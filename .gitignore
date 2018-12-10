@@ -1,0 +1,9 @@
+node_modules/
+*-error.log
+.env
+
+# dependencies
+client/node_modules/
+
+# production
+client/build/
