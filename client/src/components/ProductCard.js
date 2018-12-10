@@ -42,6 +42,7 @@ const ProductCardContainer = styled(Box)`
   padding: 15px;
   margin: 3vh 5vw;
   border-radius: 5px;
+  align-items: center;
 `;
 
 const ImageContainer = styled(Box)`
@@ -49,12 +50,14 @@ const ImageContainer = styled(Box)`
   width: fit-content;
   min-width: fit-content;
   min-height: fit-content;
+  margin: 5px;
+  border: 1px dotted grey;
 `;
 
 const Image = styled.img`
   display: flex;
-  height: 10vmin;
-  width: 10vmin;
+  height: 20vmin;
+  width: 20vmin;
 `;
 
 export default ProductCard;
