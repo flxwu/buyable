@@ -3,8 +3,7 @@ import { Box, Grid, Button } from 'grommet';
 import { Menu } from 'grommet-icons';
 import styled from 'styled-components';
 
-import gurke from './assets/gurke.jpg';
-import { ProductImage } from './components/ProductCard';
+import ProductCard from './components/ProductCard';
 
 class App extends Component {
   state = { sidebar: true };
@@ -60,8 +59,8 @@ class App extends Component {
           gridArea="main"
           align="center"
           justify="center">
-          <ProductImage src={gurke} />
-          <ProductImage src={gurke} />
+          <ProductCard product={'gurke'} />
+          <ProductCard product={'gurke'} />
         </Box>
       </Grid>
     );
