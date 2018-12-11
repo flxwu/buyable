@@ -3,16 +3,15 @@ import { Grid } from 'grommet';
 
 class IndexGrid extends Component {
 	render () {
-    const { sidebar } = this.props;
-
+    const { showSideBar } = this.props;
 		return (
 			<Grid
 			className="app-grid"
 			fill
-			rows={['auto', 'flex']}
-			columns={['auto', 'flex']}
+			rows={!showSideBar ? ['auto', 'auto'] : ['auto', 'auto', 'auto']}
+			columns={!showSideBar ? ['auto', 'auto'] : ['auto', 'auto', 'auto']}
 			areas={
-				sidebar
+				showSideBar
 					? [
 							{ name: 'header', start: [0, 0], end: [1, 0] },
 							{ name: 'sidebar', start: [0, 1], end: [0, 1] },
