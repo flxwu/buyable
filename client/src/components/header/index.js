@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box, Button } from 'grommet';
-import { Menu } from 'grommet-icons';
+import { Box, Button, Text } from 'grommet';
+import { Menu, Camera } from 'grommet-icons';
 
 const Header = props => (
   <HeaderContainer
@@ -13,12 +13,23 @@ const Header = props => (
     <Button onClick={props.toggleSidebar}>
       <Menu />
     </Button>
-    Hi Alex!
+    <RightHeader direction="row">
+      <Button icon={<Camera />} label="Sell Product"/>
+      <Text>Hi Alex!</Text>
+    </RightHeader>
   </HeaderContainer>
 );
 
 const HeaderContainer = styled(Box)`
   border-bottom: 1px solid grey;
+`;
+
+const RightHeader = styled(Box)`
+  padding: 0px 10px;
+  align-items: center;
+  > * {
+    margin: 10px;
+  }
 `;
 
 export default Header;
