@@ -8,6 +8,7 @@ const morgan_1 = __importDefault(require("morgan"));
 const express_session_1 = __importDefault(require("express-session"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
+const router_1 = __importDefault(require("./routes/api/router"));
 const app = express_1.default();
 const MongoStore = connect_mongo_1.default(express_session_1.default);
 // Session Handling
@@ -27,6 +28,7 @@ db.on('error', () => console.error('Error connecting to MLab MongoDB'));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
 app.use(morgan_1.default('dev'));
+app.use('/api', router_1.default);
 app.use(express_1.default.static(__dirname + '/../client/build/'));
 exports.default = app;
 //# sourceMappingURL=app.js.map
