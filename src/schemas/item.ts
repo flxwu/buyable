@@ -1,22 +1,40 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import { IItem } from '../interfaces/item';
+import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from 'constants';
 
 export interface IItemModel extends IItem, Document {
-	_id: any | string
+  _id: any | string;
 }
 
 export const ItemSchema: Schema = new Schema({
-  name: String,
-  price: Number,
-  imageURL: String
+  _id: String,
+  name: {
+    type: String,
+    required: true
+  },
+  description: String,
+  price: {
+    type: Number,
+    required: true,
+  },
+  imageURLs: Array,
+  amount: {
+    type: Number,
+    required: true
+  },
+  groups: Array,
+  owner: {
+    type: Object,
+    required: true
+  }
 });
 
 ItemSchema.pre('save', function(next: any) {
-  let now = new Date();
+  const now = new Date();
   if (!this.createdAt) {
     this.createdAt = now;
   }
   next();
 });
 
-export const User: Model<IItemModel> = model<IItemModel>('User', ItemSchema);
+export const Item: Model<IItemModel> = model<IItemModel>('User', ItemSchema);
