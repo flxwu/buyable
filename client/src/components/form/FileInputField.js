@@ -63,7 +63,8 @@ const Label = styled.label`
   background: #7e4ddb;
   border-radius: 18px;
   width: fit-content;
-  padding: 5px;
+	padding: 4px 22px;
+	font-weight: bold;
   color: white;
   border: 2px solid #7e4ddb;
 
