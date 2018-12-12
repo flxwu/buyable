@@ -56,8 +56,10 @@ const ImageContainer = styled(Box)`
 
 const Image = styled.img`
   display: flex;
-  height: 20vmin;
-  width: 20vmin;
+  height: auto;
+  width: auto;
+  max-width: 20vmin;
+  max-height: 20vmin;
 `;
 
 export default ProductCard;
