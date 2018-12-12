@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Layer, Box, Heading, Text, Button } from 'grommet';
 
+import NewProductForm from './NewProductForm';
+
 class NewProductModal extends Component {
   render() {
 		const { onToggleNewProductModal } = this.props;
@@ -11,26 +13,22 @@ class NewProductModal extends Component {
         modal
         onClickOutside={onToggleNewProductModal}
         onEsc={onToggleNewProductModal}>
-        <Box pad="medium" gap="small" width="medium">
-          <Heading level={3} margin="none">
-            Confirm
+        <Box pad="medium" width="medium">
+          <Heading level={3} margin="small">
+            Sell new Product
           </Heading>
-          <Text>Are you sure you want to delete?</Text>
           <Box
-            as="footer"
-            gap="small"
-            direction="row"
+            direction="column"
             align="center"
-            justify="end"
-            pad={{ top: 'medium', bottom: 'small' }}>
-            <Button label="Open 2" onClick={this.onOpen2} color="dark-3" />
+            justify="end">
+            <NewProductForm />
             <Button
               label={
                 <Text color="white">
-                  <strong>Delete</strong>
+                  <strong>Abort</strong>
                 </Text>
               }
-              onClick={this.onClose}
+              onClick={onToggleNewProductModal}
               primary
               color="status-critical"
             />
