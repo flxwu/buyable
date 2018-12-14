@@ -8,5 +8,5 @@ import Controller from './userController';
 const userController =  new Controller();
 
 router.post('/new', userController.newPost);
-
+router.get('/', userController.get);
 export default router;
