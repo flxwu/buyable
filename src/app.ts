@@ -11,7 +11,7 @@ const app = express();
 const MongoStore = MongoConnect(session);
 
 // Session Handling
-const mongoURL = `mongodb://flxwu:${
+const mongoURL = `mongodb://${process.env.MLAB_USER}:${
   process.env.MLAB_PASSWORD
 }@ds016108.mlab.com:16108/buyable-dev`;
 app.use(
