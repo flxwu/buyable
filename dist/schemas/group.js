@@ -2,14 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 exports.GroupSchema = new mongoose_1.Schema({
-    name: String,
+    _id: String,
+    password: String,
+    description: String,
+    owner: Object,
+    permissions: Object,
+    settings: Object,
+    pictureURL: String,
     items: Array,
     users: Array,
-    admin: Object,
-    settings: Object
 });
 exports.GroupSchema.pre('save', function (next) {
-    let now = new Date();
+    const now = new Date();
     if (!this.createdAt) {
         this.createdAt = now;
     }
