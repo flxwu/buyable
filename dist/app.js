@@ -12,7 +12,7 @@ const router_1 = __importDefault(require("./routes/api/router"));
 const app = express_1.default();
 const MongoStore = connect_mongo_1.default(express_session_1.default);
 // Session Handling
-const mongoURL = `mongodb://flxwu:${process.env.MLAB_PASSWORD}@ds016108.mlab.com:16108/buyable-dev`;
+const mongoURL = `mongodb://${process.env.MLAB_USER}:${process.env.MLAB_PASSWORD}@ds016108.mlab.com:16108/buyable-dev`;
 app.use(express_session_1.default({
     secret: 'foo',
     store: new MongoStore({
