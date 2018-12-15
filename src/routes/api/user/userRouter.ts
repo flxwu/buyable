@@ -7,6 +7,6 @@ import Controller from './userController';
  */
 const userController =  new Controller();
 
-router.post('/new', userController.newPost);
+router.post('/new', userController.newPOST);
 
 export default router;

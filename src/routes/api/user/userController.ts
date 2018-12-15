@@ -1,10 +1,10 @@
 interface IController {
-    newPost: Function;
+    newPOST: Function;
 }
 
 class Controller<IController> {
     constructor() {}
-    public newPost(req: any, res: any, next: any): any {
+    public newPOST(req: any, res: any, next: any): any {
 
     }
     public get(req: any, res: any, next: any): any {

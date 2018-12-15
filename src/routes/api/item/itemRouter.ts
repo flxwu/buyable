@@ -8,6 +8,6 @@ import Controller from './itemController';
 
 const itemController = new Controller();
 
-router.post('/new', itemController.newPost);
+router.post('/new', itemController.newPOST);
 router.get('/', itemController.get);
 export default router;
