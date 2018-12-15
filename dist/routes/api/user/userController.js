@@ -4,7 +4,7 @@ class Controller {
     constructor() { }
     newPOST(req, res, next) {
     }
-    get(req, res, next) {
+    GET(req, res, next) {
         res.status(200);
         res.json({ user: 'test' });
     }

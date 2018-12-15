@@ -9,4 +9,6 @@ const userController =  new Controller();
 
 router.post('/new', userController.newPOST);
 
+router.get('/', userController.GET);
+
 export default router;

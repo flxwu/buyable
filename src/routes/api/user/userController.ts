@@ -1,5 +1,6 @@
 interface IController {
     newPOST: Function;
+    GET: Function;
 }
 
 class Controller<IController> {
@@ -7,7 +8,7 @@ class Controller<IController> {
     public newPOST(req: any, res: any, next: any): any {
 
     }
-    public get(req: any, res: any, next: any): any {
+    public GET(req: any, res: any, next: any): any {
         res.status(200);
         res.json({user: 'test'});
     }
