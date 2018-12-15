@@ -1,17 +1,20 @@
 interface IController {
-    newPost: Function;
+  newPOST: Function;
 }
 
 class Controller<IController> {
-    constructor() {}
-    public newPost(req: any, res: any, next: any): any {
+  constructor(DBItemModel) {
+    this.DBItemModel = DBItemModel; 
+  }
 
-    }
-    public get(req: any, res: any, next: any): any {
-        res.status(200);
-        res.json({item: 'test'});
-    }
+  public newPOST(req: any, res: any, next: any): any {
 
+  }
+
+  public get(req: any, res: any, next: any): any {
+    res.status(200);
+    res.json({ item: 'test' });
+  }
 }
 
 export default Controller;
