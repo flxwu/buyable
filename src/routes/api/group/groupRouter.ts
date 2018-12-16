@@ -7,7 +7,7 @@ import Controller from './groupController';
  */
 const groupController = new Controller();
 
-router.post('/new', groupController.newPost);
+router.post('/new', groupController.newPOST);
 router.get('/', groupController.get);
 
 export default router;

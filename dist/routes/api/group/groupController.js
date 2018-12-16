@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 class Controller {
     constructor() { }
-    newPost(req, res, next) {
+    newPOST(req, res, next) {
     }
     get(req, res, next) {
         res.status(200);
