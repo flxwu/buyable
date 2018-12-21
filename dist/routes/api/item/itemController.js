@@ -66,10 +66,4 @@ class Controller {
     }
 }
 exports.default = Controller;
-exports.default = Controller;
-exports.default = Controller;
-exports.default = Controller;
-exports.default = Controller;
-exports.default = Controller;
-exports.default = Controller;
 //# sourceMappingURL=itemController.js.map

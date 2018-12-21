@@ -7,7 +7,6 @@ interface IController {
 }
 
 class Controller<IController> {
-  constructor() {}
   public async newPOST(req: any, res: any, next: any): Promise<void> {
     const { username, email, forename, surname, password } = req.body;
 
@@ -37,6 +36,8 @@ class Controller<IController> {
       res.status(500).json({ error: err.message });
     }
   }
+
+
   public GET(req: any, res: any, next: any): any {
     res.status(200);
     res.json({ user: 'test' });

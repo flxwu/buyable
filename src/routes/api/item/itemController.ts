@@ -71,9 +71,3 @@ class Controller<IController> {
 }
 
 export default Controller;
-export default Controller;
-export default Controller;
-export default Controller;
-export default Controller;
-export default Controller;
-export default Controller;
