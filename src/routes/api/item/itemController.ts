@@ -2,6 +2,7 @@ import { IUserReference } from '../../../interfaces/reference';
 
 import { ItemModel, IItemModel } from '../../../schemas/item';
 import { IItem } from '../../../interfaces/item';
+import validate = require('validate.js');
 
 interface IController {
   newPOST: Function;
@@ -17,8 +18,21 @@ class Controller<IController> {
   public async newPOST(req: any, res: any, next: any): Promise<void> {
     const { name, description, price, amount, images } = req.body;
     const owner = req.session.user;
+
+    // validate that user is logged in
     if (owner == null || owner._id == null) {
       res.status(401).json({ error: 'Please login to post new items!' });
+    }
+
+    // validate post body
+    if (
+      typeof name !== 'string' ||
+      name.length > 50 ||
+      (typeof description !== 'string' || description.length > 500) ||
+      typeof price !== 'number' ||
+      typeof amount !== 'number'
+    ) {
+      res.status(400).json({ error: 'Item form data invalid' });
     }
 
     const createItem = async () => {
@@ -56,4 +70,10 @@ class Controller<IController> {
   }
 }
 
+export default Controller;
+export default Controller;
+export default Controller;
+export default Controller;
+export default Controller;
+export default Controller;
 export default Controller;
