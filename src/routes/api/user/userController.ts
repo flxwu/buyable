@@ -30,7 +30,6 @@ class Controller<IController> {
     };
     try {
       const createdUser = await createUser();
-      req.session.user = createdUser;
       res.status(200).json({ user: createdUser });
     } catch (err) {
       res.status(500).json({ error: err.message });
