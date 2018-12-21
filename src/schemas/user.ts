@@ -6,7 +6,6 @@ export interface IUserModel extends IUser, Document {
 }
 
 export const UserSchema: Schema = new Schema({
-  _id: String,
   username: {
     type: String,
     required: true
@@ -34,4 +33,4 @@ UserSchema.pre('save', function(next: any) {
   next();
 });
 
-export const User: Model<IUserModel> = model<IUserModel>('User', UserSchema);
+export const UserModel: Model<IUserModel> = model<IUserModel>('User', UserSchema);
