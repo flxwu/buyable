@@ -5,7 +5,7 @@ import { Menu, Camera } from 'grommet-icons';
 
 class Header extends React.Component {
   render() {
-    const { toggleSideBar, toggleNewProductModal } = this.props;
+    const { toggleSideBar, toggleNewProductModal, toggleAuthModal } = this.props;
     return (
       <HeaderContainer
         gridArea="header"
@@ -21,6 +21,10 @@ class Header extends React.Component {
             icon={<Camera />}
             label="Sell Product"
             onClick={toggleNewProductModal}
+          />
+          <Button
+          onClick={toggleAuthModal}
+          label="Login or Sign up"
           />
           <Text>Hi Alex!</Text>
         </RightHeader>

@@ -15,7 +15,6 @@ const user_1 = require("../../../schemas/user");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const validate_js_1 = __importDefault(require("validate.js"));
 class Controller {
-    constructor() { }
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { username, email, forename, surname, password } = req.body;
