@@ -1,13 +1,6 @@
 import { ItemModel, IItemModel } from '../../../schemas/item';
 import { IItem } from '../../../interfaces/item';
-/*import mongoose from 'mongoose';
 
-const mongoURL = `mongodb://${process.env.MLAB_USER}:${
-  process.env.MLAB_PASSWORD
-}@ds016108.mlab.com:16108/buyable-dev`;
-
-mongoose.connect(mongoURL);
-*/
 interface IController {
   newPOST: Function;
 }
