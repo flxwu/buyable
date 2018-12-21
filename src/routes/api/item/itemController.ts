@@ -24,12 +24,12 @@ class Controller<IController> {
       // TODO: add user to item from session
 
       const item: IItemModel = new ItemModel({
-        name: req.body.name,
-        description: req.body.description,
-        price: req.body.price,
-        amount: req.body.amount,
+        name: name,
+        description: description,
+        price: price,
+        amount: amount,
         owner: {
-          user: req.body.user,
+          user: owner,
         }
       });
       let result;
