@@ -1,12 +1,16 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+const item_1 = require("../../../schemas/item");
 class Controller {
-    constructor(DBItemModel) {
-        this.DBItemModel = DBItemModel;
-    }
     newPOST(req, res, next) {
+        const { name, description, images, price, groups } = req.body;
+        const owner = req.session.profile.;
+        const newItem = new item_1.Item({ name, description, price, groups, owner });
+        newItem.save(err => err
+            ? console.error('Error while saving:', err)
+            : console.log('Successfully saved ', newItem.name));
     }
-    get(req, res, next) {
+    GET(req, res, next) {
         res.status(200);
         res.json({ item: 'test' });
     }
