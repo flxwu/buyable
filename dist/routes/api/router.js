@@ -7,10 +7,12 @@ const express_1 = require("express");
 const itemRouter_1 = __importDefault(require("./item/itemRouter"));
 const userRouter_1 = __importDefault(require("./user/userRouter"));
 const groupRouter_1 = __importDefault(require("./group/groupRouter"));
+const authRouter_1 = __importDefault(require("./authRouter"));
 const router = express_1.Router();
 router.use('/item', itemRouter_1.default);
 router.use('/user', userRouter_1.default);
 router.use('/group', groupRouter_1.default);
+router.use('/auth', authRouter_1.default);
 router.use('/', (req, res) => {
     res.status(200);
     res.json('This is the api');
