@@ -21,12 +21,12 @@ class Controller {
                 // TODO: deal with image blobs => upload to s3 and create array of urls
                 // TODO: add user to item from session
                 const item = new item_1.ItemModel({
-                    name: req.body.name,
-                    description: req.body.description,
-                    price: req.body.price,
-                    amount: req.body.amount,
+                    name: name,
+                    description: description,
+                    price: price,
+                    amount: amount,
                     owner: {
-                        user: req.body.user,
+                        user: owner,
                     }
                 });
                 let result;
