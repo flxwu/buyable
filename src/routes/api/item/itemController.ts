@@ -2,14 +2,7 @@ import { IUserReference } from '../../../interfaces/reference';
 
 import { ItemModel, IItemModel } from '../../../schemas/item';
 import { IItem } from '../../../interfaces/item';
-/*import mongoose from 'mongoose';
 
-const mongoURL = `mongodb://${process.env.MLAB_USER}:${
-  process.env.MLAB_PASSWORD
-}@ds016108.mlab.com:16108/buyable-dev`;
-
-mongoose.connect(mongoURL);
-*/
 interface IController {
   newPOST: Function;
   GET: Function;
@@ -29,12 +22,12 @@ class Controller<IController> {
       // TODO: add user to item from session
 
       const item: IItemModel = new ItemModel({
-        name: req.body.name,
-        description: req.body.description,
-        price: req.body.price,
-        amount: req.body.amount,
+        name: name,
+        description: description,
+        price: price,
+        amount: amount,
         owner: {
-          user: req.body.user,
+          user: owner,
         }
       });
       let result;
