@@ -17,7 +17,7 @@ class Controller<IController> {
 
   public async newPOST(req: any, res: any, next: any): Promise<void> {
     const { name, description, price, amount, images } = req.body;
-    const owner = req.session.user;
+    const owner = req.user;
 
     // validate that user is logged in
     if (owner == null || owner._id == null) {
