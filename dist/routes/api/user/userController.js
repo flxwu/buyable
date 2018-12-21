@@ -36,7 +36,6 @@ class Controller {
             });
             try {
                 const createdUser = yield createUser();
-                req.session.user = createdUser;
                 res.status(200).json({ user: createdUser });
             }
             catch (err) {

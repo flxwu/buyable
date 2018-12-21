@@ -1,9 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
+const passport_1 = __importDefault(require("passport"));
 const router = express_1.Router();
 router.get('/check', (req, res) => {
-    const user = req.session.user;
+    const user = req.user;
     if (user && user._id) {
         res.status(200).json({ loggedIn: true });
     }
@@ -11,12 +15,12 @@ router.get('/check', (req, res) => {
         res.status(200).json({ loggedIn: false });
     }
 });
-router.use('/login', (req, res) => {
-    //TODO: store profile into session
+router.post('/login', passport_1.default.authenticate('local'), function (req, res) {
+    res.status(200).send(req.user);
 });
-router.use('/logout', (req, res) => {
-    req.session.profile = {};
-    res.status(200);
+router.get('/logout', (req, res) => {
+    req.logout();
+    res.redirect('/');
     res.send('Successfully logged out');
 });
 exports.default = router;

@@ -28,19 +28,35 @@ export const UserSchema: Schema = new Schema({
 });
 
 UserSchema.pre('save', function(next: any) {
-  const now = new Date();
-  if (!this.createdAt) {
-    this.createdAt = now.getTime();
-  }
-  next();
+  const self = this;
+  UserModel.find(
+    { $or: [{ username: self.username }, { email: self.email }] },
+    function(err, docs) {
+      if (!docs.length) {
+        const now = new Date();
+        if (!this.createdAt) {
+          this.createdAt = now.getTime();
+        }
+        next();
+      } else {
+        console.log('User exists: ', self.username);
+        next(new Error('User exists!'));
+      }
+    }
+  );
 });
 
-UserSchema.methods.verifyPassword = async function verifyPassword(password: String) {
+UserSchema.methods.verifyPassword = async function verifyPassword(
+  password: String
+) {
   const matches = await bcrypt.compare(password, this.password);
   if (matches) {
     return true;
   }
   return false;
-}
+};
 
-export const UserModel: Model<IUserModel> = model<IUserModel>('User', UserSchema);
+export const UserModel: Model<IUserModel> = model<IUserModel>(
+  'User',
+  UserSchema
+);
