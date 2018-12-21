@@ -20,7 +20,7 @@
 * /items GET(count?): R Group(items)
 
 #### /api/user
-* /new POST: C User
+* ~~/new POST: C User~~
 * / GET: R User
 
 #### /auth
