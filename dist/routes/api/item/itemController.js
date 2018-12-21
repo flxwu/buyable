@@ -18,8 +18,17 @@ class Controller {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, description, price, amount, images } = req.body;
             const owner = req.session.user;
+            // validate that user is logged in
             if (owner == null || owner._id == null) {
                 res.status(401).json({ error: 'Please login to post new items!' });
+            }
+            // validate post body
+            if (typeof name !== 'string' ||
+                name.length > 50 ||
+                (typeof description !== 'string' || description.length > 500) ||
+                typeof price !== 'number' ||
+                typeof amount !== 'number') {
+                res.status(400).json({ error: 'Item form data invalid' });
             }
             const createItem = () => __awaiter(this, void 0, void 0, function* () {
                 // TODO: deal with image blobs => upload to s3 and create array of urls
@@ -56,5 +65,11 @@ class Controller {
         });
     }
 }
+exports.default = Controller;
+exports.default = Controller;
+exports.default = Controller;
+exports.default = Controller;
+exports.default = Controller;
+exports.default = Controller;
 exports.default = Controller;
 //# sourceMappingURL=itemController.js.map
