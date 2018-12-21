@@ -52,9 +52,6 @@ class Controller<IController> {
   public get(req: any, res: any, next: any): any {
     ItemModel.findOne().then((r: IItemModel) => {
       res.status(200).json(r);
-  public get(req: any, res: any, next: any): any {
-    ItemModel.findOne().then((r: IItemModel) => {
-      res.status(200).json(r);
     });
   }
 }

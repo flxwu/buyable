@@ -53,11 +53,8 @@ class Controller {
     get(req, res, next) {
         item_1.ItemModel.findOne().then((r) => {
             res.status(200).json(r);
-        }, public, get(req, any, res, any, next, any), any, {
-            ItemModel: item_1.ItemModel, : .findOne().then((r) => {
-                res.status(200).json(r);
-            })
         });
     }
 }
+exports.default = Controller;
 //# sourceMappingURL=itemController.js.map
