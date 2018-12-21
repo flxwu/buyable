@@ -10,7 +10,7 @@ const userController_1 = __importDefault(require("./userController"));
  * POST New Product
  */
 const userController = new userController_1.default();
-router.post('/new', userController.newPost);
-router.get('/', userController.get);
+router.post('/new', userController.newPOST);
+router.get('/', userController.GET);
 exports.default = router;
 //# sourceMappingURL=userRouter.js.map

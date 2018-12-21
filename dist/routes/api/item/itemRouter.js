@@ -10,7 +10,7 @@ const itemController_1 = __importDefault(require("./itemController"));
  * POST New Product
  */
 const itemController = new itemController_1.default();
-router.post('/new', itemController.newPost);
+router.post('/new', itemController.newPOST);
 router.get('/', itemController.get);
 exports.default = router;
 //# sourceMappingURL=itemRouter.js.map

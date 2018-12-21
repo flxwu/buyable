@@ -48,8 +48,8 @@ class Controller<IController> {
     try {
       const result = await createItem();
       res.status(200).json({item: result});
-    } catch (err) {
-      res.status(500).json({error: err});
+    } catch (error) {
+      res.status(500).json({ error });
     }
 
 

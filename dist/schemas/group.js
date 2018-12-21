@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 exports.GroupSchema = new mongoose_1.Schema({
-    _id: String,
     password: String,
     description: String,
     owner: Object,
@@ -19,5 +18,5 @@ exports.GroupSchema.pre('save', function (next) {
     }
     next();
 });
-exports.User = mongoose_1.model('User', exports.GroupSchema);
+exports.GroupModel = mongoose_1.model('Group', exports.GroupSchema);
 //# sourceMappingURL=group.js.map
