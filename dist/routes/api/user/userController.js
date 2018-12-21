@@ -31,7 +31,7 @@ class Controller {
                     email,
                     forename,
                     surname,
-                    hashedPassword
+                    password: hashedPassword
                 });
                 return yield user.save();
             });

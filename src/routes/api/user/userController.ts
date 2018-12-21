@@ -25,7 +25,7 @@ class Controller<IController> {
         email,
         forename,
         surname,
-        hashedPassword
+        password: hashedPassword
       });
       return await user.save();
     };

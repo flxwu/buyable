@@ -9,17 +9,20 @@ interface IController {
 }
 
 class Controller<IController> {
-
   public GET(req: any, res: any, next: any): any {
     res.status(200);
     res.json({ item: 'test' });
   }
 
   public async newPOST(req: any, res: any, next: any): Promise<void> {
-    const {name, description, price, amount, owner, images} = req.body;
+    const { name, description, price, amount, images } = req.body;
+    const owner = req.session.user;
+    if (owner == null || owner._id == null) {
+      res.status(401).json({ error: 'Please login to post new items!' });
+    }
+
     const createItem = async () => {
       // TODO: deal with image blobs => upload to s3 and create array of urls
-      // TODO: add user to item from session
 
       const item: IItemModel = new ItemModel({
         name: name,
@@ -27,7 +30,7 @@ class Controller<IController> {
         price: price,
         amount: amount,
         owner: {
-          user: owner,
+          user: owner._id
         }
       });
       let result;
@@ -40,14 +43,15 @@ class Controller<IController> {
     };
     try {
       const result = await createItem();
-      res.status(200).json({item: result});
+      res.status(200).json({ item: result });
     } catch (error) {
       res.status(500).json({ error });
     }
-
-
   }
 
+  public get(req: any, res: any, next: any): any {
+    ItemModel.findOne().then((r: IItemModel) => {
+      res.status(200).json(r);
   public get(req: any, res: any, next: any): any {
     ItemModel.findOne().then((r: IItemModel) => {
       res.status(200).json(r);
