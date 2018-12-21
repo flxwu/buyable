@@ -1,13 +1,11 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import { IItem } from '../interfaces/item';
-import { SSL_OP_NO_SESSION_RESUMPTION_ON_RENEGOTIATION } from 'constants';
 
 export interface IItemModel extends IItem, Document {
-  _id: any | string;
+  _id: string;
 }
 
 export const ItemSchema: Schema = new Schema({
-  _id: String,
   name: {
     type: String,
     required: true
@@ -37,4 +35,4 @@ ItemSchema.pre('save', function(next: any) {
   next();
 });
 
-export const Item: Model<IItemModel> = model<IItemModel>('User', ItemSchema);
+export const ItemModel: Model<IItemModel> = model<IItemModel>('Item', ItemSchema);

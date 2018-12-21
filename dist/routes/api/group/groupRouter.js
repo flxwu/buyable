@@ -10,7 +10,7 @@ const groupController_1 = __importDefault(require("./groupController"));
  * POST New Product
  */
 const groupController = new groupController_1.default();
-router.post('/new', groupController.newPOST);
+router.post('/new', groupController.newPost);
 router.get('/', groupController.get);
 exports.default = router;
 //# sourceMappingURL=groupRouter.js.map
