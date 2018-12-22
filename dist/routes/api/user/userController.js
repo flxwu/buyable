@@ -53,7 +53,9 @@ class Controller {
                 }
                 else {
                     const userGroups = doc.groups;
+                    const ownedGroups = doc.ownedGroups;
                     const publicUserGroups = [];
+                    const publicOwnedUserGroups = [];
                     for (const group of userGroups) {
                         const groupReferenceId = group.referenceId;
                         group_1.GroupModel.findById(groupReferenceId, (err, doc) => {
@@ -62,13 +64,18 @@ class Controller {
                             }
                             else {
                                 const isPublic = doc.settings.public;
-                                if (isPublic)
+                                // add to "groups", if it's an ownedGroup also add it to "ownedGroups"
+                                if (isPublic) {
                                     publicUserGroups.push({ referenceId: groupReferenceId });
+                                    if (ownedGroups.find(g => g.referenceId === groupReferenceId))
+                                        publicOwnedUserGroups.push({ referenceId: groupReferenceId });
+                                }
                             }
                         });
                     }
                     let filteredDoc = doc;
                     filteredDoc.groups = publicUserGroups;
+                    filteredDoc.ownedGroups = publicOwnedUserGroups;
                     res.status(200).json(filteredDoc);
                 }
             });
