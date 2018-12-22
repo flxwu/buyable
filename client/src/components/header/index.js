@@ -1,13 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  Box,
-  Button
-} from 'grommet';
-import {
-  Menu,
-  Camera
-} from 'grommet-icons';
+import { Box, Button } from 'grommet';
+import { Menu, Camera } from 'grommet-icons';
 
 class Header extends React.Component {
   render() {
@@ -16,49 +10,37 @@ class Header extends React.Component {
       toggleNewProductModal,
       toggleAuthModal
     } = this.props;
-    return ( <HeaderContainer gridArea = "header"
-      direction = "row"
-      align = "center"
-      justify = "between"
-      pad = {
-        {
+    return (
+      <HeaderContainer
+        gridArea="header"
+        direction="row"
+        align="center"
+        justify="between"
+        pad={{
           horizontal: 'medium',
           vertical: 'small'
-        }
-      } >
-      <Button onClick = {
-        toggleSideBar
-      } >
-      <Menu />
-      <
-      /Button> <RightHeader direction = "row" >
-      <
-      Button icon = { < Camera / >
-      }
-      label = "Sell Product"
-      onClick = {
-        toggleNewProductModal
-      }
-      /> <
-      Button onClick = {
-        toggleAuthModal
-      }
-      label = "Login or Sign up" /
-      >
-      <
-      /RightHeader> <
-      /HeaderContainer>
+        }}>
+        <Button onClick={toggleSideBar}>
+          <Menu />
+        </Button>{' '}
+        <RightHeader direction="row">
+          <Button
+            icon={<Camera />}
+            label="Sell Product"
+            onClick={toggleNewProductModal}
+          />{' '}
+          <Button onClick={toggleAuthModal} label="Login or Sign up" />
+        </RightHeader>{' '}
+      </HeaderContainer>
     );
   }
 }
 
-const HeaderContainer = styled(Box)
-`
+const HeaderContainer = styled(Box)`
   border-bottom: 1px solid grey;
 `;
 
-const RightHeader = styled(Box)
-`
+const RightHeader = styled(Box)`
   padding: 0px 10px;
   align-items: center;
   > * {
