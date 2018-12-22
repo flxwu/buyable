@@ -19,7 +19,7 @@ const mongoURL = `mongodb://${process.env.MLAB_USER}:${
 }@ds016108.mlab.com:16108/buyable-dev`;
 app.use(
   session({
-    secret: 'foo',
+    secret: process.env.SESSION_SECRET,
     store: new MongoStore({
       url: mongoURL
     }),
