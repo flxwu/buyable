@@ -45,26 +45,35 @@ class Controller<IController> {
     const userId = req.query.userId;
     UserModel.findById(userId, (err, doc) => {
       if (err) {
-        res.status(500).send(err)
+        res.status(500).send(err);
       } else {
         const userGroups = doc.groups;
+        const ownedGroups = doc.ownedGroups;
         const publicUserGroups: Array<IGroupReference> = [];
+        const publicOwnedUserGroups: Array<IGroupReference> = [];
         for (const group of userGroups) {
           const groupReferenceId = group.referenceId;
           GroupModel.findById(groupReferenceId, (err, doc) => {
             if (err) {
-              throw new Error('Error while finding group')
+              throw new Error('Error while finding group');
             } else {
               const isPublic = doc.settings.public;
-              if (isPublic) publicUserGroups.push({ referenceId: groupReferenceId});
+              // add to "groups", if it's an ownedGroup also add it to "ownedGroups"
+              if (isPublic) {
+                publicUserGroups.push({ referenceId: groupReferenceId });
+                if (ownedGroups.find(g => g.referenceId === groupReferenceId))
+                  publicOwnedUserGroups.push({ referenceId: groupReferenceId });
+              }
             }
           });
         }
         let filteredDoc = doc;
         filteredDoc.groups = publicUserGroups;
-        res.status(200).json(filteredDoc)
+        filteredDoc.ownedGroups = publicOwnedUserGroups;
+
+        res.status(200).json(filteredDoc);
       }
-    })
+    });
   }
 }
 

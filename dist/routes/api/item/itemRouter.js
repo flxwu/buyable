@@ -11,6 +11,6 @@ const itemController_1 = __importDefault(require("./itemController"));
  */
 const itemController = new itemController_1.default();
 router.post('/new', itemController.newPOST);
-router.get('/', itemController.get);
+router.get('/', itemController.GET);
 exports.default = router;
 //# sourceMappingURL=itemRouter.js.map
