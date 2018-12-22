@@ -1,6 +1,11 @@
-import { UserModel, IUserModel } from '../../../schemas/user';
 import bcrypt from 'bcrypt';
 import validate from 'validate.js';
+
+import { UserModel, IUserModel } from '../../../schemas/user';
+import { GroupModel } from '../../../schemas/group';
+import { IGroupReference } from '../../../interfaces/reference';
+import { IUser } from '../../../interfaces/user';
+
 interface IController {
   newPOST: Function;
   GET: Function;
@@ -36,10 +41,30 @@ class Controller<IController> {
     }
   }
 
-
-  public GET(req: any, res: any, next: any): any {
-    res.status(200);
-    res.json({ user: 'test' });
+  public async GET(req: any, res: any, next: any): Promise<any> {
+    const userId = req.query.userId;
+    UserModel.findById(userId, (err, doc) => {
+      if (err) {
+        res.status(500).send(err)
+      } else {
+        const userGroups = doc.groups;
+        const publicUserGroups: Array<IGroupReference> = [];
+        for (const group of userGroups) {
+          const groupReferenceId = group.referenceId;
+          GroupModel.findById(groupReferenceId, (err, doc) => {
+            if (err) {
+              throw new Error('Error while finding group')
+            } else {
+              const isPublic = doc.settings.public;
+              if (isPublic) publicUserGroups.push({ referenceId: groupReferenceId});
+            }
+          });
+        }
+        let filteredDoc = doc;
+        filteredDoc.groups = publicUserGroups;
+        res.status(200).json(filteredDoc)
+      }
+    })
   }
 }
 
