@@ -14,6 +14,7 @@ class TextInputField extends React.Component {
           placeholder={placeholder}
           value={value}
           onChange={this.onTextChange}
+          {...this.props}
         />
       </FormField>
     );
