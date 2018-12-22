@@ -10,7 +10,7 @@ class RegisterForm extends React.Component {
     return (
       <FormContainer>
         <Heading textAlign="center" size="small">
-          Register{' '}
+          Register
         </Heading>
         <TextInputField label="Username" placeholder="yodelingcucumber" />
         <TextInputField label="Email" placeholder="yodeling@cucumb.er" />

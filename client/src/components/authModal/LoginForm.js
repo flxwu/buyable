@@ -8,15 +8,15 @@ class LoginForm extends React.Component {
     return (
       <FormContainer>
         <Heading textAlign="center" size="small">
-          Login{' '}
-        </Heading>{' '}
+          Login
+        </Heading>
         <TextInputField label="Username" placeholder="yodelingcucumber" />
         <TextInputField
           label="Password"
           type="password"
           placeholder="Your Password"
         />
-        <Button label="Login" margin="medium" />{' '}
+        <Button label="Login" margin="medium" />
       </FormContainer>
     );
   }
