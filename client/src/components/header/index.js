@@ -26,7 +26,6 @@ class Header extends React.Component {
           onClick={toggleAuthModal}
           label="Login or Sign up"
           />
-          <Text>Hi Alex!</Text>
         </RightHeader>
       </HeaderContainer>
     );

@@ -19,7 +19,7 @@ class App extends React.Component {
     const { showSideBar, authModalOpen, newProductModalOpen } = this.state;
 
     return (
-      <Box>
+      <Box fill>
         <IndexGrid showSideBar={showSideBar}>
           <Header
             toggleSideBar={() => this.setState({ showSideBar: !showSideBar })}
