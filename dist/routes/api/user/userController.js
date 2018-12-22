@@ -11,9 +11,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const user_1 = require("../../../schemas/user");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const validate_js_1 = __importDefault(require("validate.js"));
+const user_1 = require("../../../schemas/user");
+const group_1 = require("../../../schemas/group");
 class Controller {
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -44,8 +45,34 @@ class Controller {
         });
     }
     GET(req, res, next) {
-        res.status(200);
-        res.json({ user: 'test' });
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = req.query.userId;
+            user_1.UserModel.findById(userId, (err, doc) => {
+                if (err) {
+                    res.status(500).send(err);
+                }
+                else {
+                    const userGroups = doc.groups;
+                    const publicUserGroups = [];
+                    for (const group of userGroups) {
+                        const groupReferenceId = group.referenceId;
+                        group_1.GroupModel.findById(groupReferenceId, (err, doc) => {
+                            if (err) {
+                                throw new Error('Error while finding group');
+                            }
+                            else {
+                                const isPublic = doc.settings.public;
+                                if (isPublic)
+                                    publicUserGroups.push({ referenceId: groupReferenceId });
+                            }
+                        });
+                    }
+                    let filteredDoc = doc;
+                    filteredDoc.groups = publicUserGroups;
+                    res.status(200).json(filteredDoc);
+                }
+            });
+        });
     }
 }
 exports.default = Controller;
