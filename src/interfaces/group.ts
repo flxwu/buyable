@@ -2,8 +2,10 @@ import { IUserReference, IGroupMemberReference, IItemReference } from './referen
 
 export interface IGroup {
   _id: string;
-  password: string;
+  name: string;
   description: string;
+  password: string;
+  urlSuffix: string;
   owner: IUserReference;
   permissions: IGroupPermissions;
   settings: IGroupSettings;
