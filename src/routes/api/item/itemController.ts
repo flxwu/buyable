@@ -10,11 +10,6 @@ interface IController {
 }
 
 class Controller<IController> {
-  public GET(req: any, res: any, next: any): any {
-    res.status(200);
-    res.json({ item: 'test' });
-  }
-
   public async newPOST(req: any, res: any, next: any): Promise<void> {
     const { name, description, price, amount, images } = req.body;
     const owner = req.user;
@@ -63,7 +58,7 @@ class Controller<IController> {
     }
   }
 
-  public get(req: any, res: any, next: any): any {
+  public GET(req: any, res: any, next: any): any {
     ItemModel.findOne().then((r: IItemModel) => {
       res.status(200).json(r);
     });

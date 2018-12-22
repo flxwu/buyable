@@ -9,5 +9,5 @@ import Controller from './itemController';
 const itemController = new Controller();
 
 router.post('/new', itemController.newPOST);
-router.get('/', itemController.get);
+router.get('/', itemController.GET);
 export default router;

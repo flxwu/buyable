@@ -9,7 +9,7 @@
 ## Backend
 
 #### /api/item
-* /new POST: C Item, U User(item), U Group(item)
+* ~~/new POST: C Item, U User(item), U Group(item)~~
 * / UPDATE(id): U Item, U/D Group(item)
 * / DELETE(id): D Item, D Group(item)
 * (/search GET(query): R Item)
@@ -21,8 +21,8 @@
 
 #### /api/user
 * ~~/new POST: C User~~
-* / GET: R User
+* ~~/ GET: R User~~
 
 #### /auth
-* /login
-* /logout
+* ~~/login~~
+* ~~/logout~~

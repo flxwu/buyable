@@ -10,10 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const item_1 = require("../../../schemas/item");
 class Controller {
-    GET(req, res, next) {
-        res.status(200);
-        res.json({ item: 'test' });
-    }
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { name, description, price, amount, images } = req.body;
@@ -59,7 +55,7 @@ class Controller {
             }
         });
     }
-    get(req, res, next) {
+    GET(req, res, next) {
         item_1.ItemModel.findOne().then((r) => {
             res.status(200).json(r);
         });
