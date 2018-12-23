@@ -1,15 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Layer, Box, Tabs, Tab } from 'grommet';
+
 import LoginForm from './LoginForm';
 import RegisterForm from './RegisterForm';
+
+import { connect } from 'react-redux';
+import { toggleModal } from '../../redux/actions/modals';
+
 class AuthModal extends React.Component {
   state = { currentActiveIndex: 0 };
   onActive = index => {
     this.setState({ index });
   };
   render() {
-    const { onToggleAuthModal, onUserStateChange } = this.props;
+    const { onToggleAuthModal } = this.props;
     const { index } = this.state;
     return (
       <Layer modal onClickOutside={onToggleAuthModal} onEsc={onToggleAuthModal}>
@@ -17,18 +22,12 @@ class AuthModal extends React.Component {
           <Tabs onActive={this.onActive}>
             <Tab title="Login">
               <Box margin="small" pad="large" align="center">
-                <LoginForm
-                  onUserStateChange={onUserStateChange}
-                  onToggleAuthModal={onToggleAuthModal}
-                />
+                <LoginForm onToggleAuthModal={onToggleAuthModal} />
               </Box>
             </Tab>
             <Tab title="Register">
               <Box margin="small" pad="large" align="center">
-                <RegisterForm
-                  onUserStateChange={onUserStateChange}
-                  onToggleAuthModal={onToggleAuthModal}
-                />
+                <RegisterForm onToggleAuthModal={onToggleAuthModal} />
               </Box>
             </Tab>
           </Tabs>
@@ -39,4 +38,8 @@ class AuthModal extends React.Component {
 }
 
 const CustomBox = styled(Box)``;
-export default AuthModal;
+
+export default connect(
+  null,
+  { toggleModal }
+)(AuthModal);

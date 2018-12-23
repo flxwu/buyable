@@ -28,7 +28,9 @@ class RegisterForm extends React.Component {
     } = this.state;
     if (
       passwordField === passwordConfirmField &&
-      validator.isLength(usernameField, { min: 3, max: 50 })
+      validator.isLength(passwordField, { min: 8, max: 72 }) &&
+      validator.isLength(usernameField, { min: 3, max: 50 }) &&
+      validator.isEmail(emailField)
     ) {
       try {
         await axios.post('/api/user/new', {
@@ -113,6 +115,17 @@ class RegisterForm extends React.Component {
           onChange={this.onPasswordChange}
           value={this.state.passwordField}
         />
+        {!validator.isLength(this.state.passwordField, { min: 8 }) &&
+          !validator.isEmpty(this.state.passwordField) && (
+            <Text as="p" color="status-critical">
+              Passwords must be at least 8 characters long.
+            </Text>
+          )}
+        {!validator.isLength(this.state.passwordField, { max: 72 }) && (
+          <Text as="p" color="status-critical">
+            Passwords cannot be longer than 72 characters.
+          </Text>
+        )}
         <TextInputField
           label="Confirm Password"
           placeholder="Retype password"

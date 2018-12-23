@@ -6,6 +6,7 @@ import apiSaga from './sagas';
 
 const sagaMiddleware = createSagaMiddleware();
 
+const store = createStore(reducer, applyMiddleware(sagaMiddleware));
 sagaMiddleware.run(apiSaga);
 
-export default createStore(reducer, applyMiddleware(sagaMiddleware));
+export default store;
