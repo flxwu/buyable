@@ -9,7 +9,7 @@ class AuthModal extends React.Component {
     this.setState({ index });
   };
   render() {
-    const { onToggleAuthModal } = this.props;
+    const { onToggleAuthModal, onUserStateChange } = this.props;
     const { index } = this.state;
     return (
       <Layer modal onClickOutside={onToggleAuthModal} onEsc={onToggleAuthModal}>
@@ -17,12 +17,12 @@ class AuthModal extends React.Component {
           <Tabs onActive={this.onActive}>
             <Tab title="Login">
               <Box margin="small" pad="large" align="center">
-                <LoginForm/>
+                <LoginForm onUserStateChange={onUserStateChange} onToggleAuthModal={onToggleAuthModal}/>
               </Box>
             </Tab>
             <Tab title="Register">
               <Box margin="small" pad="large" align="center">
-                <RegisterForm />
+                <RegisterForm onUserStateChange={onUserStateChange} onToggleAuthModal={onToggleAuthModal}/>
               </Box>
             </Tab>
           </Tabs>
