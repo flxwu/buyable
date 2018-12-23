@@ -16,12 +16,7 @@ class Controller<IController> {
     const { username, email, forename, surname, password } = req.body;
 
     const createUser = async () => {
-      console.log(
-        await validate.async(password, {
-          key1: { length: { minimum: 8 } },
-          key2: { length: { maximum: 72 } }
-        })
-      );
+      if(password.length < 8 || password.length > 72) throw new Error("Password too short")
       // TODO: deal with image blob => upload to s3 and create array of urls
       const hashedPassword = await bcrypt.hash(password, 10);
       const user: IUserModel = new UserModel({

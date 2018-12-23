@@ -4,7 +4,7 @@ import { Box, Heading, Button } from 'grommet';
 import TextInputField from '../form/TextInputField';
 import axios from 'axios';
 class LoginForm extends React.Component {
-  //TODO: Add login handler and onChange listeners
+  
   constructor(props){
     super(props);
     this.state = {usernameField: "", passwordField: ""}
