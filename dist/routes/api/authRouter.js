@@ -16,12 +16,13 @@ router.get('/check', (req, res) => {
     }
 });
 router.post('/login', passport_1.default.authenticate('local'), function (req, res) {
-    res.status(200).send(req.user);
+    const filteredUser = JSON.parse(JSON.stringify(req.user));
+    delete filteredUser.password;
+    res.status(200).json(filteredUser);
 });
 router.get('/logout', (req, res) => {
     req.logout();
-    res.redirect('/');
-    res.send('Successfully logged out');
+    res.status(200).json({ message: 'logged out' });
 });
 exports.default = router;
 //# sourceMappingURL=authRouter.js.map
