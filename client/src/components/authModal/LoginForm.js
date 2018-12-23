@@ -1,13 +1,12 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box, Heading, Button } from 'grommet';
+import { Box, Heading, Button, Text } from 'grommet';
 import TextInputField from '../form/TextInputField';
 import axios from 'axios';
 class LoginForm extends React.Component {
-  
-  constructor(props){
+  constructor(props) {
     super(props);
-    this.state = { usernameField: '', passwordField: '' };
+    this.state = { usernameField: '', passwordField: '', apiStatusCode: 200 };
   }
 
   render() {
@@ -33,6 +32,21 @@ class LoginForm extends React.Component {
           onKeyDown={this.listenForEnter}
         />
         <Button label="Login" margin="medium" onClick={this.onLoginSubmit} />
+        {this.state.apiStatusCode === 400 && (
+          <Text color="status-critical" textAlign="center">
+            Provide both username and password
+          </Text>
+        )}
+        {this.state.apiStatusCode === 401 && (
+          <Text color="status-critical" textAlign="center">
+            Wrong username or password
+          </Text>
+        )}
+        {this.state.apiStatusCode === 500 && (
+          <Text color="status-critical" textAlign="center">
+            Internal server error
+          </Text>
+        )}
       </FormContainer>
     );
   }
@@ -51,15 +65,7 @@ class LoginForm extends React.Component {
     } catch (err) {
       if (err.response) {
         const { status } = err.response;
-        if (status === 401) {
-          alert('wrong username or password');
-        }
-        if (status === 400) {
-          alert('provide both username and password');
-        }
-        if (status === 500) {
-          alert('internal server error');
-        }
+        this.setState({ apiStatusCode: status });
       }
     }
   };
