@@ -17,12 +17,18 @@ class AuthModal extends React.Component {
           <Tabs onActive={this.onActive}>
             <Tab title="Login">
               <Box margin="small" pad="large" align="center">
-                <LoginForm onUserStateChange={onUserStateChange} onToggleAuthModal={onToggleAuthModal}/>
+                <LoginForm
+                  onUserStateChange={onUserStateChange}
+                  onToggleAuthModal={onToggleAuthModal}
+                />
               </Box>
             </Tab>
             <Tab title="Register">
               <Box margin="small" pad="large" align="center">
-                <RegisterForm onUserStateChange={onUserStateChange} onToggleAuthModal={onToggleAuthModal}/>
+                <RegisterForm
+                  onUserStateChange={onUserStateChange}
+                  onToggleAuthModal={onToggleAuthModal}
+                />
               </Box>
             </Tab>
           </Tabs>
@@ -32,7 +38,5 @@ class AuthModal extends React.Component {
   }
 }
 
-const CustomBox = styled(Box)`
-  min-width: 50em;
-`;
+const CustomBox = styled(Box)``;
 export default AuthModal;
