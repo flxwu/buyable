@@ -38,8 +38,8 @@ exports.UserSchema.pre('save', function (next) {
     exports.UserModel.find({ $or: [{ username: self.username }, { email: self.email }] }, function (err, docs) {
         if (!docs.length) {
             const now = new Date();
-            if (!this.createdAt) {
-                this.createdAt = now.getTime();
+            if (!self.createdAt) {
+                self.createdAt = now.getTime();
             }
             next();
         }
