@@ -17,7 +17,7 @@ class LoginForm extends React.Component {
         });
         const user = result.data;
         onToggleAuthModal();
-        this.onUserStateChange(user);
+        onUserStateChange(user);
         
       }catch(err){
         if(err.response){
