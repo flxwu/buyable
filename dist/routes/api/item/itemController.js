@@ -29,10 +29,10 @@ class Controller {
             const createItem = () => __awaiter(this, void 0, void 0, function* () {
                 // TODO: deal with image blobs => upload to s3 and create array of urls
                 const item = new item_1.ItemModel({
-                    name: name,
-                    description: description,
-                    price: price,
-                    amount: amount,
+                    name,
+                    description,
+                    price,
+                    amount,
                     owner: {
                         user: owner._id
                     }
