@@ -25,7 +25,6 @@ router.post(
 router.get('/logout', (req: any, res: any) => {
 	req.logout();
   res.redirect('/');
-  res.send('Successfully logged out');
 });
 
 export default router;
