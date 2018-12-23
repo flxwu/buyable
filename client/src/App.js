@@ -11,11 +11,17 @@ import AuthModal from './components/authModal';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { showSideBar: false, authModalOpen: false, newProductModalOpen: false, user: undefined};
+    this.state = {
+      showSideBar: false,
+      authModalOpen: false,
+      newProductModalOpen: false,
+      user: undefined
+    };
     this.onToggleAuthModal = this.onToggleAuthModal.bind(this);
     this.onToggleNewProductModal = this.onToggleNewProductModal.bind(this);
     this.onUserStateChange = this.onUserStateChange.bind(this);
   }
+
   render() {
     const { showSideBar, authModalOpen, newProductModalOpen } = this.state;
     return (
@@ -35,7 +41,8 @@ class App extends React.Component {
           <NewProductModal
             onToggleNewProductModal={this.onToggleNewProductModal}
           />
-        )}{authModalOpen && !this.state.user && (
+        )}
+        {authModalOpen && !this.state.user && (
           <AuthModal
             onToggleAuthModal={this.onToggleAuthModal}
             onUserStateChange={this.onUserStateChange}
@@ -48,11 +55,11 @@ class App extends React.Component {
   onToggleNewProductModal() {
     this.setState({ newProductModalOpen: !this.state.newProductModalOpen });
   }
-  onToggleAuthModal(){
-    this.setState({authModalOpen: !this.state.authModalOpen});
+  onToggleAuthModal() {
+    this.setState({ authModalOpen: !this.state.authModalOpen });
   }
-  onUserStateChange(user){
-    this.setState({user})
+  onUserStateChange(user) {
+    this.setState({ user });
     this.authModalOpen = false;
   }
 }

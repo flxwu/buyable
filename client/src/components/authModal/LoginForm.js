@@ -1,8 +1,13 @@
 import React from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import { Box, Heading, Button, Text } from 'grommet';
+
 import TextInputField from '../form/TextInputField';
-import axios from 'axios';
+
+import { connect } from 'react-redux';
+import { addUser } from '../../redux/actions/user';
+
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
@@ -16,7 +21,7 @@ class LoginForm extends React.Component {
           Login
         </Heading>
         <TextInputField
-          label="Username"
+          label="Username or email"
           id="usernameField"
           placeholder="yodelingcucumber"
           value={this.state.usernameField}
@@ -52,7 +57,7 @@ class LoginForm extends React.Component {
   }
 
   onLoginSubmit = async () => {
-    const { onUserStateChange, onToggleAuthModal } = this.props;
+    const { onToggleAuthModal } = this.props;
 
     try {
       const result = await axios.post('/api/auth/login', {
@@ -61,7 +66,7 @@ class LoginForm extends React.Component {
       });
       const user = result.data;
       onToggleAuthModal();
-      onUserStateChange(user);
+      this.props.addUser(user);
     } catch (err) {
       if (err.response) {
         const { status } = err.response;
@@ -91,4 +96,7 @@ const FormContainer = styled(Box)`
   margin: 15px 0;
 `;
 
-export default LoginForm;
+export default connect(
+  null,
+  { addUser }
+)(LoginForm);
