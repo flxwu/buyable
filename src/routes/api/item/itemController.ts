@@ -34,10 +34,10 @@ class Controller<IController> {
       // TODO: deal with image blobs => upload to s3 and create array of urls
 
       const item: IItemModel = new ItemModel({
-        name: name,
-        description: description,
-        price: price,
-        amount: amount,
+        name,
+        description,
+        price,
+        amount,
         owner: {
           user: owner._id
         }

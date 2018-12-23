@@ -18,7 +18,9 @@ router.post(
   '/login',
   passport.authenticate('local'),
   function(req, res) {
-	res.status(200).send(req.user);
+    let filteredUser = JSON.parse(JSON.stringify(req.user));
+    delete filteredUser.password;
+	  res.status(200).json(filteredUser);
   }
 );
 
