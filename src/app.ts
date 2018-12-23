@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 import MongoConnect from 'connect-mongo';
 import passport from 'passport';
 import passportLocal from 'passport-local';
-
+import validator from 'validator';
 import { UserModel } from './schemas/user';
 import apiRouter from './routes/api/router';
 
@@ -48,19 +48,22 @@ passport.deserializeUser((id, done) => {
 
 passport.use(
   new LocalStrategy(function(username, password, done) {
-    UserModel.findOne({ username }, async function(err, user) {
-      if (err) {
-        return done(err);
+    UserModel.findOne(
+      validator.isEmail(username) ? { email: username } : { username },
+      async function(err, user) {
+        if (err) {
+          return done(err);
+        }
+        if (!user) {
+          return done(null, false);
+        }
+        const pwCorrect = await user.verifyPassword(password);
+        if (!pwCorrect) {
+          return done(null, false);
+        }
+        return done(null, user);
       }
-      if (!user) {
-        return done(null, false);
-      }
-      const pwCorrect = await user.verifyPassword(password);
-      if (!pwCorrect) {
-        return done(null, false);
-      }
-      return done(null, user);
-    });
+    );
   })
 );
 

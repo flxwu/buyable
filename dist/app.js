@@ -18,6 +18,7 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const connect_mongo_1 = __importDefault(require("connect-mongo"));
 const passport_1 = __importDefault(require("passport"));
 const passport_local_1 = __importDefault(require("passport-local"));
+const validator_1 = __importDefault(require("validator"));
 const user_1 = require("./schemas/user");
 const router_1 = __importDefault(require("./routes/api/router"));
 const app = express_1.default();
@@ -48,7 +49,7 @@ passport_1.default.deserializeUser((id, done) => {
     });
 });
 passport_1.default.use(new LocalStrategy(function (username, password, done) {
-    user_1.UserModel.findOne({ username }, function (err, user) {
+    user_1.UserModel.findOne(validator_1.default.isEmail(username) ? { email: username } : { username }, function (err, user) {
         return __awaiter(this, void 0, void 0, function* () {
             if (err) {
                 return done(err);
