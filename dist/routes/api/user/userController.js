@@ -12,35 +12,73 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const validate_js_1 = __importDefault(require("validate.js"));
 const user_1 = require("../../../schemas/user");
 const group_1 = require("../../../schemas/group");
+const validator_1 = __importDefault(require("validator"));
 class Controller {
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { username, email, forename, surname, password } = req.body;
             const createUser = () => __awaiter(this, void 0, void 0, function* () {
-                console.log(yield validate_js_1.default.async(password, {
-                    key1: { length: { minimum: 8 } },
-                    key2: { length: { maximum: 72 } }
-                }));
+                // Validation
+                if (!validator_1.default.isLength(username, { min: 3 }))
+                    throw new Error('uts');
+                if (!validator_1.default.isLength(username, { max: 50 }))
+                    throw new Error('utl');
+                if (!validator_1.default.isEmail(email))
+                    throw new Error('ie');
+                if (!validator_1.default.isLength(password, { min: 3 }))
+                    throw new Error('pts');
+                if (!validator_1.default.isLength(password, { max: 50 }))
+                    throw new Error('ptl');
                 // TODO: deal with image blob => upload to s3 and create array of urls
                 const hashedPassword = yield bcrypt_1.default.hash(password, 10);
-                const user = new user_1.UserModel({
-                    username,
-                    email,
-                    forename,
-                    surname,
-                    password: hashedPassword
-                });
-                return yield user.save();
+                try {
+                    const user = new user_1.UserModel({
+                        username,
+                        email,
+                        forename,
+                        surname,
+                        password: hashedPassword
+                    });
+                    return yield user.save();
+                }
+                catch (err) {
+                    throw new Error('ise');
+                }
             });
             try {
                 const createdUser = yield createUser();
                 res.status(200).json({ user: createdUser });
             }
             catch (err) {
-                res.status(500).json({ error: err.message });
+                let status, message;
+                switch (err.message) {
+                    case 'ie':
+                        status = 400;
+                        message = 'Invalid Email address';
+                        break;
+                    case 'uts':
+                        status = 400;
+                        message = 'Username too short';
+                        break;
+                    case 'utl':
+                        status = 400;
+                        message = 'Username too long';
+                        break;
+                    case 'pts':
+                        status = 400;
+                        message = 'Password too short';
+                        break;
+                    case 'ptl':
+                        status = 400;
+                        message = 'Password too long';
+                        break;
+                    default:
+                        status = 500;
+                        message = 'Internal server error';
+                }
+                res.status(status).json({ error: message });
             }
         });
     }
@@ -73,7 +111,7 @@ class Controller {
                             }
                         });
                     }
-                    let filteredDoc = doc;
+                    const filteredDoc = doc;
                     filteredDoc.groups = publicUserGroups;
                     filteredDoc.ownedGroups = publicOwnedUserGroups;
                     res.status(200).json(filteredDoc);
