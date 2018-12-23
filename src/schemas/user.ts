@@ -34,8 +34,8 @@ UserSchema.pre('save', function(next: any) {
     function(err, docs) {
       if (!docs.length) {
         const now = new Date();
-        if (!this.createdAt) {
-          this.createdAt = now.getTime();
+        if (!self.createdAt) {
+          self.createdAt = now.getTime();
         }
         next();
       } else {
