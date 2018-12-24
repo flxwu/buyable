@@ -14,6 +14,7 @@ function* updateUser(action) {
 // worker Saga: will be fired on DELETE_USER_REQUESTED actions
 function* deleteUser(action) {
   try {
+    console.log('in deleteUser saga');
     const success = yield call(Api.deleteUser);
     if (!success) throw new Error('Updating user failed');
     yield put({ type: 'DELETE_USER_SUCCEEDED' });
@@ -26,7 +27,7 @@ function* deleteUser(action) {
   Starts updateUser on each dispatched `UPDATE_USER_REQUESTED` action.
 */
 function* apiSaga() {
-  yield takeEvery('UPDATE_USER_REQUESTED', updateUser);
+  console.log('in api saga');
   yield takeEvery('DELETE_USER_REQUESTED', deleteUser);
 }
 

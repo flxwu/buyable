@@ -15,12 +15,14 @@ router.get('/check', (req: any, res: any) => {
 });
 
 router.post('/login', passport.authenticate('local'), function(req, res) {
+  console.log('logging in');
   const filteredUser = JSON.parse(JSON.stringify(req.user));
   delete filteredUser.password;
   res.status(200).json(filteredUser);
 });
 
 router.get('/logout', (req: any, res: any) => {
+  console.log('logging out');
   req.logout();
   res.status(200).json({ message: 'logged out' });
 });

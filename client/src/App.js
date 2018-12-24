@@ -17,8 +17,7 @@ class App extends React.Component {
     this.state = {
       showSideBar: false,
       authModalOpen: false,
-      newProductModalOpen: false,
-      user: undefined
+      newProductModalOpen: false
     };
     this.onToggleAuthModal = this.onToggleAuthModal.bind(this);
     this.onToggleNewProductModal = this.onToggleNewProductModal.bind(this);
@@ -30,7 +29,6 @@ class App extends React.Component {
       <Box fill>
         <IndexGrid showSideBar={showSideBar}>
           <Header
-            user={this.props.user}
             toggleSideBar={() => this.setState({ showSideBar: !showSideBar })}
             toggleNewProductModal={this.onToggleNewProductModal}
             toggleAuthModal={this.onToggleAuthModal}
