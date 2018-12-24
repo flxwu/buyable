@@ -3,7 +3,11 @@ import styled from 'styled-components';
 import { Heading, Box, Button, Text } from 'grommet';
 import axios from 'axios';
 import validator from 'validator';
+
 import TextInputField from '../form/TextInputField';
+
+import { connect } from 'react-redux';
+import { addUser } from '../../redux/actions/user';
 
 class RegisterForm extends React.Component {
   constructor(props) {
@@ -19,7 +23,7 @@ class RegisterForm extends React.Component {
   }
 
   onRegisterSubmit = async () => {
-    const { onUserStateChange, onToggleAuthModal } = this.props;
+    const { onToggleAuthModal } = this.props;
     const {
       passwordConfirmField,
       passwordField,
@@ -44,7 +48,7 @@ class RegisterForm extends React.Component {
         });
         const user = result.data;
         onToggleAuthModal();
-        onUserStateChange(user);
+        this.props.addUser(user);
       } catch (err) {
         if (err.response) {
           const { status, data } = err.response;
@@ -162,4 +166,7 @@ const FormContainer = styled(Box)`
   margin: 15px 0;
 `;
 
-export default RegisterForm;
+export default connect(
+  null,
+  { addUser }
+)(RegisterForm);

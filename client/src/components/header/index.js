@@ -1,21 +1,22 @@
 import React from 'react';
-import axios from 'axios';
 import styled from 'styled-components';
 import { Box, Button } from 'grommet';
 import { Menu, Camera } from 'grommet-icons';
 
 import { connect } from 'react-redux';
 import { deleteUser } from '../../redux/actions/user';
+import { getCurrentUser } from '../../redux/selectors';
 
 class Header extends React.Component {
   render() {
     const {
-      user,
       toggleSideBar,
       toggleNewProductModal,
-      toggleAuthModal
+      toggleAuthModal,
+      /* redux */
+      user
     } = this.props;
-    console.log(user);
+
     return (
       <HeaderContainer
         gridArea="header"
@@ -48,7 +49,7 @@ class Header extends React.Component {
 
   onLogout = () => {
     try {
-      this.props.deleteUser();
+      this.props.logoutFromStore();
     } catch (err) {
       alert('error logging out');
     }
@@ -67,7 +68,15 @@ const RightHeader = styled(Box)`
   }
 `;
 
+const mapStateToProps = state => ({
+  user: getCurrentUser(state)
+});
+
+const mapDispatchToProps = {
+  logoutFromStore: deleteUser
+};
+
 export default connect(
-  null,
-  { deleteUser }
+  mapStateToProps,
+  mapDispatchToProps
 )(Header);
