@@ -3,24 +3,24 @@ import { Layer, Box, Heading, Text, Button } from 'grommet';
 
 import NewProductForm from './NewProductForm';
 
+import { connect } from 'react-redux';
+import { toggleModal } from '../../redux/actions/modals';
+
 class NewProductModal extends Component {
   render() {
-		const { onToggleNewProductModal } = this.props;
+    const { toggleModal } = this.props;
 
     return (
       <Layer
         position="center"
         modal
-        onClickOutside={onToggleNewProductModal}
-        onEsc={onToggleNewProductModal}>
+        onClickOutside={() => toggleModal(null)}
+        onEsc={() => toggleModal(null)}>
         <Box pad="medium" width="medium">
           <Heading level={3} margin="small">
             Sell new Product
           </Heading>
-          <Box
-            direction="column"
-            align="center"
-            justify="end">
+          <Box direction="column" align="center" justify="end">
             <NewProductForm />
             <Button
               label={
@@ -28,7 +28,7 @@ class NewProductModal extends Component {
                   <strong>Abort</strong>
                 </Text>
               }
-              onClick={onToggleNewProductModal}
+              onClick={() => toggleModal(null)}
               primary
               color="status-critical"
             />
@@ -39,4 +39,7 @@ class NewProductModal extends Component {
   }
 }
 
-export default NewProductModal;
+export default connect(
+  null,
+  { toggleModal }
+)(NewProductModal);

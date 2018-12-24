@@ -6,15 +6,16 @@ import { Menu, Camera } from 'grommet-icons';
 import { connect } from 'react-redux';
 import { deleteUser } from '../../redux/actions/user';
 import { getCurrentUser } from '../../redux/selectors';
+import { toggleModal } from '../../redux/actions/modals';
+import { MODAL_IDS } from '../../helpers/constants';
 
 class Header extends React.Component {
   render() {
     const {
       toggleSideBar,
-      toggleNewProductModal,
-      toggleAuthModal,
       /* redux */
-      user
+      user,
+      showModal
     } = this.props;
 
     return (
@@ -35,11 +36,14 @@ class Header extends React.Component {
             <Button
               icon={<Camera />}
               label="Sell Product"
-              onClick={toggleNewProductModal}
+              onClick={() => showModal(MODAL_IDS.NEW_PRODUCT)}
             />
           )}
           {!user && (
-            <Button onClick={toggleAuthModal} label="Login or Sign up" />
+            <Button
+              onClick={() => showModal(MODAL_IDS.AUTH)}
+              label="Login or Sign up"
+            />
           )}
           {user && <Button onClick={this.onLogout} label="Logout" />}
         </RightHeader>
@@ -73,7 +77,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = {
-  logoutFromStore: deleteUser
+  logoutFromStore: deleteUser,
+  showModal: toggleModal
 };
 
 export default connect(
