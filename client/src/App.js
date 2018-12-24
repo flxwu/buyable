@@ -30,7 +30,7 @@ class App extends React.Component {
       <Box fill>
         <IndexGrid showSideBar={showSideBar}>
           <Header
-            user={this.props.user.user}
+            user={this.props.user}
             toggleSideBar={() => this.setState({ showSideBar: !showSideBar })}
             toggleNewProductModal={this.onToggleNewProductModal}
             toggleAuthModal={this.onToggleAuthModal}
@@ -43,7 +43,7 @@ class App extends React.Component {
             onToggleNewProductModal={this.onToggleNewProductModal}
           />
         )}
-        {authModalOpen && !this.props.user.user && (
+        {authModalOpen && !this.props.user && (
           <AuthModal onToggleAuthModal={this.onToggleAuthModal} />
         )}
       </Box>
