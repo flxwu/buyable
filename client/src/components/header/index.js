@@ -1,8 +1,12 @@
 import React from 'react';
+import axios from 'axios';
 import styled from 'styled-components';
 import { Box, Button } from 'grommet';
 import { Menu, Camera } from 'grommet-icons';
-import axios from 'axios';
+
+import { connect } from 'react-redux';
+import { deleteUser } from '../../redux/actions/user';
+
 class Header extends React.Component {
   render() {
     const {
@@ -11,6 +15,7 @@ class Header extends React.Component {
       toggleNewProductModal,
       toggleAuthModal
     } = this.props;
+    console.log(user);
     return (
       <HeaderContainer
         gridArea="header"
@@ -23,7 +28,7 @@ class Header extends React.Component {
         }}>
         <Button onClick={toggleSideBar}>
           <Menu />
-        </Button>{' '}
+        </Button>
         <RightHeader direction="row">
           {user && (
             <Button
@@ -31,20 +36,19 @@ class Header extends React.Component {
               label="Sell Product"
               onClick={toggleNewProductModal}
             />
-          )}{' '}
+          )}
           {!user && (
             <Button onClick={toggleAuthModal} label="Login or Sign up" />
           )}
           {user && <Button onClick={this.onLogout} label="Logout" />}
-        </RightHeader>{' '}
+        </RightHeader>
       </HeaderContainer>
     );
   }
 
-  onLogout = async () => {
+  onLogout = () => {
     try {
-      this.props.onUserStateChange(undefined);
-      const { data } = await axios.get('/api/auth/logout');
+      this.props.deleteUser();
     } catch (err) {
       alert('error logging out');
     }
@@ -63,4 +67,7 @@ const RightHeader = styled(Box)`
   }
 `;
 
-export default Header;
+export default connect(
+  null,
+  { deleteUser }
+)(Header);

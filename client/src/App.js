@@ -8,6 +8,9 @@ import NewProductModal from './components/newProductModal';
 import Main from './components/main';
 import AuthModal from './components/authModal';
 
+import { connect } from 'react-redux';
+import { getCurrentUser } from './redux/selectors';
+
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -19,7 +22,6 @@ class App extends React.Component {
     };
     this.onToggleAuthModal = this.onToggleAuthModal.bind(this);
     this.onToggleNewProductModal = this.onToggleNewProductModal.bind(this);
-    this.onUserStateChange = this.onUserStateChange.bind(this);
   }
 
   render() {
@@ -28,11 +30,10 @@ class App extends React.Component {
       <Box fill>
         <IndexGrid showSideBar={showSideBar}>
           <Header
-            user={this.state.user}
+            user={this.props.user.user}
             toggleSideBar={() => this.setState({ showSideBar: !showSideBar })}
             toggleNewProductModal={this.onToggleNewProductModal}
             toggleAuthModal={this.onToggleAuthModal}
-            onUserStateChange={this.onUserStateChange}
           />
           {showSideBar && <SideBar />}
           <Main />
@@ -42,11 +43,8 @@ class App extends React.Component {
             onToggleNewProductModal={this.onToggleNewProductModal}
           />
         )}
-        {authModalOpen && !this.state.user && (
-          <AuthModal
-            onToggleAuthModal={this.onToggleAuthModal}
-            onUserStateChange={this.onUserStateChange}
-          />
+        {authModalOpen && !this.props.user.user && (
+          <AuthModal onToggleAuthModal={this.onToggleAuthModal} />
         )}
       </Box>
     );
@@ -58,10 +56,8 @@ class App extends React.Component {
   onToggleAuthModal() {
     this.setState({ authModalOpen: !this.state.authModalOpen });
   }
-  onUserStateChange(user) {
-    this.setState({ user });
-    this.authModalOpen = false;
-  }
 }
 
-export default App;
+const mapStateToProps = state => ({ user: getCurrentUser(state) });
+
+export default connect(mapStateToProps)(App);

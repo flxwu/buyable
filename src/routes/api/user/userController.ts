@@ -1,5 +1,4 @@
 import bcrypt from 'bcrypt';
-import validate from 'validate.js';
 
 import { UserModel, IUserModel } from '../../../schemas/user';
 import { GroupModel } from '../../../schemas/group';

@@ -15,7 +15,6 @@ class AuthModal extends React.Component {
   };
   render() {
     const { onToggleAuthModal } = this.props;
-    const { index } = this.state;
     return (
       <Layer modal onClickOutside={onToggleAuthModal} onEsc={onToggleAuthModal}>
         <CustomBox pad="medium" width="large">
