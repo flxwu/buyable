@@ -3,11 +3,15 @@ import {
   UPDATE_USER_SUCCEEDED,
   UPDATE_USER_FAILED,
   DELETE_USER_SUCCEEDED,
-  DELETE_USER_FAILED
-} from '../actions/actionTypes';
+  DELETE_USER_FAILED,
+  CHECK_USER_TRUE,
+  CHECK_USER_FALSE,
+  CHECK_USER_FAILED
+} from "../actions/actionTypes";
 
 const initialState = {
-  user: null
+  user: null,
+  loggedIn: false
 };
 
 export default function(state = initialState, action) {
@@ -16,7 +20,8 @@ export default function(state = initialState, action) {
       const { userData } = action.payload;
       return {
         ...state,
-        user: userData
+        user: userData,
+        loggedIn: true
       };
     }
     case UPDATE_USER_SUCCEEDED: {
@@ -36,7 +41,8 @@ export default function(state = initialState, action) {
     case DELETE_USER_SUCCEEDED: {
       return {
         ...state,
-        user: null
+        user: null,
+        loggedIn: false
       };
     }
     case DELETE_USER_FAILED: {
@@ -46,6 +52,25 @@ export default function(state = initialState, action) {
         error: message
       };
     }
+    case CHECK_USER_TRUE: {
+      return {
+        ...state,
+        loggedIn: true
+      };
+    }
+    case CHECK_USER_FALSE: {
+      return {
+        ...state,
+        loggedIn: false
+      };
+    }
+    case CHECK_USER_FAILED: {
+      return {
+        ...state,
+        loggedIn: false
+      };
+    }
+
     default:
       return state;
   }
