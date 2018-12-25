@@ -4,14 +4,13 @@ import {
   UPDATE_USER_FAILED,
   DELETE_USER_SUCCEEDED,
   DELETE_USER_FAILED,
-  CHECK_USER_TRUE,
-  CHECK_USER_FALSE,
+  CHECK_USER_SUCCEEDED,
   CHECK_USER_FAILED
-} from "../actions/actionTypes";
+} from '../actions/actionTypes';
 
 const initialState = {
   user: null,
-  loggedIn: null
+  loggedIn: false
 };
 
 export default function(state = initialState, action) {
@@ -24,6 +23,13 @@ export default function(state = initialState, action) {
         loggedIn: true
       };
     }
+    default:
+      return asyncReducers(action, state);
+  }
+}
+
+const asyncReducers = (action, state) => {
+  switch (action.type) {
     case UPDATE_USER_SUCCEEDED: {
       const { user } = action.payload;
       return {
@@ -52,16 +58,11 @@ export default function(state = initialState, action) {
         error: message
       };
     }
-    case CHECK_USER_TRUE: {
+    case CHECK_USER_SUCCEEDED: {
+      const { loggedIn } = action.payload;
       return {
         ...state,
-        loggedIn: true
-      };
-    }
-    case CHECK_USER_FALSE: {
-      return {
-        ...state,
-        loggedIn: false
+        loggedIn
       };
     }
     case CHECK_USER_FAILED: {
@@ -70,8 +71,7 @@ export default function(state = initialState, action) {
         loggedIn: false
       };
     }
-
     default:
       return state;
   }
-}
+};
