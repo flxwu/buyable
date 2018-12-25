@@ -2,17 +2,17 @@ import React from 'react';
 import { FormField, TextInput } from 'grommet';
 
 class TextInputField extends React.Component {
-	state = { value: '' };
+  state = { value: this.props.prefix || '', valueChanged: false };
 
   render() {
-    const { placeholder } = this.props;
-    const { value } = this.state;
+    const { placeholder, preValue } = this.props;
+    const { value, valueChanged } = this.state;
     return (
       <FormField {...this.props}>
         <TextInput
           id="text-input"
           placeholder={placeholder}
-          value={value}
+          value={(!valueChanged && preValue) || value}
           onChange={this.onTextChange}
           {...this.props}
         />
@@ -20,7 +20,17 @@ class TextInputField extends React.Component {
     );
   }
 
-  onTextChange = evt => this.setState({ value: evt.target.value });
+  onTextChange = evt => {
+    const { prefix } = this.props;
+    let value = evt.target.value;
+    if (prefix && value.indexOf(prefix) !== 0) {
+      value = prefix;
+    }
+    this.setState({
+      value,
+      valueChanged: true
+    });
+  };
 }
 
 export default TextInputField;
