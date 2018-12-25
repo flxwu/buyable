@@ -57,7 +57,6 @@ class Header extends React.Component {
   onLogout = () => {
     try {
       this.props.logoutFromStore();
-      this.props.authCheck();
     } catch (err) {
       alert("error logging out");
     }
