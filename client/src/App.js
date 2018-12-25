@@ -31,11 +31,20 @@ class App extends React.Component {
     };
   }
   static getDerivedStateFromProps(props, state) {
-    props.authCheck();
-    if (!props.user && props.loggedIn) {
-      const user = JSON.parse(Cookie.get("user"));
+    let user;
+    try {
+      user = JSON.parse(Cookie.get("user"));
+    } catch (err) {
+      return state;
+    }
+    if (user && props.loggedIn == null) {
       props.loginToStore(user);
     }
+    if (!props.loggedIn && props.loggedIn != null) {
+      Cookie.remove("user");
+    }
+    if (props.loggedIn == null) props.authCheck();
+
     return state;
   }
 
