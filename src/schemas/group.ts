@@ -8,16 +8,16 @@ export interface IGroupModel extends IGroup, Document {
 }
 
 export const GroupSchema: Schema = new Schema({
-  name: String,
+  name: { type: String, required: true },
   description: String,
   password: String,
-  urlSuffix: String,
-  owner: Object,
-  permissions: Object,
-  settings: Object,
+  urlSuffix: { type: String, required: true },
+  owner: { type: Object, required: true },
+  permissions: { type: Object, required: true },
+  settings: { type: Object, required: true },
   pictureURL: String,
   items: Array,
-  users: Array,
+  users: { type: Array, required: true }
 });
 
 GroupSchema.pre('save', function(next: any) {
@@ -31,4 +31,7 @@ GroupSchema.pre('save', function(next: any) {
   next();
 });
 
-export const GroupModel: Model<IGroupModel> = model<IGroupModel>('Group', GroupSchema);
+export const GroupModel: Model<IGroupModel> = model<IGroupModel>(
+  'Group',
+  GroupSchema
+);
