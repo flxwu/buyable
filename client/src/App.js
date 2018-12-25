@@ -1,29 +1,29 @@
-import React from 'react';
-import { Box } from 'grommet';
+import React from "react";
+import { Box } from "grommet";
 
-import IndexGrid from './components/IndexGrid';
-import Header from './components/header';
-import SideBar from './components/sidebar';
-import NewProductModal from './components/newProductModal';
-import Main from './components/main';
-import Profile from './Profile';
-import AuthModal from './components/authModal';
+import IndexGrid from "./components/IndexGrid";
+import Header from "./components/header";
+import SideBar from "./components/sidebar";
+import NewProductModal from "./components/newProductModal";
+import Main from "./components/main";
+import Profile from "./components/profile";
+import AuthModal from "./components/authModal";
 
-import { Route } from 'react-router-dom';
-import Cookie from 'js-cookie';
-import { connect } from 'react-redux';
+import { Route } from "react-router-dom";
+import Cookie from "js-cookie";
+import { connect } from "react-redux";
 import {
   getCurrentUser,
   getCurrentModalId,
   isLoggedIn
-} from './redux/selectors';
+} from "./redux/selectors";
 import {
   deleteUser,
   addUser,
   checkUserAuthenticated
-} from './redux/actions/user';
-import { toggleModal } from './redux/actions/modals';
-import { MODAL_IDS } from './helpers/constants';
+} from "./redux/actions/user";
+import { toggleModal } from "./redux/actions/modals";
+import { MODAL_IDS } from "./helpers/constants";
 
 class App extends React.Component {
   constructor(props) {
@@ -35,7 +35,7 @@ class App extends React.Component {
   static getDerivedStateFromProps(props, state) {
     let user;
     try {
-      user = JSON.parse(Cookie.get('user'));
+      user = JSON.parse(Cookie.get("user"));
     } catch (err) {
       return state;
     }
@@ -43,7 +43,7 @@ class App extends React.Component {
       props.loginToStore(user);
     }
     if (!props.loggedIn && props.loggedIn != null) {
-      Cookie.remove('user');
+      Cookie.remove("user");
     }
     if (props.loggedIn == null) props.authCheck();
 
