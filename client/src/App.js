@@ -1,16 +1,27 @@
-import React from 'react';
-import { Box } from 'grommet';
+import React from "react";
+import { Box } from "grommet";
 
-import IndexGrid from './components/IndexGrid';
-import Header from './components/header';
-import SideBar from './components/sidebar';
-import NewProductModal from './components/newProductModal';
-import Main from './components/main';
-import AuthModal from './components/authModal';
+import IndexGrid from "./components/IndexGrid";
+import Header from "./components/header";
+import SideBar from "./components/sidebar";
+import NewProductModal from "./components/newProductModal";
+import Main from "./components/main";
+import AuthModal from "./components/authModal";
 
-import { connect } from 'react-redux';
-import { getCurrentUser, getCurrentModalId } from './redux/selectors';
-import { MODAL_IDS } from './helpers/constants';
+import Cookie from "js-cookie";
+import { connect } from "react-redux";
+import {
+  getCurrentUser,
+  getCurrentModalId,
+  isLoggedIn
+} from "./redux/selectors";
+import {
+  deleteUser,
+  addUser,
+  checkUserAuthenticated
+} from "./redux/actions/user";
+import { toggleModal } from "./redux/actions/modals";
+import { MODAL_IDS } from "./helpers/constants";
 
 class App extends React.Component {
   constructor(props) {
@@ -18,6 +29,14 @@ class App extends React.Component {
     this.state = {
       showSideBar: false
     };
+  }
+  static getDerivedStateFromProps(props, state) {
+    props.authCheck();
+    if (!props.user && props.loggedIn) {
+      const user = JSON.parse(Cookie.get("user"));
+      props.loginToStore(user);
+    }
+    return state;
   }
 
   render() {
@@ -52,7 +71,17 @@ class App extends React.Component {
 
 const mapStateToProps = state => ({
   user: getCurrentUser(state),
-  modal_id: getCurrentModalId(state)
+  modal_id: getCurrentModalId(state),
+  loggedIn: isLoggedIn(state)
 });
+const mapDispatchToProps = {
+  logoutFromStore: deleteUser,
+  showModal: toggleModal,
+  loginToStore: addUser,
+  authCheck: checkUserAuthenticated
+};
 
-export default connect(mapStateToProps)(App);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);
