@@ -1,24 +1,24 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Heading, Box, Button, Text } from 'grommet';
-import axios from 'axios';
-import validator from 'validator';
+import React from "react";
+import styled from "styled-components";
+import { Heading, Box, Button, Text } from "grommet";
+import axios from "axios";
+import validator from "validator";
 
-import TextInputField from '../form/TextInputField';
+import TextInputField from "../form/TextInputField";
 
-import { connect } from 'react-redux';
-import { addUser } from '../../redux/actions/user';
-
+import { connect } from "react-redux";
+import { addUser } from "../../redux/actions/user";
+import Cookie from "js-cookie";
 class RegisterForm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      usernameField: '',
-      passwordField: '',
-      passwordConfirmField: '',
-      emailField: '',
+      usernameField: "",
+      passwordField: "",
+      passwordConfirmField: "",
+      emailField: "",
       statusCode: 200,
-      errorMessage: ''
+      errorMessage: ""
     };
   }
 
@@ -37,18 +37,19 @@ class RegisterForm extends React.Component {
       validator.isEmail(emailField)
     ) {
       try {
-        await axios.post('/api/user/new', {
+        await axios.post("/api/user/new", {
           username: this.state.usernameField,
           email: this.state.emailField,
           password: this.state.passwordField
         });
-        const result = await axios.post('/api/auth/login', {
+        const result = await axios.post("/api/auth/login", {
           username: this.state.usernameField,
           password: this.state.passwordField
         });
         const user = result.data;
         onToggleAuthModal();
         this.props.addUser(user);
+        Cookie.set("user", user);
       } catch (err) {
         if (err.response) {
           const { status, data } = err.response;
@@ -95,7 +96,7 @@ class RegisterForm extends React.Component {
           min: 3,
           max: 50
         }) &&
-          this.state.usernameField !== '' && (
+          this.state.usernameField !== "" && (
             <Text as="p" color="status-critical">
               Usernames must be between 3 and 50 characters long.
             </Text>
@@ -107,7 +108,7 @@ class RegisterForm extends React.Component {
           value={this.state.emailField}
         />
         {!validator.isEmail(this.state.emailField) &&
-          this.state.emailField !== '' && (
+          this.state.emailField !== "" && (
             <Text as="p" color="status-critical">
               Please enter a valid email address.
             </Text>
@@ -139,8 +140,8 @@ class RegisterForm extends React.Component {
         />
         {!(this.state.passwordField === this.state.passwordConfirmField) &&
           !(
-            this.state.passwordField === '' ||
-            this.state.passwordConfirmField === ''
+            this.state.passwordField === "" ||
+            this.state.passwordConfirmField === ""
           ) && (
             <Text as="p" color="status-critical">
               Passwords don't match.
