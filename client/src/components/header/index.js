@@ -1,9 +1,10 @@
 import React from "react";
 import styled from "styled-components";
-import { Box, Button } from "grommet";
-import { Menu, Camera } from "grommet-icons";
-
+import { Box, Button, DropButton, Menu } from "grommet";
+import { Camera, Menu as MenuIcon } from "grommet-icons";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
+
 import {
   deleteUser,
   addUser,
@@ -14,6 +15,11 @@ import { toggleModal } from "../../redux/actions/modals";
 import { MODAL_IDS } from "../../helpers/constants";
 import Cookie from "js-cookie";
 class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { open: undefined };
+  }
+
   render() {
     const {
       toggleSideBar,
@@ -21,6 +27,7 @@ class Header extends React.Component {
       user,
       showModal
     } = this.props;
+    const { open } = this.state;
     return (
       <HeaderContainer
         gridArea="header"
@@ -33,7 +40,7 @@ class Header extends React.Component {
         }}
       >
         <Button onClick={toggleSideBar}>
-          <Menu />
+          <MenuIcon />
         </Button>
         <RightHeader direction="row">
           {user && (
@@ -49,7 +56,38 @@ class Header extends React.Component {
               label="Login or Sign up"
             />
           )}
-          {user && <Button onClick={this.onLogout} label="Logout" />}
+          {user && (
+            <Menu
+              label={user.username}
+              items={[
+                {
+                  label: "My Profile",
+                  onClick: () => {
+                    this.props.history.push("/profile");
+                  }
+                },
+                {
+                  label: "Items",
+                  onClick: () => {
+                    this.props.history.push("/items");
+                  }
+                },
+                {
+                  label: "Groups",
+                  onClick: () => {
+                    this.props.history.push("/groups");
+                  }
+                },
+                {
+                  label: "Settings",
+                  onClick: () => {
+                    this.props.history.push("/settings");
+                  }
+                },
+                { label: "Log out", onClick: this.onLogout }
+              ]}
+            />
+          )}
         </RightHeader>
       </HeaderContainer>
     );
@@ -87,8 +125,7 @@ const mapDispatchToProps = {
   loginToStore: addUser,
   authCheck: checkUserAuthenticated
 };
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(Header);
+)(withRouter(Header));

@@ -1,6 +1,7 @@
 import React from "react";
 import styled from "styled-components";
 import { Box, Button } from "grommet";
+import { sidebarPages } from "../../helpers/pages";
 
 const SideBar = props => (
   <SideBarContainer
@@ -11,9 +12,9 @@ const SideBar = props => (
       { type: "slideRight", size: "xlarge", duration: 450 }
     ]}
   >
-    {["timeline", "groups", "items"].map(name => (
-      <Button key={name} href={name} hoverIndicator>
-        <Box pad={{ horizontal: "medium", vertical: "small" }}>{name}</Box>
+    {sidebarPages.map(page => (
+      <Button key={page.name} href={page.url} hoverIndicator>
+        <Box pad={{ horizontal: "medium", vertical: "small" }}>{page.name}</Box>
       </Button>
     ))}
   </SideBarContainer>
