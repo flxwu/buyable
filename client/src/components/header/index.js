@@ -1,14 +1,18 @@
-import React from 'react';
-import styled from 'styled-components';
-import { Box, Button } from 'grommet';
-import { Menu, Camera } from 'grommet-icons';
+import React from "react";
+import styled from "styled-components";
+import { Box, Button } from "grommet";
+import { Menu, Camera } from "grommet-icons";
 
-import { connect } from 'react-redux';
-import { deleteUser } from '../../redux/actions/user';
-import { getCurrentUser } from '../../redux/selectors';
-import { toggleModal } from '../../redux/actions/modals';
-import { MODAL_IDS } from '../../helpers/constants';
-
+import { connect } from "react-redux";
+import {
+  deleteUser,
+  addUser,
+  checkUserAuthenticated
+} from "../../redux/actions/user";
+import { getCurrentUser, isLoggedIn } from "../../redux/selectors";
+import { toggleModal } from "../../redux/actions/modals";
+import { MODAL_IDS } from "../../helpers/constants";
+import Cookie from "js-cookie";
 class Header extends React.Component {
   render() {
     const {
@@ -17,7 +21,6 @@ class Header extends React.Component {
       user,
       showModal
     } = this.props;
-
     return (
       <HeaderContainer
         gridArea="header"
@@ -25,9 +28,10 @@ class Header extends React.Component {
         align="center"
         justify="between"
         pad={{
-          horizontal: 'medium',
-          vertical: 'small'
-        }}>
+          horizontal: "medium",
+          vertical: "small"
+        }}
+      >
         <Button onClick={toggleSideBar}>
           <Menu />
         </Button>
@@ -50,12 +54,12 @@ class Header extends React.Component {
       </HeaderContainer>
     );
   }
-
   onLogout = () => {
     try {
       this.props.logoutFromStore();
+      this.props.authCheck();
     } catch (err) {
-      alert('error logging out');
+      alert("error logging out");
     }
   };
 }
@@ -73,12 +77,15 @@ const RightHeader = styled(Box)`
 `;
 
 const mapStateToProps = state => ({
-  user: getCurrentUser(state)
+  user: getCurrentUser(state),
+  loggedIn: isLoggedIn(state)
 });
 
 const mapDispatchToProps = {
   logoutFromStore: deleteUser,
-  showModal: toggleModal
+  showModal: toggleModal,
+  loginToStore: addUser,
+  authCheck: checkUserAuthenticated
 };
 
 export default connect(
