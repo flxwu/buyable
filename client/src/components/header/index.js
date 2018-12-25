@@ -1,19 +1,19 @@
-import React from "react";
-import styled from "styled-components";
-import { Box, Button, DropButton, Menu } from "grommet";
-import { Camera, Menu as MenuIcon } from "grommet-icons";
-import { connect } from "react-redux";
-import { withRouter } from "react-router-dom";
+import React from 'react';
+import styled from 'styled-components';
+import { Box, Button, DropButton, Menu } from 'grommet';
+import { Camera, Menu as MenuIcon } from 'grommet-icons';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 
 import {
   deleteUser,
   addUser,
   checkUserAuthenticated
-} from "../../redux/actions/user";
-import { getCurrentUser, isLoggedIn } from "../../redux/selectors";
-import { toggleModal } from "../../redux/actions/modals";
-import { MODAL_IDS } from "../../helpers/constants";
-import Cookie from "js-cookie";
+} from '../../redux/actions/user';
+import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
+import { toggleModal } from '../../redux/actions/modals';
+import { MODAL_IDS } from '../../helpers/constants';
+import Cookie from 'js-cookie';
 class Header extends React.Component {
   constructor(props) {
     super(props);
@@ -35,10 +35,9 @@ class Header extends React.Component {
         align="center"
         justify="between"
         pad={{
-          horizontal: "medium",
-          vertical: "small"
-        }}
-      >
+          horizontal: 'medium',
+          vertical: 'small'
+        }}>
         <Button onClick={toggleSideBar}>
           <MenuIcon />
         </Button>
@@ -61,30 +60,30 @@ class Header extends React.Component {
               label={user.username}
               items={[
                 {
-                  label: "My Profile",
+                  label: 'My Profile',
                   onClick: () => {
-                    this.props.history.push("/profile");
+                    this.props.history.push('/profile');
                   }
                 },
                 {
-                  label: "Items",
+                  label: 'Items',
                   onClick: () => {
-                    this.props.history.push("/profile/items");
+                    this.props.history.push('/profile/items');
                   }
                 },
                 {
-                  label: "Groups",
+                  label: 'Groups',
                   onClick: () => {
-                    this.props.history.push("/profile/groups");
+                    this.props.history.push('/profile/groups');
                   }
                 },
                 {
-                  label: "Settings",
+                  label: 'Settings',
                   onClick: () => {
-                    this.props.history.push("/profile/settings");
+                    this.props.history.push('/profile/settings');
                   }
                 },
-                { label: "Log out", onClick: this.onLogout }
+                { label: 'Log out', onClick: this.onLogout }
               ]}
             />
           )}
@@ -95,9 +94,10 @@ class Header extends React.Component {
   onLogout = () => {
     try {
       this.props.logoutFromStore();
-      Cookie.remove("user");
+      Cookie.remove('user');
+      this.props.history.push('/');
     } catch (err) {
-      alert("error logging out");
+      alert('error logging out');
     }
   };
 }

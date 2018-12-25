@@ -1,29 +1,30 @@
-import React from "react";
-import { Box } from "grommet";
+import React from 'react';
+import { Box } from 'grommet';
+import { Route } from 'react-router-dom';
+import Cookie from 'js-cookie';
 
-import IndexGrid from "./components/IndexGrid";
-import Header from "./components/header";
-import SideBar from "./components/sidebar";
-import NewProductModal from "./components/newProductModal";
-import Main from "./components/main";
-import Profile from "./components/profile";
-import AuthModal from "./components/authModal";
+import IndexGrid from './components/IndexGrid';
+import Header from './components/header';
+import SideBar from './components/sidebar';
+import NewProductModal from './components/newProductModal';
+import Main from './components/main';
+import Profile from './components/profile';
+import AuthModal from './components/authModal';
+import { MODAL_IDS } from './helpers/constants';
+import { checkForRestrictedPage } from './helpers/pages';
 
-import { Route } from "react-router-dom";
-import Cookie from "js-cookie";
-import { connect } from "react-redux";
+import { connect } from 'react-redux';
 import {
   getCurrentUser,
   getCurrentModalId,
   isLoggedIn
-} from "./redux/selectors";
+} from './redux/selectors';
 import {
   deleteUser,
   addUser,
   checkUserAuthenticated
-} from "./redux/actions/user";
-import { toggleModal } from "./redux/actions/modals";
-import { MODAL_IDS } from "./helpers/constants";
+} from './redux/actions/user';
+import { toggleModal } from './redux/actions/modals';
 
 class App extends React.Component {
   constructor(props) {
@@ -35,7 +36,7 @@ class App extends React.Component {
   static getDerivedStateFromProps(props, state) {
     let user;
     try {
-      user = JSON.parse(Cookie.get("user"));
+      user = JSON.parse(Cookie.get('user'));
     } catch (err) {
       return state;
     }
@@ -43,7 +44,7 @@ class App extends React.Component {
       props.loginToStore(user);
     }
     if (!props.loggedIn && props.loggedIn != null) {
-      Cookie.remove("user");
+      Cookie.remove('user');
     }
     if (props.loggedIn == null) props.authCheck();
 
@@ -53,7 +54,7 @@ class App extends React.Component {
   render() {
     const { showSideBar } = this.state;
     /* redux */
-    const { modal_id } = this.props;
+    const { modal_id, loggedIn } = this.props;
     return (
       <Box fill>
         <IndexGrid showSideBar={showSideBar}>
@@ -63,7 +64,10 @@ class App extends React.Component {
           {showSideBar && <SideBar />}
           <Box gridArea="main" align="center" justify="center">
             <Route exact path="/" component={Main} />
-            <Route path="/profile" component={Profile} />
+            <Route
+              path="/profile"
+              component={checkForRestrictedPage(Profile, Main, loggedIn)}
+            />
           </Box>
         </IndexGrid>
         {this.currentModal(modal_id)}
