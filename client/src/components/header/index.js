@@ -69,19 +69,19 @@ class Header extends React.Component {
                 {
                   label: "Items",
                   onClick: () => {
-                    this.props.history.push("/items");
+                    this.props.history.push("/profile/items");
                   }
                 },
                 {
                   label: "Groups",
                   onClick: () => {
-                    this.props.history.push("/groups");
+                    this.props.history.push("/profile/groups");
                   }
                 },
                 {
                   label: "Settings",
                   onClick: () => {
-                    this.props.history.push("/settings");
+                    this.props.history.push("/profile/settings");
                   }
                 },
                 { label: "Log out", onClick: this.onLogout }
