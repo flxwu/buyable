@@ -6,16 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const shortid_1 = __importDefault(require("shortid"));
 exports.GroupSchema = new mongoose_1.Schema({
-    name: String,
+    name: { type: String, required: true },
     description: String,
     password: String,
-    urlSuffix: String,
-    owner: Object,
-    permissions: Object,
-    settings: Object,
+    urlSuffix: { type: String, required: true },
+    owner: { type: Object, required: true },
+    permissions: { type: Object, required: true },
+    settings: { type: Object, required: true },
     pictureURL: String,
     items: Array,
-    users: Array,
+    users: { type: Array, required: true }
 });
 exports.GroupSchema.pre('save', function (next) {
     const now = new Date();
