@@ -1,7 +1,10 @@
 {
-	"editor.formatOnSave": true,
-	"[handlebars]": {
-			"editor.formatOnSave": false
-	},
-	"tslint.autoFixOnSave": true
+  "editor.formatOnSave": true,
+  "[handlebars]": {
+    "editor.formatOnSave": false
+  },
+  "tslint.autoFixOnSave": true,
+  "prettier.jsxBracketSameLine": true,
+	"prettier.useTabs": false,
+	"prettier.singleQuote": true	
 }
