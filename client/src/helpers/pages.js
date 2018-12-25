@@ -5,4 +5,4 @@ export const sidebarPages = [
 ];
 
 export const checkForRestrictedPage = (routePage, fallback, condition) =>
-  condition ? routePage : fallback;
+  condition === false ? fallback : routePage;
