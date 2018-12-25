@@ -4,7 +4,7 @@ import { Box } from 'grommet';
 import ProductCard from './ProductCard';
 
 const Main = props => (
-  <Box gridArea="main" align="center" justify="center">
+  <Box>
     <ProductCard product={'gurke'} />
     <ProductCard product={'gurke'} />
   </Box>
