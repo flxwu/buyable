@@ -29,7 +29,7 @@ function* deleteUser(action) {
 function* checkUser(action) {
   try {
     const loggedIn = yield call(Api.isAuthenticated);
-    yield put({ type: 'CHECK_USER_SUCCEEDED', loggedIn });
+    yield put({ type: 'CHECK_USER_SUCCEEDED', payload: { loggedIn } });
   } catch (e) {
     yield put({ type: 'CHECK_USER_FAILED' });
   }
