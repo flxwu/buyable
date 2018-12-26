@@ -1,17 +1,22 @@
 import React from 'react';
 import axios from 'axios';
 import shortid from 'shortid';
-import { Box, Heading, Text, CheckBox } from 'grommet';
+import { Box, Heading, Text, CheckBox, Select, Button } from 'grommet';
 import styled from 'styled-components';
 
 import TextInputField from '../form/TextInputField';
 
 class ProfileGroups extends React.Component {
   state = {
-    showAddGroupsForm: false,
+    showAddGroupsForm: true,
     groupNameField: '',
     groupDescriptionField: '',
-    groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`
+    groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`,
+    groupPermissionsDefault: 'Buyer',
+    groupPermissionsSeller: { Sell: true },
+    groupPermissionsAdmin: { 'Remove Users': true, 'Change Roles': true },
+    groupSettingsPublicCheckbox: false,
+    groupSettingsPriceLimitField: ''
   };
 
   permissionsForm() {
@@ -109,9 +114,9 @@ class ProfileGroups extends React.Component {
           <li>Group 1</li>
           <li>Group 2</li>
         </ul>
-        <AddGroupsCTA onClick={this.showAddGroupsForm}>
+        <ShowAddGroupsFormCTA onClick={this.showAddGroupsForm}>
           {showAddGroupsForm ? 'Close' : 'Add Group'}
-        </AddGroupsCTA>
+        </ShowAddGroupsFormCTA>
         {showAddGroupsForm && (
           <AddGroupContainer>
             <TextInputField
@@ -126,14 +131,26 @@ class ProfileGroups extends React.Component {
               onChange={this.onGroupDescriptionFieldChange}
               value={this.state.groupDescriptionField}
             />
-            <TextInputField
-              label="URL Suffix"
-              placeholder="cucumberfangroup"
-              prefix="buyable.io/groups/"
-              onChange={this.onGroupUrlSuffixFieldChange}
-              value={this.state.groupUrlSuffixField}
-            />
+            <Box>
+              <TextInputField
+                label="URL Suffix"
+                placeholder="cucumberfangroup"
+                prefix="buyable.io/groups/"
+                onChange={this.onGroupUrlSuffixFieldChange}
+                value={this.state.groupUrlSuffixField}
+              />
+              <GenerateNewSuffixCTA
+                onClick={() =>
+                  this.setState({
+                    groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`
+                  })
+                }>
+                Generate new
+              </GenerateNewSuffixCTA>
+            </Box>
             {this.permissionsForm()}
+            {this.settingsForm()}
+            <AddGroupCTA label="Add Group" onClick={this.onAddGroup} />
           </AddGroupContainer>
         )}
       </Box>
@@ -151,6 +168,9 @@ class ProfileGroups extends React.Component {
     }
     this.setState({ groupUrlSuffixField: value });
   };
+
+  onGroupPriceLimitFieldChange = e =>
+    this.setState({ groupSettingsPriceLimitField: e.target.value });
 
   showAddGroupsForm = () =>
     this.setState({ showAddGroupsForm: !this.state.showAddGroupsForm });
@@ -179,26 +199,31 @@ class ProfileGroups extends React.Component {
         public: groupSettingsPublicCheckbox,
         priceLimit: groupSettingsPriceLimitField
       }
+    });
+  };
 }
 
 const PermissionsRow = ({ title, options, values, onChange }) => (
   <Box direction="row" justify="between">
     <Text>{title}</Text>
-    {options.map(option => (
-      <CheckBox
-        label={option}
-        checked={values ? values[option] : false}
-        onChange={evt => onChange(option, evt.target.checked)}
-      />
-    ))}
+    <CheckBoxesContainer direction="row">
+      {options.map(option => (
+        <CheckBox
+          label={option}
+          checked={values ? values[option] : false}
+          onChange={evt => onChange(option, evt.target.checked)}
+        />
+      ))}
+    </CheckBoxesContainer>
   </Box>
 );
 
 const AddGroupContainer = styled(Box)`
-  width: 80%;
+  width: 50vw;
+  margin: 10vh;
 `;
 
-const AddGroupsCTA = styled(Text)`
+const ShowAddGroupsFormCTA = styled(Text)`
   border-bottom: 2px dashed grey;
   cursor: pointer;
 `;
