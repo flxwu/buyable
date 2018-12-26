@@ -68,59 +68,30 @@ class ProfileGroups extends React.Component {
   showAddGroupsForm = () =>
     this.setState({ showAddGroupsForm: !this.state.showAddGroupsForm });
 
-  permissionsForm() {
-    return (
-      <Box>
-        <Heading level="3">Permissions</Heading>
-        <PermissionsRow
-          title="Admin"
-          stateKey="permissions-admin"
-          options={['Edit Settings', 'Remove Users', 'Change Roles', 'ALL']}
-          values={this.state['permissions-admin']}
-          onChange={(option, checked) =>
-            this.setState({
-              'permissions-admin': {
-                ...this.state['permissions-admin'],
-                [option]: checked
-              }
-            })
-          }
-        />
-        <PermissionsRow
-          title="Moderator"
-          stateKey="permissions-mod"
-          options={['Sell', 'Sell & Remove Users']}
-          values={this.state['permissions-mod']}
-          onChange={(option, checked) =>
-            this.setState({
-              'permissions-mod': {
-                ...this.state['permissions-mod'],
-                [option]: checked
-              }
-            })
-          }
-        />
-        <PermissionsRow
-          title="Default Role"
-          options={['Admin', 'Moderator', 'Buyer']}
-          stateKey="permissions-default"
-          values={this.state['permissions-default']}
-          onChange={(option, checked) =>
-            this.setState({
-              'permissions-default': {
-                ...this.state['permissions-default'],
-                [option]: checked
-              }
-            })
-          }
-        />
-      </Box>
-    );
-  }
-
-  async onAddGroup() {
-    const createdGroup = await axios.post('/api/group/new', {});
-  }
+  onAddGroup = async () => {
+    const {
+      groupNameField,
+      groupDescriptionField,
+      groupUrlSuffixField,
+      groupPermissionsAdmin,
+      groupPermissionsSeller,
+      groupPermissionsDefault,
+      groupSettingsPriceLimitField,
+      groupSettingsPublicCheckbox
+    } = this.state;
+    const createdGroup = await axios.post('/api/group/new', {
+      name: groupNameField,
+      description: groupDescriptionField,
+      urlSuffix: groupUrlSuffixField,
+      permissions: {
+        admin: groupPermissionsAdmin,
+        seller: groupPermissionsSeller
+      },
+      defaultRole: groupPermissionsDefault,
+      settings: {
+        public: groupSettingsPublicCheckbox,
+        priceLimit: groupSettingsPriceLimitField
+      }
 }
 
 const PermissionsRow = ({ title, options, values, onChange }) => (
