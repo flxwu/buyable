@@ -8,7 +8,7 @@ import TextInputField from '../form/TextInputField';
 
 class ProfileGroups extends React.Component {
   state = {
-    showAddGroupsForm: true,
+    showAddGroupsForm: false,
     groupNameField: '',
     groupDescriptionField: '',
     groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`,
