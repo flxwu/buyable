@@ -1,4 +1,8 @@
-import { IUserReference, IGroupMemberReference, IItemReference } from './reference';
+import {
+  IUserReference,
+  IGroupMemberReference,
+  IItemReference
+} from './reference';
 
 export interface IGroup {
   _id: string;
@@ -8,6 +12,7 @@ export interface IGroup {
   urlSuffix: string;
   owner: IUserReference;
   permissions: IGroupPermissions;
+  defaultRole: string;
   settings: IGroupSettings;
   pictureURL: string;
   items: Array<IItemReference>;

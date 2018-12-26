@@ -13,6 +13,7 @@ exports.GroupSchema = new mongoose_1.Schema({
     owner: { type: Object, required: true },
     permissions: { type: Object, required: true },
     settings: { type: Object, required: true },
+    defaultRole: { type: String, required: true },
     pictureURL: String,
     items: Array,
     users: { type: Array, required: true }
