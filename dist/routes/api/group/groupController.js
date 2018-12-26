@@ -12,12 +12,14 @@ const group_1 = require("../../../schemas/group");
 class Controller {
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { name, description, urlSuffix, permissions, settings, pictureURL, items } = req.body;
+            const { name, description, urlSuffix, permissions, settings, pictureURL, defaultRole, items } = req.body;
             const owner = { referenceId: req.user._id };
             const users = [owner];
             // TODO: Validation
             // TODO: Upload image to s3 and create url
             const duplicate = yield group_1.GroupModel.findOne({ urlSuffix }).exec();
+            if (settings.priceLimit === 0)
+                settings.priceLimit = Number.MAX_SAFE_INTEGER;
             if (!duplicate) {
                 try {
                     const newGroup = new group_1.GroupModel({
@@ -29,6 +31,7 @@ class Controller {
                         pictureURL,
                         owner,
                         users,
+                        defaultRole,
                         items
                     });
                     yield newGroup.save();
@@ -37,6 +40,7 @@ class Controller {
                             name,
                             description,
                             urlSuffix,
+                            defaultRole,
                             permissions,
                             settings,
                             pictureURL,

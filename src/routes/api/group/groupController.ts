@@ -13,6 +13,7 @@ class Controller<IController> {
       permissions,
       settings,
       pictureURL,
+      defaultRole,
       items
     } = req.body;
     const owner = { referenceId: req.user._id };
@@ -20,6 +21,8 @@ class Controller<IController> {
     // TODO: Validation
     // TODO: Upload image to s3 and create url
     const duplicate = await GroupModel.findOne({ urlSuffix }).exec();
+    if (settings.priceLimit === 0)
+      settings.priceLimit = Number.MAX_SAFE_INTEGER;
     if (!duplicate) {
       try {
         const newGroup: IGroupModel = new GroupModel({
@@ -31,6 +34,7 @@ class Controller<IController> {
           pictureURL,
           owner,
           users,
+          defaultRole,
           items
         });
         await newGroup.save();
@@ -39,6 +43,7 @@ class Controller<IController> {
             name,
             description,
             urlSuffix,
+            defaultRole,
             permissions,
             settings,
             pictureURL,
