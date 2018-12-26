@@ -13,6 +13,93 @@ class ProfileGroups extends React.Component {
     groupDescriptionField: '',
     groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`
   };
+
+  permissionsForm() {
+    return (
+      <Box>
+        <Heading level="3">Permissions</Heading>
+        <PermissionsRow
+          title="Admin"
+          stateKey="groupPermissionsAdmin"
+          options={['Edit Settings', 'Remove Users', 'Change Roles', 'ALL']}
+          values={this.state.groupPermissionsAdmin}
+          onChange={(option, checked) =>
+            option === 'ALL'
+              ? this.setState({
+                  groupPermissionsAdmin: {
+                    'Edit Settings': checked,
+                    'Remove Users': checked,
+                    'Change Roles': checked,
+                    ALL: checked
+                  }
+                })
+              : this.setState({
+                  groupPermissionsAdmin: {
+                    ...this.state.groupPermissionsAdmin,
+                    [option]: checked
+                  }
+                })
+          }
+        />
+        <PermissionsRow
+          title="Moderator"
+          stateKey="groupPermissionsSeller"
+          options={['Sell', 'Sell & Remove Users']}
+          values={this.state.groupPermissionsSeller}
+          onChange={(option, checked) =>
+            this.setState({
+              groupPermissionsSeller: {
+                ...this.state.groupPermissionsSeller,
+                [option]: checked
+              }
+            })
+          }
+        />
+        <Box direction="row" justify="between">
+          <Text>Default Role</Text>
+          <Select
+            options={['Admin', 'Moderator', 'Buyer']}
+            plain
+            value={this.state.groupPermissionsDefault}
+            onChange={option =>
+              this.setState({
+                groupPermissionsDefault: option
+              })
+            }
+          />
+        </Box>
+      </Box>
+    );
+  }
+
+  settingsForm() {
+    return (
+      <SettingsContainer>
+        <Heading level="3">Settings</Heading>
+        <InnerSettingsContainer direction="row" align="center">
+          <CheckBox
+            label="Public"
+            checked={this.state.groupSettingsPublicCheckbox}
+            onChange={evt =>
+              this.setState({
+                groupSettingsPublicCheckbox: evt.target.checked
+              })
+            }
+          />
+          <Box direction="row">
+            <Text alignSelf="center">Price Limit</Text>
+            <TextInputField
+              placeholder="1500"
+              type="number"
+              value={this.state.groupSettingsPriceLimitField}
+              onChange={this.onGroupPriceLimitFieldChange}
+            />
+          </Box>
+        </InnerSettingsContainer>
+      </SettingsContainer>
+    );
+  }
+
   render() {
     const { showAddGroupsForm } = this.state;
     return (
