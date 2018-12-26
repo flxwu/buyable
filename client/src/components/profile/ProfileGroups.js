@@ -203,4 +203,39 @@ const AddGroupsCTA = styled(Text)`
   cursor: pointer;
 `;
 
+const CheckBoxesContainer = styled(Box)`
+  > * {
+    margin: 10px !important;
+  }
+`;
+
+const GenerateNewSuffixCTA = styled(Text)`
+  font-size: 1rem;
+  font-style: italic;
+  cursor: pointer;
+  margin-left: 12px;
+  margin-top: -10px;
+  width: fit-content;
+  &:hover {
+    border-bottom: 2px dashed grey;
+  }
+`;
+
+const AddGroupCTA = styled(Button)`
+  width: fit-content;
+  align-self: center;
+`;
+
+const SettingsContainer = styled(Box)`
+  > * {
+    margin: 10px 0 !important;
+  }
+`;
+
+const InnerSettingsContainer = styled(Box)`
+  > * {
+    margin: 0 10px !important;
+  }
+`;
+
 export default ProfileGroups;
