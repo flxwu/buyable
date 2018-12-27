@@ -1,10 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box, Button, DropButton, Menu } from 'grommet';
+import { Box, Button, Menu } from 'grommet';
 import { Camera, Menu as MenuIcon } from 'grommet-icons';
-import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import Cookie from 'js-cookie';
 
+import { connect } from 'react-redux';
 import {
   deleteUser,
   addUser,
@@ -13,7 +14,7 @@ import {
 import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
 import { toggleModal } from '../../redux/actions/modals';
 import { MODAL_IDS } from '../../helpers/constants';
-import Cookie from 'js-cookie';
+
 const Header = ({
   toggleSideBar,
   /* react-router */
