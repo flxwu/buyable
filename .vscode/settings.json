@@ -5,6 +5,6 @@
   },
   "tslint.autoFixOnSave": true,
   "prettier.jsxBracketSameLine": true,
-	"prettier.useTabs": false,
-	"prettier.singleQuote": true	
+  "prettier.useTabs": false,
+  "prettier.singleQuote": true
 }
