@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Cookie from 'js-cookie';
 import styled from 'styled-components';
 import { Box, Heading, Button, Text } from 'grommet';
 
@@ -24,7 +23,6 @@ const LoginForm = props => {
       const user = result.data;
       props.toggleModal(null);
       props.addUser(user);
-      Cookie.set('user', user);
     } catch (err) {
       if (err.response) {
         const { status } = err.response;
