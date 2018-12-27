@@ -14,93 +14,87 @@ import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
 import { toggleModal } from '../../redux/actions/modals';
 import { MODAL_IDS } from '../../helpers/constants';
 import Cookie from 'js-cookie';
-class Header extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { open: undefined };
-  }
-
-  render() {
-    const {
-      toggleSideBar,
-      /* redux */
-      user,
-      showModal
-    } = this.props;
-    const { open } = this.state;
-    return (
-      <HeaderContainer
-        gridArea="header"
-        direction="row"
-        align="center"
-        justify="between"
-        pad={{
-          horizontal: 'medium',
-          vertical: 'small'
-        }}>
-        <Button onClick={toggleSideBar}>
-          <MenuIcon />
-        </Button>
-        <RightHeader direction="row">
-          {user && (
-            <Button
-              icon={<Camera />}
-              label="Sell Product"
-              onClick={() => showModal(MODAL_IDS.NEW_PRODUCT)}
-            />
-          )}
-          {!user && (
-            <Button
-              onClick={() => showModal(MODAL_IDS.AUTH)}
-              label="Login or Sign up"
-            />
-          )}
-          {user && (
-            <Menu
-              label={user.username}
-              items={[
-                {
-                  label: 'My Profile',
-                  onClick: () => {
-                    this.props.history.push('/profile');
-                  }
-                },
-                {
-                  label: 'Items',
-                  onClick: () => {
-                    this.props.history.push('/profile/items');
-                  }
-                },
-                {
-                  label: 'Groups',
-                  onClick: () => {
-                    this.props.history.push('/profile/groups');
-                  }
-                },
-                {
-                  label: 'Settings',
-                  onClick: () => {
-                    this.props.history.push('/profile/settings');
-                  }
-                },
-                { label: 'Log out', onClick: this.onLogout }
-              ]}
-            />
-          )}
-        </RightHeader>
-      </HeaderContainer>
-    );
-  }
-  onLogout = () => {
-    try {
-      this.props.logoutFromStore();
-      Cookie.remove('user');
-      this.props.history.push('/');
-    } catch (err) {
-      alert('error logging out');
-    }
-  };
-}
+const Header = ({
+  toggleSideBar,
+  /* react-router */
+  history,
+  /* redux */
+  user,
+  showModal,
+  logoutFromStore
+}) => (
+  <HeaderContainer
+    gridArea="header"
+    direction="row"
+    align="center"
+    justify="between"
+    pad={{
+      horizontal: 'medium',
+      vertical: 'small'
+    }}>
+    <Button onClick={toggleSideBar}>
+      <MenuIcon />
+    </Button>
+    <RightHeader direction="row">
+      {user && (
+        <Button
+          icon={<Camera />}
+          label="Sell Product"
+          onClick={() => showModal(MODAL_IDS.NEW_PRODUCT)}
+        />
+      )}
+      {!user && (
+        <Button
+          onClick={() => showModal(MODAL_IDS.AUTH)}
+          label="Login or Sign up"
+        />
+      )}
+      {user && (
+        <Menu
+          label={user.username}
+          items={[
+            {
+              label: 'My Profile',
+              onClick: () => {
+                history.push('/profile');
+              }
+            },
+            {
+              label: 'Items',
+              onClick: () => {
+                history.push('/profile/items');
+              }
+            },
+            {
+              label: 'Groups',
+              onClick: () => {
+                history.push('/profile/groups');
+              }
+            },
+            {
+              label: 'Settings',
+              onClick: () => {
+                history.push('/profile/settings');
+              }
+            },
+            {
+              label: 'Log out',
+              onClick: () => {
+                try {
+                  logoutFromStore();
+                  Cookie.remove('user');
+                  history.push('/');
+                } catch (err) {
+                  alert('error logging out');
+                }
+              }
+            }
+          ]}
+        />
+      )}
+    </RightHeader>
+  </HeaderContainer>
+);
 
 const HeaderContainer = styled(Box)`
   border-bottom: 1px solid grey;
