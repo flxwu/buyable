@@ -1,18 +1,18 @@
-import React from "react";
-import axios from "axios";
-import styled from "styled-components";
-import { Box, Heading, Button, Text } from "grommet";
+import React from 'react';
+import axios from 'axios';
+import styled from 'styled-components';
+import { Box, Heading, Button, Text } from 'grommet';
 
-import TextInputField from "../form/TextInputField";
+import TextInputField from '../form/TextInputField';
 
-import { connect } from "react-redux";
-import { addUser } from "../../redux/actions/user";
-import { toggleModal } from "../../redux/actions/modals";
-import Cookie from "js-cookie";
+import { connect } from 'react-redux';
+import { addUser } from '../../redux/actions/user';
+import { toggleModal } from '../../redux/actions/modals';
+
 class LoginForm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { usernameField: "", passwordField: "", apiStatusCode: 200 };
+    this.state = { usernameField: '', passwordField: '', apiStatusCode: 200 };
   }
 
   render() {
@@ -61,14 +61,13 @@ class LoginForm extends React.Component {
     const { toggleModal } = this.props;
 
     try {
-      const result = await axios.post("/api/auth/login", {
+      const result = await axios.post('/api/auth/login', {
         username: this.state.usernameField,
         password: this.state.passwordField
       });
       const user = result.data;
       toggleModal(null);
       this.props.addUser(user);
-      Cookie.set("user", user);
     } catch (err) {
       if (err.response) {
         const { status } = err.response;

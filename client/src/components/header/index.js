@@ -13,7 +13,6 @@ import {
 import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
 import { toggleModal } from '../../redux/actions/modals';
 import { MODAL_IDS } from '../../helpers/constants';
-import Cookie from 'js-cookie';
 class Header extends React.Component {
   constructor(props) {
     super(props);
@@ -94,7 +93,6 @@ class Header extends React.Component {
   onLogout = () => {
     try {
       this.props.logoutFromStore();
-      Cookie.remove('user');
       this.props.history.push('/');
     } catch (err) {
       alert('error logging out');
