@@ -3,7 +3,6 @@ import styled from 'styled-components';
 import { Box, Button, Menu } from 'grommet';
 import { Camera, Menu as MenuIcon } from 'grommet-icons';
 import { withRouter } from 'react-router-dom';
-import Cookie from 'js-cookie';
 
 import { connect } from 'react-redux';
 import {
@@ -83,7 +82,6 @@ const Header = ({
               onClick: () => {
                 try {
                   logoutFromStore();
-                  Cookie.remove('user');
                   history.push('/');
                 } catch (err) {
                   alert('error logging out');

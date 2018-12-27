@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import Cookie from 'js-cookie';
 import axios from 'axios';
 import validator from 'validator';
 import styled from 'styled-components';
@@ -39,7 +38,6 @@ const RegisterForm = props => {
         const user = result.data;
         onToggleAuthModal();
         props.addUser(user);
-        Cookie.set('user', user);
       } catch (err) {
         if (err.response) {
           const { status, data } = err.response;
