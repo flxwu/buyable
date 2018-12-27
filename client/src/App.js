@@ -1,8 +1,6 @@
 import React from 'react';
 import { Box } from 'grommet';
 import { Route } from 'react-router-dom';
-import Cookie from 'js-cookie';
-
 import IndexGrid from './components/IndexGrid';
 import Header from './components/header';
 import SideBar from './components/sidebar';
@@ -32,23 +30,6 @@ class App extends React.Component {
     this.state = {
       showSideBar: false
     };
-  }
-  static getDerivedStateFromProps(props, state) {
-    let user;
-    try {
-      user = JSON.parse(Cookie.get('user'));
-    } catch (err) {
-      return state;
-    }
-    if (user && props.loggedIn == null) {
-      props.loginToStore(user);
-    }
-    if (!props.loggedIn && props.loggedIn != null) {
-      Cookie.remove('user');
-    }
-    if (props.loggedIn == null) props.authCheck();
-
-    return state;
   }
 
   render() {
