@@ -16,7 +16,8 @@ class ProfileGroups extends React.Component {
     groupPermissionsSeller: { Sell: true },
     groupPermissionsAdmin: { 'Remove Users': true, 'Change Roles': true },
     groupSettingsPublicCheckbox: false,
-    groupSettingsPriceLimitField: ''
+    groupSettingsPriceLimitField: '',
+    submitError: null
   };
 
   permissionsForm() {
@@ -106,7 +107,7 @@ class ProfileGroups extends React.Component {
   }
 
   render() {
-    const { showAddGroupsForm } = this.state;
+    const { showAddGroupsForm, submitError } = this.state;
     return (
       <Box fill align="center" justify="center">
         <Heading>Groups</Heading>
@@ -151,6 +152,7 @@ class ProfileGroups extends React.Component {
             {this.permissionsForm()}
             {this.settingsForm()}
             <AddGroupCTA label="Add Group" onClick={this.onAddGroup} />
+            {submitError && <Text>{submitError}</Text>}
           </AddGroupContainer>
         )}
       </Box>
@@ -200,6 +202,9 @@ class ProfileGroups extends React.Component {
         priceLimit: groupSettingsPriceLimitField
       }
     });
+    if (createdGroup.error) {
+      this.setState({ submitError: createdGroup.error });
+    }
   };
 }
 
