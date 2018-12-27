@@ -25,16 +25,12 @@ export const ProductDescription = props => {
   );
 };
 
-class ProductCard extends React.Component {
-  render() {
-    return (
-      <ProductCardContainer elevation="xsmall" direction="row">
-        <ProductDescription />
-        <ProductImage src={`/assets/${this.props.product}.jpg`} />
-      </ProductCardContainer>
-    );
-  }
-}
+const ProductCard = ({ product }) => (
+  <ProductCardContainer elevation="xsmall" direction="row">
+    <ProductDescription />
+    <ProductImage src={`/assets/${this.props.product}.jpg`} />
+  </ProductCardContainer>
+);
 
 const ProductCardContainer = styled(Box)`
   width: 80%;
