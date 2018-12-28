@@ -5,16 +5,19 @@ import { Box, Heading, Text, CheckBox, Select, Button } from 'grommet';
 import styled from 'styled-components';
 
 import TextInputField from '../form/TextInputField';
+import TextButtonCTA from '../form/CTAs/TextButtonCTA';
+
+import { GROUP_PERMISSIONS } from '../../helpers/constants';
 
 class ProfileGroups extends React.Component {
   state = {
-    showAddGroupsForm: false,
+    showAddGroupForm: false,
     groupNameField: '',
     groupDescriptionField: '',
     groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`,
     groupPermissionsDefault: 'Buyer',
-    groupPermissionsSeller: { Sell: true },
-    groupPermissionsAdmin: { 'Remove Users': true, 'Change Roles': true },
+    groupPermissionsSeller: { [GROUP_PERMISSIONS.ADD_ITEM]: true },
+    groupPermissionsAdmin: { [GROUP_PERMISSIONS.DELETE_USER]: true, [GROUP_PERMISSIONS.CHANGE_ROLES]: true },
     groupSettingsPublicCheckbox: false,
     groupSettingsPriceLimitField: '',
     submitError: null
@@ -107,18 +110,20 @@ class ProfileGroups extends React.Component {
   }
 
   render() {
-    const { showAddGroupsForm, submitError } = this.state;
+    const { showAddGroupForm, submitError } = this.state;
     return (
       <Box fill align="center" justify="center">
-        <Heading>Groups</Heading>
+        <Heading level="2">Groups</Heading>
         <ul>
           <li>Group 1</li>
           <li>Group 2</li>
         </ul>
-        <ShowAddGroupsFormCTA onClick={this.showAddGroupsForm}>
-          {showAddGroupsForm ? 'Close' : 'Add Group'}
-        </ShowAddGroupsFormCTA>
-        {showAddGroupsForm && (
+        <TextButtonCTA
+          onClick={this.showAddGroupForm}
+          label1="Add Group"
+          label2="Close"
+        />
+        {showAddGroupForm && (
           <AddGroupContainer>
             <TextInputField
               label="Group name"
@@ -163,6 +168,7 @@ class ProfileGroups extends React.Component {
   };
   onGroupDescriptionFieldChange = e =>
     this.setState({ groupDescriptionField: e.target.value });
+
   onGroupUrlSuffixFieldChange = e => {
     let value = e.target.value;
     if (value.indexOf('buyable.io/group/') !== 0) {
@@ -174,8 +180,8 @@ class ProfileGroups extends React.Component {
   onGroupPriceLimitFieldChange = e =>
     this.setState({ groupSettingsPriceLimitField: e.target.value });
 
-  showAddGroupsForm = () =>
-    this.setState({ showAddGroupsForm: !this.state.showAddGroupsForm });
+  showAddGroupForm = () =>
+    this.setState({ showAddGroupForm: !this.state.showAddGroupForm });
 
   onAddGroup = async () => {
     const {
@@ -226,11 +232,6 @@ const PermissionsRow = ({ title, options, values, onChange }) => (
 const AddGroupContainer = styled(Box)`
   width: 50vw;
   margin: 10vh;
-`;
-
-const ShowAddGroupsFormCTA = styled(Text)`
-  border-bottom: 2px dashed grey;
-  cursor: pointer;
 `;
 
 const CheckBoxesContainer = styled(Box)`

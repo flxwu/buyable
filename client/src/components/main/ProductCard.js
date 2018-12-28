@@ -28,7 +28,7 @@ export const ProductDescription = props => {
 const ProductCard = ({ product }) => (
   <ProductCardContainer elevation="xsmall" direction="row">
     <ProductDescription />
-    <ProductImage src={`/assets/${this.props.product}.jpg`} />
+    <ProductImage src={`/assets/${product}.jpg`} />
   </ProductCardContainer>
 );
 
