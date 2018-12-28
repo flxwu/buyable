@@ -1,16 +1,16 @@
-import React from "react";
-import { connect } from "react-redux";
-import { getCurrentUser, isLoggedIn } from "../../redux/selectors";
-import { updateUser, checkUserAuthenticated } from "../../redux/actions/user";
-import { Text, TextInput, Heading, Box, Button } from "grommet";
-import TextInputField from "../form/TextInputField";
+import React from 'react';
+import { connect } from 'react-redux';
+import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
+import { updateUser, checkUserAuthenticated } from '../../redux/actions/user';
+import { Text, Heading, Box } from 'grommet';
+import TextInputField from '../form/TextInputField';
 class ProfileMain extends React.Component {
   constructor(props) {
     super(props);
     const { user } = props;
     this.state = {
-      usernameField: user ? user.username : "",
-      emailField: user ? user.email : ""
+      usernameField: user ? user.username : '',
+      emailField: user ? user.email : ''
     };
   }
   onUsernameFieldChange = e => {
@@ -21,7 +21,7 @@ class ProfileMain extends React.Component {
   };
   onUpdateUser = () => {
     //updateUserInfo(user)
-    console.log("called");
+    console.log('called');
   };
   render() {
     const { user } = this.props;

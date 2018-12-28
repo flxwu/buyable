@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box } from 'grommet';
 import { Route } from 'react-router-dom';
-import { PromiseProvider } from 'mongoose';
 
 import ProfileGroups from './ProfileGroups';
 import ProfileItems from './ProfileItems';
