@@ -3,8 +3,8 @@ import { Box } from 'grommet';
 
 import ProductCard from './ProductCard';
 
-const Main = () => {
-  useEffect(() => this.props.history.push('/'));
+const Main = ({ /* react-router */ history }) => {
+  useEffect(() => history.push('/'));
 
   return (
     <Box>
