@@ -10,10 +10,10 @@ export const ItemSchema: Schema = new Schema({
     type: String,
     required: true
   },
-  description: String,
+  description: { type: String, required: true },
   price: {
     type: Number,
-    required: true,
+    required: true
   },
   imageURLs: Array,
   amount: {
@@ -35,4 +35,7 @@ ItemSchema.pre('save', function(next: any) {
   next();
 });
 
-export const ItemModel: Model<IItemModel> = model<IItemModel>('Item', ItemSchema);
+export const ItemModel: Model<IItemModel> = model<IItemModel>(
+  'Item',
+  ItemSchema
+);
