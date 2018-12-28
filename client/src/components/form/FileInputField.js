@@ -1,52 +1,54 @@
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import { Box } from 'grommet';
 
-class FileInputField extends Component {
-  state = { selectedFiles: [], loaded: 0 };
+const FileInputField = ({ label }) => {
+  const [selectedFiles, setSelectedFiles] = useState([]);
 
-  render() {
-    return (
-      <Box align="center">
-        <Label htmlFor="file">Choose Images</Label>
-        <FileInput
-          type="file"
-          name="file"
-          id="file"
-          onChange={this.handleSelectedFiles}
-					multiple
-					accept="image/png, image/jpeg"
-        />
-        {this.selectedFilesList()}
-      </Box>
-    );
-  }
-
-  selectedFilesList = () => {
-		const { selectedFiles } = this.state;
-		
-		if (selectedFiles.length > 0) {
-			return (
-				<div>
-					{(this.state.selectedFiles).map(file => {
-						let blobURL = URL.createObjectURL(file);
-						return (<img key={file.name} src={blobURL} alt={file.name} width="100" height="100"/>);
-					}
-					)}
-				</div>
-			);
-		} else {
-			return null;
-		}
+  const selectedFilesList = () => {
+    if (selectedFiles.length > 0) {
+      return (
+        <div>
+          {selectedFiles.map(file => {
+            let blobURL = URL.createObjectURL(file);
+            return (
+              <img
+                key={file.name}
+                src={blobURL}
+                alt={file.name}
+                width="100"
+                height="100"
+              />
+            );
+          })}
+        </div>
+      );
+    } else {
+      return null;
+    }
   };
 
-  handleSelectedFiles = evt => {
-    this.setState({
-      selectedFiles: Array.from(evt.target.files).filter(file => file.name.match(/(jpg)|(png)/)),
-      loaded: 0
-    });
-  };
-}
+  return (
+    <Box align="center">
+      <Label htmlFor="file">Choose Images</Label>
+      <FileInput
+        type="file"
+        name="file"
+        id="file"
+        onChange={evt =>
+          setSelectedFiles(
+            Array.from(evt.target.files).filter(file =>
+              file.name.match(/(jpg)|(png)/)
+            )
+          )
+        }
+        multiple
+        accept="image/png, image/jpeg"
+      />
+      {selectedFilesList()}
+    </Box>
+  );
+};
 
 const FileInput = styled.input`
   width: 0.1px;
@@ -63,8 +65,8 @@ const Label = styled.label`
   background: #7e4ddb;
   border-radius: 18px;
   width: fit-content;
-	padding: 4px 22px;
-	font-weight: bold;
+  padding: 4px 22px;
+  font-weight: bold;
   color: white;
   border: 2px solid #7e4ddb;
 
