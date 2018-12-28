@@ -1,166 +1,125 @@
-import React from "react";
-import styled from "styled-components";
-import { Heading, Box, Button, Text } from "grommet";
-import axios from "axios";
-import validator from "validator";
+import React, { useState } from 'react';
+import axios from 'axios';
+import validator from 'validator';
+import styled from 'styled-components';
+import { Heading, Box, Button, Text } from 'grommet';
 
-import TextInputField from "../form/TextInputField";
+import TextInputField from '../form/TextInputField';
 
-import { connect } from "react-redux";
-import { addUser } from "../../redux/actions/user";
-import Cookie from "js-cookie";
-class RegisterForm extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      usernameField: "",
-      passwordField: "",
-      passwordConfirmField: "",
-      emailField: "",
-      statusCode: 200,
-      errorMessage: ""
-    };
-  }
+import { connect } from 'react-redux';
+import { addUser } from '../../redux/actions/user';
 
-  onRegisterSubmit = async () => {
-    const { onToggleAuthModal } = this.props;
-    const {
-      passwordConfirmField,
-      passwordField,
-      usernameField,
-      emailField
-    } = this.state;
+const RegisterForm = props => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [email, setEmail] = useState('');
+  const [apiStatusCode, setApiStatusCode] = useState(200);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const onRegisterSubmit = async () => {
+    const { onToggleAuthModal } = props;
     if (
-      passwordField === passwordConfirmField &&
-      validator.isLength(passwordField, { min: 8, max: 72 }) &&
-      validator.isLength(usernameField, { min: 3, max: 50 }) &&
-      validator.isEmail(emailField)
+      password === passwordConfirm &&
+      validator.isLength(password, { min: 8, max: 72 }) &&
+      validator.isLength(username, { min: 3, max: 50 }) &&
+      validator.isEmail(email)
     ) {
       try {
-        await axios.post("/api/user/new", {
-          username: this.state.usernameField,
-          email: this.state.emailField,
-          password: this.state.passwordField
+        await axios.post('/api/user/new', {
+          username: username,
+          email: email,
+          password: password
         });
-        const result = await axios.post("/api/auth/login", {
-          username: this.state.usernameField,
-          password: this.state.passwordField
+        const result = await axios.post('/api/auth/login', {
+          username: username,
+          password: password
         });
         const user = result.data;
         onToggleAuthModal();
-        this.props.addUser(user);
-        Cookie.set("user", user);
+        props.addUser(user);
       } catch (err) {
         if (err.response) {
           const { status, data } = err.response;
-          this.setState({ statusCode: status, errorMessage: data.error });
+          setApiStatusCode(status);
+          setErrorMessage(data.error);
         }
       }
     }
   };
-  onUsernameChange = event => {
-    this.setState({
-      usernameField: event.target.value.substr(0, 100)
-    });
-  };
-  onEmailChange = event => {
-    this.setState({
-      emailField: event.target.value.substr(0, 100)
-    });
-  };
-  onPasswordChange = event => {
-    this.setState({
-      passwordField: event.target.value.substr(0, 72)
-    });
-  };
 
-  onPasswordConfirmChange = event => {
-    this.setState({
-      passwordConfirmField: event.target.value.substr(0, 72)
-    });
-  };
-
-  render() {
-    return (
-      <FormContainer>
-        <Heading textAlign="center" size="small">
-          Register
-        </Heading>
-        <TextInputField
-          label="Username"
-          placeholder="yodelingcucumber"
-          onChange={this.onUsernameChange}
-          value={this.state.usernameField}
-        />
-        {!validator.isLength(this.state.usernameField, {
-          min: 3,
-          max: 50
-        }) &&
-          this.state.usernameField !== "" && (
-            <Text as="p" color="status-critical">
-              Usernames must be between 3 and 50 characters long.
-            </Text>
-          )}
-        <TextInputField
-          label="Email"
-          placeholder="yodeling@cucumb.er"
-          onChange={this.onEmailChange}
-          value={this.state.emailField}
-        />
-        {!validator.isEmail(this.state.emailField) &&
-          this.state.emailField !== "" && (
-            <Text as="p" color="status-critical">
-              Please enter a valid email address.
-            </Text>
-          )}
-        <TextInputField
-          label="Password"
-          type="password"
-          placeholder="Your password"
-          onChange={this.onPasswordChange}
-          value={this.state.passwordField}
-        />
-        {!validator.isLength(this.state.passwordField, { min: 8 }) &&
-          !validator.isEmpty(this.state.passwordField) && (
-            <Text as="p" color="status-critical">
-              Passwords must be at least 8 characters long.
-            </Text>
-          )}
-        {!validator.isLength(this.state.passwordField, { max: 72 }) && (
+  return (
+    <FormContainer>
+      <Heading textAlign="center" size="small">
+        Register
+      </Heading>
+      <TextInputField
+        label="Username"
+        placeholder="yodelingcucumber"
+        onChange={evt => setUsername(evt.target.value.substr(0, 100))}
+        value={username}
+      />
+      {!validator.isLength(username, {
+        min: 3,
+        max: 50
+      }) &&
+        username !== '' && (
           <Text as="p" color="status-critical">
-            Passwords cannot be longer than 72 characters.
+            Usernames must be between 3 and 50 characters long.
           </Text>
         )}
-        <TextInputField
-          label="Confirm Password"
-          placeholder="Retype password"
-          type="password"
-          onChange={this.onPasswordConfirmChange}
-          value={this.state.passwordConfirmField}
-        />
-        {!(this.state.passwordField === this.state.passwordConfirmField) &&
-          !(
-            this.state.passwordField === "" ||
-            this.state.passwordConfirmField === ""
-          ) && (
-            <Text as="p" color="status-critical">
-              Passwords don't match.
-            </Text>
-          )}
-        <Button
-          label="Register"
-          margin="medium"
-          onClick={this.onRegisterSubmit}
-        />
-        {!this.state.statusCode === 200 && (
+      <TextInputField
+        label="Email"
+        placeholder="yodeling@cucumb.er"
+        onChange={evt => setEmail(evt.target.value.substr(0, 100))}
+        value={email}
+      />
+      {!validator.isEmail(email) && email !== '' && (
+        <Text as="p" color="status-critical">
+          Please enter a valid email address.
+        </Text>
+      )}
+      <TextInputField
+        label="Password"
+        type="password"
+        placeholder="Your password"
+        onChange={evt => setPassword(evt.target.value.substr(0, 72))}
+        value={password}
+      />
+      {!validator.isLength(password, { min: 8 }) &&
+        !validator.isEmpty(password) && (
           <Text as="p" color="status-critical">
-            {this.state.errorMessage}
+            Passwords must be at least 8 characters long.
           </Text>
         )}
-      </FormContainer>
-    );
-  }
-}
+      {!validator.isLength(password, { max: 72 }) && (
+        <Text as="p" color="status-critical">
+          Passwords cannot be longer than 72 characters.
+        </Text>
+      )}
+      <TextInputField
+        label="Confirm Password"
+        placeholder="Retype password"
+        type="password"
+        onChange={evt => setPasswordConfirm(evt.target.value.substr(0, 72))}
+        value={passwordConfirm}
+      />
+      {!(password === passwordConfirm) &&
+        !(password === '' || passwordConfirm === '') && (
+          <Text as="p" color="status-critical">
+            Passwords don't match.
+          </Text>
+        )}
+      <Button label="Register" margin="medium" onClick={onRegisterSubmit} />
+      {!apiStatusCode === 200 && (
+        <Text as="p" color="status-critical">
+          {errorMessage}
+        </Text>
+      )}
+    </FormContainer>
+  );
+};
+
 const FormContainer = styled(Box)`
   min-width: 80%;
   max-width: 80%;
