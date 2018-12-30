@@ -127,7 +127,6 @@ class Controller<IController> {
         });
       }
     }
-
     // validate settings
     try {
       settings = JSON.parse(settings);
@@ -174,7 +173,10 @@ class Controller<IController> {
             seller: sellerPermissions,
             user: userPermissions
           },
-          settings,
+          settings: {
+            priceLimit: settings.priceLimit,
+            defaultRole: settings.defaultRole
+          },
           pictureURL,
           owner,
           users,
