@@ -211,8 +211,8 @@ class ProfileGroups extends React.Component {
         priceLimit: groupSettingsPriceLimitField
       }
     });
-    if (createdGroup.error) {
-      this.setState({ submitError: createdGroup.error });
+    if (createdGroup.errors) {
+      this.setState({ submitError: createdGroup.errors });
     }
   };
 }
