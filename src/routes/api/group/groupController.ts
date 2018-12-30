@@ -203,6 +203,9 @@ class Controller<IController> {
       res.status(404).json({ error: err.message });
     }
   }
+  public async update(req: any, res: any, next: any): Promise<any> {
+    res.send('patch');
+  }
 }
 
 export default Controller;
