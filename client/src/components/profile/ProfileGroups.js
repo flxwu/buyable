@@ -7,8 +7,8 @@ import styled from 'styled-components';
 import TextInputField from '../form/TextInputField';
 import TextButtonCTA from '../form/CTAs/TextButtonCTA';
 
-import { GROUP_PERMISSIONS } from '../../helpers/constants';
-
+import { PERMISSIONS } from '../../helpers/constants';
+const GROUP_PERMISSIONS = PERMISSIONS.GROUP;
 class ProfileGroups extends React.Component {
   state = {
     showAddGroupForm: false,
@@ -17,7 +17,10 @@ class ProfileGroups extends React.Component {
     groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`,
     groupPermissionsDefault: 'Buyer',
     groupPermissionsSeller: { [GROUP_PERMISSIONS.ADD_ITEM]: true },
-    groupPermissionsAdmin: { [GROUP_PERMISSIONS.DELETE_USER]: true, [GROUP_PERMISSIONS.CHANGE_ROLES]: true },
+    groupPermissionsAdmin: {
+      [GROUP_PERMISSIONS.DELETE_USER]: true,
+      [GROUP_PERMISSIONS.CHANGE_ROLES]: true
+    },
     groupSettingsPublicCheckbox: false,
     groupSettingsPriceLimitField: '',
     submitError: null
@@ -51,9 +54,9 @@ class ProfileGroups extends React.Component {
           }
         />
         <PermissionsRow
-          title="Moderator"
+          title="Seller"
           stateKey="groupPermissionsSeller"
-          options={['Sell', 'Sell & Remove Users']}
+          options={['Sell', 'Remove Users']}
           values={this.state.groupPermissionsSeller}
           onChange={(option, checked) =>
             this.setState({
@@ -67,7 +70,7 @@ class ProfileGroups extends React.Component {
         <Box direction="row" justify="between">
           <Text>Default Role</Text>
           <Select
-            options={['Admin', 'Moderator', 'Buyer']}
+            options={['Admin', 'Seller', 'Buyer']}
             plain
             value={this.state.groupPermissionsDefault}
             onChange={option =>
