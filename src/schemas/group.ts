@@ -15,9 +15,8 @@ export const GroupSchema: Schema = new Schema({
   owner: { type: Object, required: true },
   permissions: { type: Object, required: true },
   settings: { type: Object, required: true },
-  defaultRole: { type: String, required: true },
   pictureURL: String,
-  items: Array,
+  items: { type: Array, required: true },
   users: { type: Array, required: true }
 });
 
