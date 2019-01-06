@@ -16,13 +16,21 @@ interface IController {
 class Controller<IController> {
   public async newPOST(req: any, res: any, next: any): Promise<any> {
     const errors = [];
-    const { name, urlSuffix, pictureURL, description } = req.body;
-    let { permissions, settings, password } = req.body;
+    const {
+      name,
+      urlSuffix,
+      pictureURL,
+      description,
+      permissions,
+      settings
+    } = req.body;
+    let password = req.body.password;
     const owner = { referenceId: req.user._id };
     const ownerUser = {
       referenceId: req.user._id,
       role: constants.ROLES.OWNER
     };
+
     const users: Array<IGroupMemberReference> = [ownerUser];
     const items: Array<IItemReference> = [];
     // validate name
@@ -63,12 +71,6 @@ class Controller<IController> {
     // validate permissions
     // TODO: deeper validation -> right now user can add any permissions to any role!
     if (permissions) {
-      // json needs to be manually parsed since its urlencoded
-      try {
-        permissions = JSON.parse(permissions);
-      } catch (err) {
-        errors.push(constants.ERRORS.GROUP_ADD.PERMISSIONS_INVALID);
-      }
       if (permissions.admin) {
         for (const permission in permissions.admin) {
           if (
@@ -121,22 +123,22 @@ class Controller<IController> {
           } else {
             errors.push({
               [constants.ERRORS.GROUP_ADD.PERMISSIONS_INVALID]:
-                constants.ROLES.USER
+                constants.ROLES.BUYER
             });
             break;
           }
         }
       } else {
         errors.push({
-          [constants.ERRORS.GROUP_ADD.PERMISSIONS_INVALID]: constants.ROLES.USER
+          [constants.ERRORS.GROUP_ADD.PERMISSIONS_INVALID]:
+            constants.ROLES.BUYER
         });
       }
     }
     // validate settings
     try {
-      settings = JSON.parse(settings);
       // validate price limit
-      if (settings.priceLimit) {
+      if (settings.priceLimit != null) {
         if (settings.priceLimit < 0)
           errors.push(constants.ERRORS.GROUP_ADD.SETTINGS_MIN_PRICE_TOO_LOW);
         if (settings.priceLimit > Number.MAX_SAFE_INTEGER)
@@ -164,7 +166,7 @@ class Controller<IController> {
     // TODO: Validation
     // TODO: Upload image to s3 and create url
     const duplicate = await GroupModel.findOne({ urlSuffix }).exec();
-    console.log(duplicate);
+    console.log('Duplicate Group: ', duplicate);
     if (!duplicate && errors.length == 0) {
       try {
         // create permissions array
