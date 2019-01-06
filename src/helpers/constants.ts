@@ -86,7 +86,7 @@ const constants = {
     OWNER: 'OWNER',
     ADMIN: 'ADMIN',
     SELLER: 'SELLER',
-    USER: 'USER'
+    BUYER: 'BUYER'
   },
   ACTIONS: {
     GROUP: {

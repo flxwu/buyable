@@ -172,7 +172,7 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
             userValidationErrors = true;
             errors.push({
               [constants.ERRORS.GROUP_UPDATE.PERMISSIONS_INVALID]:
-                constants.ROLES.USER
+                constants.ROLES.BUYER
             });
             break;
           }
@@ -188,7 +188,7 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
       } else {
         errors.push({
           [constants.ERRORS.GROUP_UPDATE.PERMISSIONS_INVALID]:
-            constants.ROLES.USER
+            constants.ROLES.BUYER
         });
       }
     } else {
