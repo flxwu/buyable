@@ -8,22 +8,26 @@ import TextInputField from '../form/TextInputField';
 import TextButtonCTA from '../form/CTAs/TextButtonCTA';
 
 import { PERMISSIONS } from '../../helpers/constants';
+import { PERMISSIONS as PERMISSIONS_LABELS, ROLES } from '../../helpers/labels';
 const GROUP_PERMISSIONS = PERMISSIONS.GROUP;
+
 class ProfileGroups extends React.Component {
   state = {
-    showAddGroupForm: false,
+    showAddGroupForm: true,
     groupNameField: '',
     groupDescriptionField: '',
     groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`,
-    groupPermissionsDefault: 'Buyer',
-    groupPermissionsSeller: { [GROUP_PERMISSIONS.ADD_ITEM]: true },
+    groupPermissionsDefault: ROLES.BUYER,
+    groupPermissionsSeller: {
+      [PERMISSIONS_LABELS[GROUP_PERMISSIONS.ADD_ITEM]]: true
+    },
     groupPermissionsAdmin: {
-      [GROUP_PERMISSIONS.DELETE_USER]: true,
-      [GROUP_PERMISSIONS.CHANGE_ROLES]: true
+      [PERMISSIONS_LABELS[GROUP_PERMISSIONS.DELETE_USER]]: true,
+      [PERMISSIONS_LABELS[GROUP_PERMISSIONS.CHANGE_ROLES]]: true
     },
     groupSettingsPublicCheckbox: false,
     groupSettingsPriceLimitField: '',
-    submitError: null
+    submitErrors: null
   };
 
   permissionsForm() {
@@ -33,16 +37,27 @@ class ProfileGroups extends React.Component {
         <PermissionsRow
           title="Admin"
           stateKey="groupPermissionsAdmin"
-          options={['Edit Settings', 'Remove Users', 'Change Roles', 'ALL']}
+          options={mapOptionLabels([
+            GROUP_PERMISSIONS.EDIT_SETTINGS,
+            GROUP_PERMISSIONS.DELETE_USER,
+            GROUP_PERMISSIONS.CHANGE_ROLES,
+            GROUP_PERMISSIONS.ALL
+          ])}
           values={this.state.groupPermissionsAdmin}
           onChange={(option, checked) =>
-            option === 'ALL'
+            option === PERMISSIONS_LABELS[GROUP_PERMISSIONS.ALL]
               ? this.setState({
                   groupPermissionsAdmin: {
-                    'Edit Settings': checked,
-                    'Remove Users': checked,
-                    'Change Roles': checked,
-                    ALL: checked
+                    [PERMISSIONS_LABELS[
+                      GROUP_PERMISSIONS.EDIT_SETTINGS
+                    ]]: checked,
+                    [PERMISSIONS_LABELS[
+                      GROUP_PERMISSIONS.DELETE_USER
+                    ]]: checked,
+                    [PERMISSIONS_LABELS[
+                      GROUP_PERMISSIONS.CHANGE_ROLES
+                    ]]: checked,
+                    [PERMISSIONS_LABELS[GROUP_PERMISSIONS.ALL]]: checked
                   }
                 })
               : this.setState({
@@ -56,7 +71,10 @@ class ProfileGroups extends React.Component {
         <PermissionsRow
           title="Seller"
           stateKey="groupPermissionsSeller"
-          options={['Sell', 'Remove Users']}
+          options={mapOptionLabels([
+            GROUP_PERMISSIONS.DELETE_USER,
+            GROUP_PERMISSIONS.ADD_ITEM
+          ])}
           values={this.state.groupPermissionsSeller}
           onChange={(option, checked) =>
             this.setState({
@@ -70,7 +88,7 @@ class ProfileGroups extends React.Component {
         <Box direction="row" justify="between">
           <Text>Default Role</Text>
           <Select
-            options={['Admin', 'Seller', 'Buyer']}
+            options={Object.values(ROLES)}
             plain
             value={this.state.groupPermissionsDefault}
             onChange={option =>
@@ -113,7 +131,8 @@ class ProfileGroups extends React.Component {
   }
 
   render() {
-    const { showAddGroupForm, submitError } = this.state;
+    const { showAddGroupForm, submitErrors } = this.state;
+    console.log(submitErrors);
     return (
       <Box fill align="center" justify="center">
         <Heading level="2">Groups</Heading>
@@ -159,8 +178,8 @@ class ProfileGroups extends React.Component {
             </Box>
             {this.permissionsForm()}
             {this.settingsForm()}
+            {submitErrors && <ErrorText>{submitErrors}</ErrorText>}
             <AddGroupCTA label="Add Group" onClick={this.onAddGroup} />
-            {submitError && <Text>{submitError}</Text>}
           </AddGroupContainer>
         )}
       </Box>
@@ -197,22 +216,26 @@ class ProfileGroups extends React.Component {
       groupSettingsPriceLimitField,
       groupSettingsPublicCheckbox
     } = this.state;
-    const createdGroup = await axios.post('/api/group/new', {
-      name: groupNameField,
-      description: groupDescriptionField,
-      urlSuffix: groupUrlSuffixField,
-      permissions: {
-        admin: groupPermissionsAdmin,
-        seller: groupPermissionsSeller
-      },
-      defaultRole: groupPermissionsDefault,
-      settings: {
-        public: groupSettingsPublicCheckbox,
-        priceLimit: groupSettingsPriceLimitField
-      }
-    });
-    if (createdGroup.errors) {
-      this.setState({ submitError: createdGroup.errors });
+    try {
+      const createdGroup = await axios.post('/api/group/new', {
+        name: groupNameField,
+        description: groupDescriptionField,
+        urlSuffix: groupUrlSuffixField.replace('buyable.io/group/', ''),
+        permissions: {
+          admin: mapLabelsObjectToPermissionsObject(groupPermissionsAdmin),
+          seller: mapLabelsObjectToPermissionsObject(groupPermissionsSeller),
+          buyer: {}
+        },
+        settings: {
+          defaultRole: Object.keys(ROLES).find(
+            k => ROLES[k] === groupPermissionsDefault
+          ),
+          public: groupSettingsPublicCheckbox,
+          priceLimit: groupSettingsPriceLimitField || 0
+        }
+      });
+    } catch ({ response }) {
+      this.setState({ submitErrors: response.data.errors });
     }
   };
 }
@@ -223,6 +246,7 @@ const PermissionsRow = ({ title, options, values, onChange }) => (
     <CheckBoxesContainer direction="row">
       {options.map(option => (
         <CheckBox
+          key={option}
           label={option}
           checked={values ? values[option] : false}
           onChange={evt => onChange(option, evt.target.checked)}
@@ -231,6 +255,17 @@ const PermissionsRow = ({ title, options, values, onChange }) => (
     </CheckBoxesContainer>
   </Box>
 );
+
+const mapOptionLabels = options => options.map(o => PERMISSIONS_LABELS[o]);
+
+const mapLabelsObjectToPermissionsObject = labelsObject =>
+  Object.entries(labelsObject).reduce((accumulator, [label, checked]) => {
+    accumulator[mapLabelToPermission(label)] = checked;
+    return accumulator;
+  }, {});
+
+const mapLabelToPermission = label =>
+  Object.keys(PERMISSIONS_LABELS).find(k => PERMISSIONS_LABELS[k] === label);
 
 const AddGroupContainer = styled(Box)`
   width: 50vw;
@@ -270,6 +305,14 @@ const InnerSettingsContainer = styled(Box)`
   > * {
     margin: 0 10px !important;
   }
+`;
+
+const ErrorText = styled(Text)`
+  color: red;
+  font-style: italic;
+  width: fit-content;
+  align-self: center;
+  margin: 1rem;
 `;
 
 export default ProfileGroups;
