@@ -65,8 +65,8 @@ passport_1.default.use(new LocalStrategy(function (username, password, done) {
         });
     });
 }));
-app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
+app.use(express_1.default.json());
 app.use(morgan_1.default('dev'));
 app.use('/api', router_1.default);
 app.use(express_1.default.static(__dirname + '/../client/build/'));
