@@ -78,7 +78,7 @@ const groupUpdateHandler = async (
             permissionsArray = oldGroup.permissions.admin;
           case constants.ROLES.SELLER:
             permissionsArray = oldGroup.permissions.seller;
-          case constants.ROLES.USER:
+          case constants.ROLES.BUYER:
             permissionsArray = oldGroup.permissions.user;
           case constants.ROLES.OWNER:
             permissionsArray = oldGroup.permissions.owner;
@@ -99,7 +99,7 @@ const groupUpdateHandler = async (
             permissionsArray = oldGroup.permissions.admin;
           case constants.ROLES.SELLER:
             permissionsArray = oldGroup.permissions.seller;
-          case constants.ROLES.USER:
+          case constants.ROLES.BUYER:
             permissionsArray = oldGroup.permissions.user;
           case constants.ROLES.OWNER:
             permissionsArray = oldGroup.permissions.owner;
