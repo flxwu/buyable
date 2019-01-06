@@ -1,7 +1,7 @@
 const constants = {
   PERMISSIONS: {
     GROUP: {
-      DELETE_USER: 'DELETE_USERS',
+      DELETE_USER: 'DELETE_USER',
       DELETE_SELLER: 'DELETE_SELLER',
       DELETE_ADMIN: 'DELETE_ADMIN',
       ADD_ITEM: 'ADD_ITEM',
