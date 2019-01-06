@@ -13,7 +13,7 @@ const GROUP_PERMISSIONS = PERMISSIONS.GROUP;
 
 class ProfileGroups extends React.Component {
   state = {
-    showAddGroupForm: true,
+    showAddGroupForm: false,
     groupNameField: '',
     groupDescriptionField: '',
     groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`,
