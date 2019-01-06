@@ -10,7 +10,7 @@ const TextButtonCTA = ({ label1, label2, onClick }) => {
         setOpen(!open);
         onClick();
       }}>
-      {open ? label1 : label2}
+      {open ? label2 : label1}
     </EnableText>
   );
 };
