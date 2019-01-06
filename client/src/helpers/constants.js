@@ -5,7 +5,8 @@ export const MODAL_IDS = {
 
 export const PERMISSIONS = {
   GROUP: {
-    DELETE_USER: 'DELETE_USERS',
+    ALL: 'ALL',
+    DELETE_USER: 'DELETE_USER',
     DELETE_SELLER: 'DELETE_SELLER',
     DELETE_ADMIN: 'DELETE_ADMIN',
     ADD_ITEM: 'ADD_ITEM',
@@ -17,6 +18,7 @@ export const PERMISSIONS = {
     EDIT_SETTINGS: 'EDIT_SETTINGS'
   }
 };
+
 export const ERRORS = {
   GROUP_ADD: {
     NAME_TOO_SHORT: 'NAME_TOO_SHORT',
@@ -78,10 +80,4 @@ export const ERRORS = {
     GROUP_CANNOT_ADD: 'GROUP_CANNOT_ADD',
     GROUP_CANNOT_REMOVE: 'GROUP_CANNOT_REMOVE'
   }
-};
-export const ROLES = {
-  OWNER: 'OWNER',
-  ADMIN: 'ADMIN',
-  SELLER: 'SELLER',
-  USER: 'USER'
 };
