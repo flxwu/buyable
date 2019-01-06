@@ -4,6 +4,11 @@ import { IGroupMemberReference } from '../../../../src/interfaces/reference';
 import { IItemReference } from '../../../../src/interfaces/reference';
 
 import bcrypt from 'bcrypt';
+import { observableDiff } from 'deep-diff';
+
+import groupUpdate from '../../../custom_validators/groupUpdate';
+import { url } from 'inspector';
+import groupUpdateHandler from '../../../action_handlers/groupUpdateHandler';
 interface IController {
   newPOST: Function;
 }
@@ -204,7 +209,79 @@ class Controller<IController> {
     }
   }
   public async update(req: any, res: any, next: any): Promise<any> {
-    res.send('patch');
+    // accepts only content-type: application/json!!!1
+    // idea: deep object differences check-> create actions array (which only contains allowed actions)
+    // and error array
+    // if actions array.length > 0 and error.length === 0 perform the actions, then save object.
+    // otherwise, send error array or do nothing
+    const content_type = req.headers['content-type'];
+    if (content_type && content_type.indexOf('application/json') === 0) {
+      const { group, urlSuffix, _id } = req.body;
+      const oldGroup = JSON.parse(
+        JSON.stringify(
+          urlSuffix
+            ? await GroupModel.findOne({
+                urlSuffix
+              })
+                .lean()
+                .exec()
+            : await GroupModel.findOne({
+                _id
+              })
+                .lean()
+                .exec()
+        )
+      );
+      let isMember = false,
+        groupUser;
+      for (const user of group.users) {
+        if (user.referenceId === req.user._id) isMember = true;
+        groupUser = user;
+      }
+      if (isMember) {
+        if (oldGroup && group) {
+          const { errors, actions } = await groupUpdate(oldGroup, group);
+          if (errors.length === 0) {
+            if (actions.length > 0) {
+              // perform actions
+              const { errors, newGroup } = await groupUpdateHandler(
+                req.user,
+                groupUser,
+                oldGroup,
+                actions
+              );
+              res.json(errors, newGroup);
+              if (errors) {
+                // success
+                res.status(200).json({ group: newGroup });
+              } else {
+                // performing actions on object returned errors
+                res.status(400).json({ errors });
+              }
+            } else {
+              // objects submitted are equal
+              res.status(304).send('NOT MODIFIED');
+            }
+          } else {
+            // group validation returned errors
+            res.json({ errors });
+          }
+        } else {
+          // group (specified in req.body.urlSuffix or _id) doesn't exist
+          res.status(400).json({
+            errors: [constants.ERRORS.GROUP_UPDATE.GROUP_NOT_FOUND]
+          });
+        }
+      } else {
+        // user is not in the group he's editing
+        res.status(401).send('UNAUTHORIZED');
+      }
+    } else {
+      // content-type is not application json
+      res.status(400).json({
+        errors: ['BAD REQUEST']
+      });
+    }
   }
 }
 
