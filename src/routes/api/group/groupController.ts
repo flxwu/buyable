@@ -59,7 +59,7 @@ class Controller<IController> {
     }
     const adminPermissions = [],
       sellerPermissions = [],
-      userPermissions = [];
+      buyerPermissions = [];
     // validate permissions
     // TODO: deeper validation -> right now user can add any permissions to any role!
     if (permissions) {
@@ -111,13 +111,13 @@ class Controller<IController> {
             constants.ROLES.SELLER
         });
       }
-      if (permissions.user) {
-        for (const permission in permissions.user) {
+      if (permissions.buyer) {
+        for (const permission in permissions.buyer) {
           if (
             constants.PERMISSIONS.GROUP.hasOwnProperty(permission) &&
-            permissions.user[permission]
+            permissions.buyer[permission]
           ) {
-            userPermissions.push(permission);
+            buyerPermissions.push(permission);
           } else {
             errors.push({
               [constants.ERRORS.GROUP_ADD.PERMISSIONS_INVALID]:
@@ -176,7 +176,7 @@ class Controller<IController> {
           permissions: {
             admin: adminPermissions,
             seller: sellerPermissions,
-            user: userPermissions
+            buyer: buyerPermissions
           },
           settings: {
             priceLimit: settings.priceLimit,
@@ -193,7 +193,7 @@ class Controller<IController> {
         res.status(500).json({ error: err.message });
       }
     } else {
-      errors.push(constants.ERRORS.GROUP_ADD.GROUP_EXISTS);
+      if (duplicate) errors.push(constants.ERRORS.GROUP_ADD.GROUP_EXISTS);
       res.status(500).json({ errors });
     }
   }
