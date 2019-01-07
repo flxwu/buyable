@@ -2,7 +2,6 @@ import { IUserReference } from '../../../interfaces/reference';
 
 import { ItemModel, IItemModel } from '../../../schemas/item';
 import { IItem } from '../../../interfaces/item';
-import validate = require('validate.js');
 
 interface IController {
   newPOST: Function;
