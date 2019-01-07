@@ -6,10 +6,10 @@ exports.ItemSchema = new mongoose_1.Schema({
         type: String,
         required: true
     },
-    description: String,
+    description: { type: String, required: true },
     price: {
         type: Number,
-        required: true,
+        required: true
     },
     imageURLs: Array,
     amount: {

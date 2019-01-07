@@ -1,11 +1,14 @@
 import React from 'react';
 import { Box, Heading } from 'grommet';
-import { Formik, ErrorMessage, Form, Field } from 'formik';
+import { Formik, ErrorMessage, Form } from 'formik';
+import axios from 'axios';
+import * as yup from 'yup';
 
 import TextButtonCTA from '../form/CTAs/TextButtonCTA';
+import TextInputField from '../form/TextInputField';
 
 class ProfileItems extends React.Component {
-  state = { showAddItemForm: false };
+  state = { showAddItemForm: true };
 
   render() {
     const { showAddItemForm } = this.state;
@@ -26,37 +29,36 @@ class ProfileItems extends React.Component {
     return (
       <Formik
         initialValues={{
-          name: '',
+          name: 'BAC',
           description: '',
           price: 0,
           amount: 1,
           groups: []
         }}
-        validate={values => {
-          let errors = {};
-          if (!values.email) {
-            errors.email = 'Required';
-          } else if (
-            !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(values.email)
-          ) {
-            errors.email = 'Invalid email address';
-          }
-          return errors;
-        }}
-        onSubmit={(values, { setSubmitting }) => {
-          setTimeout(() => {
-            alert(JSON.stringify(values, null, 2));
-            setSubmitting(false);
-          }, 400);
+        validationSchema={
+          yup.object().shape({
+            name: yup.string().required('Required'),
+            description: yup.string().required('Required'),
+            price: yup.number().moreThan(0).required('Required'),
+            amount: yup.number().integer().moreThan(0).required('Required'),
+            groups: yup.array().of(yup.string())
+          })
+        }
+        onSubmit={async (values, { setSubmitting }) => {
+          const createdItem = await axios.post('/api/item/new', {
+            ...values
+          });
+          setSubmitting(false);
+          console.log(createdItem.data);
         }}>
         {({ isSubmitting }) => (
           <Form>
-            <Field type="email" name="email" />
-            <ErrorMessage name="email" component="div" />
-            <Field type="password" name="password" />
-            <ErrorMessage name="password" component="div" />
+            <TextInputField label="Name" name="name" id="name" />
+            <ErrorMessage name="name" component="div" />
+            <TextInputField label="Description" name="description" />
+            <ErrorMessage name="description" component="div" />
             <button type="submit" disabled={isSubmitting}>
-              Submit
+              Add Item
             </button>
           </Form>
         )}
