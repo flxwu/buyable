@@ -2,8 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
 import { updateUser, checkUserAuthenticated } from '../../redux/actions/user';
-import { Text, Heading, Box } from 'grommet';
+import { Text, Heading, Box, Button } from 'grommet';
 import TextInputField from '../form/TextInputField';
+import styled from 'styled-components';
+import FormContainer from '../form/FormContainer';
 class ProfileMain extends React.Component {
   constructor(props) {
     super(props);
@@ -28,21 +30,29 @@ class ProfileMain extends React.Component {
     const { usernameField, emailField } = this.state;
     return (
       user && (
-        <Box fill width="full">
-          <Heading alignSelf="start">Profile</Heading>
-          <Text alignSelf="start">Username</Text>
-          <TextInputField
-            value={usernameField || user.username}
-            alignSelf="start"
-            onChange={this.onUsernameFieldChange}
-          />
-          <Text alignSelf="start">Email</Text>
-          <TextInputField
-            value={emailField || user.email}
-            alignSelf="start"
-            onChange={this.onEmailFieldChange}
-          />
-          <a onClick={this.onUpdateUser}>Save</a>
+        <Box fill align="center" justify="center">
+          <FormContainer>
+            <Heading level="2" alignSelf="center">
+              Profile
+            </Heading>
+            <TextInputField
+            label="Username"
+              value={usernameField || user.username}
+              onChange={this.onUsernameFieldChange}
+            />
+            <TextInputField
+            label="Email"
+            type="email"
+              value={emailField || user.email}
+              onChange={this.onEmailFieldChange}
+            />
+            <UpdateProfileCTA
+              align="center"
+              type="submit"
+              label="Save"
+              onClick={this.onUpdateUser}
+            />
+          </FormContainer>
         </Box>
       )
     );
@@ -56,6 +66,11 @@ const mapDispatchToProps = {
   updateUserInfo: updateUser,
   authCheck: checkUserAuthenticated
 };
+
+const UpdateProfileCTA = styled(Button)`
+  width: fit-content;
+  align-self: center;
+`;
 
 export default connect(
   mapStateToProps,
