@@ -72,7 +72,7 @@ class Controller<IController> {
   }
 
   public async GET(req: any, res: any, next: any): Promise<any> {
-    const userId = req.query.userId;
+    const userId = req.query._id;
     UserModel.findById(userId, (err, doc) => {
       if (err) {
         res.status(500).send(err);
