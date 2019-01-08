@@ -14,8 +14,8 @@ router.use('/user', userRouter_1.default);
 router.use('/group', groupRouter_1.default);
 router.use('/auth', authRouter_1.default);
 router.use('/', (req, res) => {
-    res.status(200);
-    res.json('This is the api');
+    res.status(400);
+    res.send('This api route is not implemented yet.');
 });
 exports.default = router;
 //# sourceMappingURL=router.js.map

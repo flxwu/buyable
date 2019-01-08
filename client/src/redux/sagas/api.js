@@ -1,6 +1,9 @@
 import axios from 'axios';
 
-const updateUser = async userData => await axios.patch('/api/user', userData);
+const updateUser = async userData => {
+  const { data } = await axios.patch('/api/user', userData);
+  return data;
+};
 const deleteUser = async () => await axios.get('/api/auth/logout');
 const isAuthenticated = async () => {
   console.log('in authentication saga');
