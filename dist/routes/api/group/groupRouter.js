@@ -12,5 +12,6 @@ const groupController_1 = __importDefault(require("./groupController"));
 const groupController = new groupController_1.default();
 router.post('/new', groupController.newPOST);
 router.get('/', groupController.get);
+router.patch('/', groupController.update);
 exports.default = router;
 //# sourceMappingURL=groupRouter.js.map
