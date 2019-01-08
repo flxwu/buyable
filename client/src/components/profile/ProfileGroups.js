@@ -5,9 +5,14 @@ import { Box, Heading, Text, CheckBox, Select, Button } from 'grommet';
 import styled from 'styled-components';
 
 import TextInputField from '../form/TextInputField';
+import FormContainer from '../form/FormContainer';
 import TextButtonCTA from '../form/CTAs/TextButtonCTA';
 
 import { GROUP_PERMISSIONS } from '../../helpers/constants';
+
+import { connect } from 'react-redux';
+import { updateUser } from '../../redux/actions/user';
+import { getCurrentUser } from '../../redux/selectors';
 
 class ProfileGroups extends React.Component {
   state = {
@@ -17,7 +22,10 @@ class ProfileGroups extends React.Component {
     groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`,
     groupPermissionsDefault: 'Buyer',
     groupPermissionsSeller: { [GROUP_PERMISSIONS.ADD_ITEM]: true },
-    groupPermissionsAdmin: { [GROUP_PERMISSIONS.DELETE_USER]: true, [GROUP_PERMISSIONS.CHANGE_ROLES]: true },
+    groupPermissionsAdmin: {
+      [GROUP_PERMISSIONS.DELETE_USER]: true,
+      [GROUP_PERMISSIONS.CHANGE_ROLES]: true
+    },
     groupSettingsPublicCheckbox: false,
     groupSettingsPriceLimitField: '',
     submitError: null
@@ -124,7 +132,7 @@ class ProfileGroups extends React.Component {
           label2="Close"
         />
         {showAddGroupForm && (
-          <AddGroupContainer>
+          <FormContainer>
             <TextInputField
               label="Group name"
               placeholder="cucumber-fans"
@@ -158,7 +166,7 @@ class ProfileGroups extends React.Component {
             {this.settingsForm()}
             <AddGroupCTA label="Add Group" onClick={this.onAddGroup} />
             {submitError && <Text>{submitError}</Text>}
-          </AddGroupContainer>
+          </FormContainer>
         )}
       </Box>
     );
@@ -208,8 +216,14 @@ class ProfileGroups extends React.Component {
         priceLimit: groupSettingsPriceLimitField
       }
     });
+
     if (createdGroup.error) {
       this.setState({ submitError: createdGroup.error });
+    } else {
+      let user = this.props.user;
+      user.groups.push({ referenceId: createdGroup.data._id });
+      user.ownedGroups.push({ referenceId: createdGroup.data._id });
+      this.props.updateUser(user);
     }
   };
 }
@@ -228,11 +242,6 @@ const PermissionsRow = ({ title, options, values, onChange }) => (
     </CheckBoxesContainer>
   </Box>
 );
-
-const AddGroupContainer = styled(Box)`
-  width: 50vw;
-  margin: 10vh;
-`;
 
 const CheckBoxesContainer = styled(Box)`
   > * {
@@ -269,4 +278,7 @@ const InnerSettingsContainer = styled(Box)`
   }
 `;
 
-export default ProfileGroups;
+export default connect(
+  state => ({ user: getCurrentUser(state) }),
+  { updateUser }
+)(ProfileGroups);
