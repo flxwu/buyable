@@ -138,7 +138,6 @@ class ProfileGroups extends React.Component {
 
   render() {
     const { showAddGroupForm, submitErrors } = this.state;
-    console.log(submitErrors);
     return (
       <Box fill align="center" justify="center">
         <Heading level="2">Groups</Heading>
@@ -184,7 +183,7 @@ class ProfileGroups extends React.Component {
             </Box>
             {this.permissionsForm()}
             {this.settingsForm()}
-            {submitErrors && <ErrorMessage>{submitErrors}</ErrorMessage>}
+            {submitErrors && <ErrorMessage text={submitErrors} />}
             <AddGroupCTA label="Add Group" onClick={this.onAddGroup} />
           </FormContainer>
         )}

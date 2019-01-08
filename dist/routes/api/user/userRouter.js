@@ -12,5 +12,6 @@ const userController_1 = __importDefault(require("./userController"));
 const userController = new userController_1.default();
 router.post('/new', userController.newPOST);
 router.get('/', userController.GET);
+router.patch('/', userController.PATCH);
 exports.default = router;
 //# sourceMappingURL=userRouter.js.map

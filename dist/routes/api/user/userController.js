@@ -119,6 +119,17 @@ class Controller {
             });
         });
     }
+    PATCH(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const userId = req.user._id;
+            const user = req.body;
+            if (userId !== user._id)
+                return res.status(401).json({ errors: ['NOT_AUTHORIZED'] });
+            user_1.UserModel.findById(userId, (err, doc) => {
+                res.status(200).json(doc);
+            });
+        });
+    }
 }
 exports.default = Controller;
 //# sourceMappingURL=userController.js.map

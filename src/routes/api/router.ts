@@ -11,8 +11,8 @@ router.use('/user', userRouter);
 router.use('/group', groupRouter);
 router.use('/auth', authRouter);
 router.use('/', (req: any, res: any) => {
-    res.status(200);
-    res.json('This is the api');
+  res.status(400);
+  res.send('This api route is not implemented yet.');
 });
 
 export default router;
