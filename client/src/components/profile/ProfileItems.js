@@ -1,12 +1,14 @@
 import React from 'react';
-import { Box, Heading } from 'grommet';
-import { Formik, ErrorMessage, Form } from 'formik';
+import { Box, Heading, Button } from 'grommet';
+import styled from 'styled-components';
+import { Formik, Form } from 'formik';
 import axios from 'axios';
 import * as yup from 'yup';
 
 import TextButtonCTA from '../form/CTAs/TextButtonCTA';
+import ErrorText from '../form/ErrorMessage';
 import TextInputField from '../form/TextInputField';
-
+import FormContainer from '../form/FormContainer';
 class ProfileItems extends React.Component {
   state = { showAddItemForm: true };
 
@@ -29,21 +31,26 @@ class ProfileItems extends React.Component {
     return (
       <Formik
         initialValues={{
-          name: 'BAC',
+          name: '',
           description: '',
-          price: 0,
+          price: '',
           amount: 1,
-          groups: []
+          Items: []
         }}
-        validationSchema={
-          yup.object().shape({
-            name: yup.string().required('Required'),
-            description: yup.string().required('Required'),
-            price: yup.number().moreThan(0).required('Required'),
-            amount: yup.number().integer().moreThan(0).required('Required'),
-            groups: yup.array().of(yup.string())
-          })
-        }
+        validationSchema={yup.object().shape({
+          name: yup.string().required('Required'),
+          description: yup.string().required('Required'),
+          price: yup
+            .number()
+            .moreThan(0)
+            .required('Required'),
+          amount: yup
+            .number()
+            .integer()
+            .moreThan(0)
+            .required('Required'),
+          Items: yup.array().of(yup.string())
+        })}
         onSubmit={async (values, { setSubmitting }) => {
           const createdItem = await axios.post('/api/item/new', {
             ...values
@@ -51,15 +58,57 @@ class ProfileItems extends React.Component {
           setSubmitting(false);
           console.log(createdItem.data);
         }}>
-        {({ isSubmitting }) => (
+        {({ values, isSubmitting, handleChange, errors, touched }) => (
           <Form>
-            <TextInputField label="Name" name="name" id="name" />
-            <ErrorMessage name="name" component="div" />
-            <TextInputField label="Description" name="description" />
-            <ErrorMessage name="description" component="div" />
-            <button type="submit" disabled={isSubmitting}>
-              Add Item
-            </button>
+            <FormContainer>
+              <TextInputField
+                label="Name"
+                name="name"
+                onChange={handleChange}
+                placeholder="Cucumber"
+                value={values.name}
+              />
+              {errors.name && touched.name && <ErrorText text={errors.name} />}
+              <TextInputField
+                label="Description"
+                name="description"
+                onChange={handleChange}
+                placeholder="This is a very well rounded cucumber"
+                value={values.description}
+              />
+              {errors.description && touched.description && (
+                <ErrorText text={errors.description} />
+              )}
+              <TextInputField
+                label="Price"
+                name="price"
+                type="number"
+                onChange={handleChange}
+                placeholder=""
+                value={values.price}
+              />
+              {errors.price && touched.price && (
+                <ErrorText text={errors.price} />
+              )}
+              <TextInputField
+                label="Amount"
+                name="amount"
+                type="number"
+                onChange={handleChange}
+                placeholder=""
+                value={values.amount}
+              />
+              {errors.amount && touched.amount && (
+                <ErrorText text={errors.amount} />
+              )}
+              <AddItemCTA
+                align="center"
+                type="submit"
+                disabled={isSubmitting}
+                label="Add Item"
+                onClick={this.onSubmit}
+              />
+            </FormContainer>
           </Form>
         )}
       </Formik>
@@ -69,5 +118,10 @@ class ProfileItems extends React.Component {
   showAddItemForm = () =>
     this.setState({ showAddItemForm: !this.state.showAddItemForm });
 }
+
+const AddItemCTA = styled(Button)`
+  width: fit-content;
+  align-self: center;
+`;
 
 export default ProfileItems;
