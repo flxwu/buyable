@@ -38,10 +38,10 @@ const asyncReducers = (action, state) => {
       };
     }
     case UPDATE_USER_FAILED: {
-      const { message } = action.payload;
+      const { errors } = action.payload;
       return {
         ...state,
-        error: message
+        errors
       };
     }
     case DELETE_USER_SUCCEEDED: {
@@ -52,10 +52,10 @@ const asyncReducers = (action, state) => {
       };
     }
     case DELETE_USER_FAILED: {
-      const { message } = action.payload;
+      const { errors } = action.payload;
       return {
         ...state,
-        error: message
+        errors
       };
     }
     case CHECK_USER_SUCCEEDED: {
