@@ -84,7 +84,7 @@ class Controller {
     }
     GET(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
-            const userId = req.query.userId;
+            const userId = req.query._id;
             user_1.UserModel.findById(userId, (err, doc) => {
                 if (err) {
                     res.status(500).send(err);

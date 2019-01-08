@@ -38,7 +38,7 @@ class Controller<IController> {
         price,
         amount,
         owner: {
-          user: owner._id
+          referenceId: owner._id
         }
       });
       let result;
@@ -57,10 +57,15 @@ class Controller<IController> {
     }
   }
 
-  public GET(req: any, res: any, next: any): any {
-    ItemModel.findOne().then((r: IItemModel) => {
-      res.status(200).json(r);
-    });
+  public async GET(req: any, res: any, next: any): Promise<any> {
+    const id = req.query._id;
+    console.log(id);
+    const item = await ItemModel.findById(id);
+    if (item) {
+      res.status(200).json({ item });
+    } else {
+      res.status(404).json({ errors: ['NOT_FOUND'] });
+    }
   }
 }
 

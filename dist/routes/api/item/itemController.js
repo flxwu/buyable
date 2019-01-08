@@ -34,7 +34,7 @@ class Controller {
                     price,
                     amount,
                     owner: {
-                        user: owner._id
+                        referenceId: owner._id
                     }
                 });
                 let result;
@@ -56,8 +56,16 @@ class Controller {
         });
     }
     GET(req, res, next) {
-        item_1.ItemModel.findOne().then((r) => {
-            res.status(200).json(r);
+        return __awaiter(this, void 0, void 0, function* () {
+            const id = req.query._id;
+            console.log(id);
+            const item = yield item_1.ItemModel.findById(id);
+            if (item) {
+                res.status(200).json({ item });
+            }
+            else {
+                res.status(404).json({ errors: ['NOT_FOUND'] });
+            }
         });
     }
 }

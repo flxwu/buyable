@@ -67,8 +67,8 @@ passport.use(
   })
 );
 
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(morgan('dev'));
 app.use('/api', apiRouter);
 app.use(express.static(__dirname + '/../client/build/'));

@@ -12,7 +12,6 @@ export interface IGroup {
   urlSuffix: string;
   owner: IUserReference;
   permissions: IGroupPermissions;
-  defaultRole: string;
   settings: IGroupSettings;
   pictureURL: string;
   items: Array<IItemReference>;
@@ -22,7 +21,7 @@ export interface IGroup {
 export interface IGroupPermissions {
   owner: Array<string>;
   admin: Array<string>;
-  mod: Array<string>;
+  seller: Array<string>;
   user: Array<String>;
 }
 export interface IGroupSettings {
