@@ -128,11 +128,6 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
           );
         }
       }
-    } else {
-      errors.push({
-        [constants.ERRORS.GROUP_UPDATE.PERMISSIONS_INVALID]:
-          constants.ROLES.ADMIN
-      });
     }
     if (newGroup.permissions.seller) {
       if (
@@ -158,16 +153,13 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
           );
         }
       }
-    } else {
-      errors.push({
-        [constants.ERRORS.GROUP_UPDATE.PERMISSIONS_INVALID]:
-          constants.ROLES.SELLER
-      });
     }
-    if (newGroup.permissions.user) {
-      if (!arraysEqual(oldGroup.permissions.user, newGroup.permissions.user)) {
+    if (newGroup.permissions.buyer) {
+      if (
+        !arraysEqual(oldGroup.permissions.buyer, newGroup.permissions.buyer)
+      ) {
         let userValidationErrors = false;
-        for (const permission of newGroup.permissions.user) {
+        for (const permission of newGroup.permissions.buyer) {
           if (!constants.PERMISSIONS.GROUP.hasOwnProperty(permission)) {
             userValidationErrors = true;
             errors.push({
@@ -180,30 +172,33 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
         if (!userValidationErrors) {
           actions.push(
             new Action(
-              constants.ACTIONS.GROUP.EDIT_USER_PERMISSIONS,
-              newGroup.permissions.user
+              constants.ACTIONS.GROUP.EDIT_BUYER_PERMISSIONS,
+              newGroup.permissions.buyer
             )
           );
         }
-      } else {
-        errors.push({
-          [constants.ERRORS.GROUP_UPDATE.PERMISSIONS_INVALID]:
-            constants.ROLES.BUYER
-        });
       }
-    } else {
-      errors.push(constants.ERRORS.GROUP_UPDATE.PERMISSIONS_INVALID);
     }
+  } else {
+    errors.push(constants.ERRORS.GROUP_UPDATE.PERMISSIONS_INVALID);
   }
   // validate settings
   if (newGroup.settings) {
     if (newGroup.settings.priceLimit) {
-      if (newGroup.settings.priceLimit < 0)
-        errors.push(constants.ERRORS.GROUP_UPDATE.SETTINGS_MIN_PRICE_TOO_LOW);
-      if (newGroup.settings.priceLimit > Number.MAX_SAFE_INTEGER)
-        errors.push(constants.ERRORS.GROUP_UPDATE.SETTINGS_MIN_PRICE_TOO_HIGH);
       if (newGroup.settings.priceLimit === 0)
         newGroup.settings.priceLimit = Number.MAX_SAFE_INTEGER;
+      if (newGroup.settings.priceLimit < 0)
+        errors.push(constants.ERRORS.GROUP_UPDATE.SETTINGS_MIN_PRICE_TOO_LOW);
+      else if (newGroup.settings.priceLimit > Number.MAX_SAFE_INTEGER)
+        errors.push(constants.ERRORS.GROUP_UPDATE.SETTINGS_MIN_PRICE_TOO_HIGH);
+      else {
+        actions.push(
+          new Action(
+            constants.ACTIONS.GROUP.EDIT_SETTINGS_PRICE_LIMIT,
+            newGroup.settings.priceLimit
+          )
+        );
+      }
     } else {
       errors.push(constants.ERRORS.GROUP_UPDATE.SETTINGS_MIN_PRICE_INVALID);
     }
@@ -214,9 +209,14 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
         newGroup.settings.defaultRole === constants.ROLES.OWNER
       ) {
         errors.push(constants.ERRORS.GROUP_UPDATE.SETTINGS_DEFAULTROLE_INVALID);
+      } else {
+        actions.push(
+          new Action(
+            constants.ACTIONS.GROUP.EDIT_SETTINGS_DEFAULT_ROLE,
+            newGroup.settings.defaultRole
+          )
+        );
       }
-    } else {
-      errors.push(constants.ERRORS.GROUP_UPDATE.SETTINGS_DEFAULTROLE_MISSING);
     }
   }
   // validate items
@@ -280,6 +280,7 @@ function arrayDiff(a: Array<any>, b: Array<any>) {
   });
 }
 function arraysEqual(a: Array<any>, b: Array<any>) {
+  if ((!a && b) || (a && !b)) return false;
   if (a.length !== b.length) return false;
   for (let i = a.length; i--; ) {
     if (a[i] !== b[i]) return false;

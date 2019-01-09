@@ -13,6 +13,8 @@ const groupUpdateHandler = async (
 ): Promise<Object> => {
   const update: { [k: string]: any } = {},
     errors = [];
+  update.permissions = { ...oldGroup.permissions };
+  update.settings = { ...oldGroup.settings };
   for (const action of actions) {
     let permissionsArray;
     switch (action.type) {
@@ -68,27 +70,33 @@ const groupUpdateHandler = async (
         if (groupUser.role === constants.ROLES.OWNER)
           update.permissions.seller = action.payload;
         break;
-      case constants.ACTIONS.GROUP.EDIT_USER_PERMISSIONS:
+      case constants.ACTIONS.GROUP.EDIT_BUYER_PERMISSIONS:
         if (groupUser.role === constants.ROLES.OWNER)
-          update.permissions.user = action.payload;
+          update.permissions.buyer = action.payload;
         break;
       case constants.ACTIONS.GROUP.EDIT_SETTINGS_PRICE_LIMIT:
         switch (groupUser.role) {
           case constants.ROLES.ADMIN:
             permissionsArray = oldGroup.permissions.admin;
+            break;
           case constants.ROLES.SELLER:
             permissionsArray = oldGroup.permissions.seller;
+            break;
           case constants.ROLES.BUYER:
-            permissionsArray = oldGroup.permissions.user;
+            permissionsArray = oldGroup.permissions.buyer;
+            break;
           case constants.ROLES.OWNER:
-            permissionsArray = oldGroup.permissions.owner;
+            permissionsArray = [];
+            break;
           default:
             errors.push(constants.ERRORS.GROUP_UPDATE.UNPRIVILEGED);
         }
         if (
-          errors.length === 0 &&
-          permissionsArray.indexOf(constants.PERMISSIONS.GROUP.EDIT_SETTINGS) >=
-            0
+          (errors.length === 0 &&
+            permissionsArray.indexOf(
+              constants.PERMISSIONS.GROUP.EDIT_SETTINGS
+            ) >= 0) ||
+          groupUser.role === constants.ROLES.OWNER
         ) {
           update.settings.priceLimit = action.payload;
         }
@@ -97,19 +105,25 @@ const groupUpdateHandler = async (
         switch (groupUser.role) {
           case constants.ROLES.ADMIN:
             permissionsArray = oldGroup.permissions.admin;
+            break;
           case constants.ROLES.SELLER:
             permissionsArray = oldGroup.permissions.seller;
+            break;
           case constants.ROLES.BUYER:
-            permissionsArray = oldGroup.permissions.user;
+            permissionsArray = oldGroup.permissions.buyer;
+            break;
           case constants.ROLES.OWNER:
-            permissionsArray = oldGroup.permissions.owner;
+            permissionsArray = [];
+            break;
           default:
             errors.push(constants.ERRORS.GROUP_UPDATE.UNPRIVILEGED);
         }
         if (
-          errors.length === 0 &&
-          permissionsArray.indexOf(constants.PERMISSIONS.GROUP.EDIT_SETTINGS) >=
-            0
+          (errors.length === 0 &&
+            permissionsArray.indexOf(
+              constants.PERMISSIONS.GROUP.EDIT_SETTINGS
+            ) >= 0) ||
+          groupUser.role === constants.ROLES.OWNER
         ) {
           update.settings.defaultRole = action.payload;
         }
@@ -141,10 +155,10 @@ const groupUpdateHandler = async (
   if (errors.length > 0) return { errors };
   // update group;
   try {
-    const newGroup = await GroupModel.findOneAndUpdate(
-      oldGroup.urlSuffix,
-      update
-    );
+    const newGroup = await GroupModel.findByIdAndUpdate(oldGroup._id, update, {
+      new: true
+    }).exec();
+    console.log(newGroup);
     return { errors: null, newGroup };
   } catch (err) {
     return { errors: err.message, newGroup: null };

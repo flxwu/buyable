@@ -218,26 +218,21 @@ class Controller<IController> {
     // otherwise, send error array or do nothing
     const content_type = req.headers['content-type'];
     if (content_type && content_type.indexOf('application/json') === 0) {
-      const { group, urlSuffix, _id } = req.body;
+      const group = req.body;
       const oldGroup = JSON.parse(
         JSON.stringify(
-          urlSuffix
-            ? await GroupModel.findOne({
-                urlSuffix
-              })
-                .lean()
-                .exec()
-            : await GroupModel.findOne({
-                _id
-              })
-                .lean()
-                .exec()
+          await GroupModel.findById(group._id)
+            .lean()
+            .exec()
         )
       );
       let isMember = false,
         groupUser;
-      for (const user of group.users) {
-        if (user.referenceId === req.user._id) isMember = true;
+      const reqUserId = String(req.user._id);
+      for (const user of oldGroup.users) {
+        console.log(user.referenceId);
+        console.log(reqUserId);
+        if (user.referenceId === reqUserId) isMember = true;
         groupUser = user;
       }
       if (isMember) {
@@ -246,14 +241,13 @@ class Controller<IController> {
           if (errors.length === 0) {
             if (actions.length > 0) {
               // perform actions
-              const { errors, newGroup } = await groupUpdateHandler(
+              const { errors, newGroup }: any = await groupUpdateHandler(
                 req.user,
                 groupUser,
                 oldGroup,
                 actions
               );
-              res.json(errors, newGroup);
-              if (errors) {
+              if (!errors) {
                 // success
                 res.status(200).json({ group: newGroup });
               } else {
@@ -266,7 +260,7 @@ class Controller<IController> {
             }
           } else {
             // group validation returned errors
-            res.json({ errors });
+            res.status(500).json({ errors });
           }
         } else {
           // group (specified in req.body.urlSuffix or _id) doesn't exist
