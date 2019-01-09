@@ -5,9 +5,9 @@ import * as yup from 'yup';
 import { UserModel, IUserModel } from '../../../schemas/user';
 import { GroupModel } from '../../../schemas/group';
 import { IGroupReference } from '../../../interfaces/reference';
-import { IUser } from '../../../interfaces/user';
 import { isUserDuplicate } from '../../../helpers/database';
 import { User } from '../../../helpers/yupSchemas';
+import { DuplicateError } from '../../../helpers/errors';
 
 interface IController {
   newPOST: Function;
@@ -38,6 +38,7 @@ class Controller<IController> {
         });
         return await user.save();
       } catch (err) {
+        if (err instanceof DuplicateError) throw new Error('dup');
         throw new Error('ise');
       }
     };
@@ -66,6 +67,10 @@ class Controller<IController> {
         case 'ptl':
           status = 400;
           message = 'Password too long';
+          break;
+        case 'dup':
+          status = 400;
+          message = 'User already exists';
           break;
         default:
           status = 500;
@@ -156,8 +161,10 @@ class Controller<IController> {
     /* Update Document */
     const updatedDoc = await UserModel.findByIdAndUpdate(
       sessionUser._id,
-      reqUser
+      reqUser,
+      { new: true }
     );
+    req.user = updatedDoc;
     res.json(updatedDoc);
   }
 }

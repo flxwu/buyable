@@ -25,6 +25,7 @@ const user_1 = require("../../../schemas/user");
 const group_1 = require("../../../schemas/group");
 const database_1 = require("../../../helpers/database");
 const yupSchemas_1 = require("../../../helpers/yupSchemas");
+const errors_1 = require("../../../helpers/errors");
 class Controller {
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -54,6 +55,8 @@ class Controller {
                     return yield user.save();
                 }
                 catch (err) {
+                    if (err instanceof errors_1.DuplicateError)
+                        throw new Error('dup');
                     throw new Error('ise');
                 }
             });
@@ -83,6 +86,10 @@ class Controller {
                     case 'ptl':
                         status = 400;
                         message = 'Password too long';
+                        break;
+                    case 'dup':
+                        status = 400;
+                        message = 'User already exists';
                         break;
                     default:
                         status = 500;
@@ -162,7 +169,8 @@ class Controller {
             if (!isMatch)
                 reqUser.password = yield bcrypt_1.default.hash(reqUser.password, 10);
             /* Update Document */
-            const updatedDoc = yield user_1.UserModel.findByIdAndUpdate(sessionUser._id, reqUser);
+            const updatedDoc = yield user_1.UserModel.findByIdAndUpdate(sessionUser._id, reqUser, { new: true });
+            req.user = updatedDoc;
             res.json(updatedDoc);
         });
     }

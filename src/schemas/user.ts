@@ -2,6 +2,7 @@ import { Document, Schema, Model, model } from 'mongoose';
 import { IUser } from '../interfaces/user';
 import bcrypt from 'bcrypt';
 import { isUserDuplicate } from '../helpers/database';
+import { DuplicateError } from '../helpers/errors';
 
 export interface IUserModel extends IUser, Document {
   _id: any | string;
@@ -34,13 +35,13 @@ UserSchema.pre('save', async function(next: any) {
     ['username', 'email']
   );
   if (isDuplicate) {
+    next(new DuplicateError('Username or email already exists'));
+  } else {
     const now = new Date();
     if (!this.createdAt) {
-      this.createdAt = now;
+      this.createdAt = now.getTime();
     }
     next();
-  } else {
-    next(new Error('Username or email already exists'));
   }
 });
 
