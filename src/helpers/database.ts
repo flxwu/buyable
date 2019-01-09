@@ -2,14 +2,22 @@ import { UserModel } from '../schemas/user';
 
 /**
  * Returns if user is duplicate
- * @param username user's handle
- * @param email user's email
+ * @param attributes attributes to check against, like usernames
+ * @param keys object keys to map the attributes against, like ['username', 'email']
  */
-export const isUserDuplicate = async (username: string, email?: string) => {
+export const isUserDuplicate = async (
+  attributes: string | Array<string>,
+  keys: string | Array<string>
+): Promise<boolean> => {
   try {
-    const docs = await UserModel.find(
-      email ? { $or: [{ username }, { email }] } : { username }
-    );
+    let docs;
+    if (keys instanceof Array) {
+      docs = await UserModel.find({
+        $or: keys.map((k, i) => ({ [k]: attributes[i] }))
+      });
+    } else {
+      docs = await UserModel.find({ [keys]: attributes });
+    }
     if (!docs.length) return false;
     return true;
   } catch (err) {
