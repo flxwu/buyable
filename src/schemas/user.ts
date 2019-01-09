@@ -29,7 +29,10 @@ export const UserSchema: Schema = new Schema({
 });
 
 UserSchema.pre('save', async function(next: any) {
-  const isDuplicate = await isUserDuplicate(this.username, this.email);
+  const isDuplicate = await isUserDuplicate(
+    [this.username, this.email],
+    ['username', 'email']
+  );
   if (isDuplicate) {
     const now = new Date();
     if (!this.createdAt) {
