@@ -1,10 +1,14 @@
 import bcrypt from 'bcrypt';
+import validator from 'validator';
+import * as yup from 'yup';
 
 import { UserModel, IUserModel } from '../../../schemas/user';
 import { GroupModel } from '../../../schemas/group';
 import { IGroupReference } from '../../../interfaces/reference';
 import { IUser } from '../../../interfaces/user';
-import validator from 'validator';
+import { isUserDuplicate } from '../../../helpers/database';
+import { User } from '../../../helpers/yupSchemas';
+
 interface IController {
   newPOST: Function;
   GET: Function;
@@ -107,14 +111,54 @@ class Controller<IController> {
   }
 
   public async PATCH(req: any, res: any): Promise<any> {
-    const userId = req.user._id;
-    const user = req.body;
+    const sessionUser = req.user;
+    const reqUser = req.body;
 
-    if (userId !== user._id)
+    if (String(sessionUser._id) !== reqUser._id)
       return res.status(401).json({ errors: ['NOT_AUTHORIZED'] });
-    UserModel.findById(userId, (err, doc) => {
-      res.status(200).json(doc);
-    });
+
+    try {
+      User.validateSync(reqUser);
+    } catch (err) {
+      if (err instanceof yup.ValidationError)
+        return res.status(400).json({ errors: ['Invalid Inputs'] });
+    }
+
+    if (sessionUser.username !== reqUser.username) {
+      const userAlreadyRegistered = await isUserDuplicate(
+        reqUser.username,
+        'username'
+      );
+      if (userAlreadyRegistered)
+        return res
+          .status(400)
+          .json({ errors: ['Username already registered'] });
+    }
+
+    if (sessionUser.email !== reqUser.email) {
+      const userAlreadyRegistered = await isUserDuplicate(
+        reqUser.email,
+        'email'
+      );
+      if (userAlreadyRegistered)
+        return res.status(400).json({ errors: ['Email already registered'] });
+    }
+
+    /* Delete immutable attributes */
+    delete reqUser._id;
+    delete reqUser.createdAt;
+    /* Check for password update */
+    const isMatch = await bcrypt.compare(
+      sessionUser.password,
+      reqUser.password
+    );
+    if (!isMatch) reqUser.password = await bcrypt.hash(reqUser.password, 10);
+    /* Update Document */
+    const updatedDoc = await UserModel.findByIdAndUpdate(
+      sessionUser._id,
+      reqUser
+    );
+    res.json(updatedDoc);
   }
 }
 
