@@ -1,6 +1,7 @@
 import { IUserReference } from '../../../interfaces/reference';
 
 import { ItemModel, IItemModel } from '../../../schemas/item';
+import { UserModel, IUserModel } from '../../../schemas/user';
 import { IItem } from '../../../interfaces/item';
 
 interface IController {
@@ -46,9 +47,12 @@ class Controller<IController> {
       let result;
       try {
         result = await item.save();
+        const update = { $push: { items: { referenceId: result._id } } };
+        await UserModel.findByIdAndUpdate(req.user._id, update).exec();
       } catch (err) {
         throw err;
       }
+
       return result;
     };
     try {
