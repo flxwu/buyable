@@ -230,8 +230,6 @@ class Controller<IController> {
         groupUser;
       const reqUserId = String(req.user._id);
       for (const user of oldGroup.users) {
-        console.log(user.referenceId);
-        console.log(reqUserId);
         if (user.referenceId === reqUserId) isMember = true;
         groupUser = user;
       }
@@ -270,12 +268,12 @@ class Controller<IController> {
         }
       } else {
         // user is not in the group he's editing
-        res.status(401).send('UNAUTHORIZED');
+        res.status(401).json({ errors: ['NOT MEMBER OF GROUP'] });
       }
     } else {
       // content-type is not application json
       res.status(400).json({
-        errors: ['BAD REQUEST']
+        errors: ['CONTENT-TYPE NOT APPLICATION/JSON']
       });
     }
   }

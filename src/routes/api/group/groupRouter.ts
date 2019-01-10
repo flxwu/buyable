@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 const router: Router = Router();
 import Controller from './groupController';
+import passport from 'passport';
 /**
  * POST New Product
  */
