@@ -319,39 +319,21 @@ class Validators {
     errors: Array<String>;
     actions: Array<Object>;
   } => {
-    const errors = [],
+    const errors: Array<string> = [],
       actions = [];
-    const deletedItems = arrayDiff(oldGroupItems, newGroupItems);
-    const addedItems = arrayDiff(newGroupItems, oldGroupItems);
-    for (const item of deletedItems) {
-      if (item && item.referenceId) {
-        actions.push(
-          new Action(constants.ACTIONS.GROUP.DELETE_ITEM, {
-            referenceId: item.referenceId
-          })
-        );
-      } else {
-        errors.push(
-          constants.ERRORS.GROUP_UPDATE.ITEM_DELETED_INVALID +
-            '_' +
-            JSON.stringify(item)
-        );
-      }
+    const deletedItems = arrayDiff(oldGroupItems, newGroupItems).filter(
+      item => item && item.referenceId
+    );
+    const addedItems = arrayDiff(newGroupItems, oldGroupItems).filter(
+      item => item && item.referenceId
+    );
+    if (deletedItems.length > 0) {
+      actions.push(
+        new Action(constants.ACTIONS.GROUP.DELETE_ITEMS, deletedItems)
+      );
     }
-    for (const item of addedItems) {
-      if (item && item.referenceId) {
-        actions.push(
-          new Action(constants.ACTIONS.GROUP.ADD_ITEM, {
-            referenceId: item.referenceId
-          })
-        );
-      } else {
-        errors.push(
-          constants.ERRORS.GROUP_UPDATE.ITEM_ADDED_INVALID +
-            '_' +
-            JSON.stringify(item)
-        );
-      }
+    if (addedItems.length > 0) {
+      actions.push(new Action(constants.ACTIONS.GROUP.ADD_ITEMS, addedItems));
     }
     return { errors, actions };
   };
@@ -362,23 +344,15 @@ class Validators {
     errors: Array<String>;
     actions: Array<Object>;
   } => {
-    const errors = [],
+    const errors: Array<String> = [],
       actions = [];
-    const deletedUsers = arrayDiff(oldGroupUsers, newGroupUsers);
-    for (const user of deletedUsers) {
-      if (user && user.referenceId) {
-        actions.push(
-          new Action(constants.ACTIONS.GROUP.DELETE_USER, {
-            referenceId: user.referenceId
-          })
-        );
-      } else {
-        errors.push(
-          constants.ERRORS.GROUP_UPDATE.USER_DELETED_INVALID +
-            '_' +
-            JSON.stringify(user)
-        );
-      }
+    const deletedUsers = arrayDiff(oldGroupUsers, newGroupUsers).filter(
+      user => user && user.referenceId
+    );
+    if (deletedUsers.length > 0) {
+      actions.push(
+        new Action(constants.ACTIONS.GROUP.DELETE_USERS, deletedUsers)
+      );
     }
     return { errors, actions };
   };
