@@ -14,7 +14,7 @@
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "test": "jest -v"
+    "test": "jest --verbose"
   },
   "jest": {
     "testURL": "http://localhost:5000"
