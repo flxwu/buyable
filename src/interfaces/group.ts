@@ -14,7 +14,7 @@ export interface IGroup {
   permissions: IGroupPermissions;
   settings: IGroupSettings;
   pictureURL: string;
-  items: Array<IItemReference>;
+  items: Array<IGroupItem>;
   users: Array<IGroupMemberReference>;
 }
 
@@ -24,7 +24,13 @@ export interface IGroupPermissions {
   seller: Array<string>;
   user: Array<String>;
 }
+
 export interface IGroupSettings {
   public: boolean;
   priceLimit: number;
+}
+
+export interface IGroupItem {
+  referenceId: IItemReference;
+  addedAt: string;
 }

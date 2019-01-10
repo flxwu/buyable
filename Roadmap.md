@@ -20,8 +20,8 @@
 
 - ~~/new POST: C Group~~
 - ~~/ GET: R Group~~
-- ~~/ UPDATE: U Group~~
-- /items GET(count?): R Group(items)
+- / UPDATE: U Group
+- ~~/items GET(count?): R Group(items)~~
 
 #### /api/user
 
