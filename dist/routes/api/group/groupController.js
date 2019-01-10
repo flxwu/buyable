@@ -12,11 +12,12 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const group_1 = require("../../../schemas/group");
+const item_1 = require("../../../schemas/item");
 const constants_1 = __importDefault(require("../../../helpers/constants"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const groupUpdate_1 = __importDefault(require("../../../custom_validators/groupUpdate"));
 const groupUpdateHandler_1 = __importDefault(require("../../../action_handlers/groupUpdateHandler"));
-class Controller {
+class GroupController {
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const errors = [];
@@ -281,5 +282,52 @@ class Controller {
         });
     }
 }
-exports.default = Controller;
+exports.GroupController = GroupController;
+class GroupItemsController {
+    constructor() {
+        this.SORT_BY = {
+            NEWEST: 'new',
+            OLDEST: 'old'
+        };
+    }
+    GET(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const groupId = req.query._id;
+            const user = req.user;
+            if (groupId == null)
+                return res.status(400).json({ errors: ['No group given'] });
+            if (user == null || !user.groups.some(g => g.referenceId === groupId))
+                return res.status(401).json({ errors: ['UNAUTHORIZED'] });
+            const amount = req.query.n || 5;
+            const sortBy = req.query.sort || this.SORT_BY.NEWEST;
+            const group = yield group_1.GroupModel.findById(groupId);
+            // Sort group items by sort criteria
+            group.items = group.items.sort((i1, i2) => {
+                switch (sortBy) {
+                    case this.SORT_BY.NEWEST:
+                        return Number(i2.addedAt) - Number(i1.addedAt);
+                        break;
+                    case this.SORT_BY.OLDEST:
+                        return Number(i1.addedAt) - Number(i2.addedAt);
+                        break;
+                    case this.SORT_BY.NEWEST:
+                        return Number(i2.addedAt) - Number(i1.addedAt);
+                        break;
+                }
+            });
+            // Get first 5
+            const returnItemsReferenceIds = group.items
+                .slice(0, amount - 1)
+                .map(ref => ref.referenceId);
+            // from the item ids, get the item objects
+            const groupItems = yield item_1.ItemModel.find({
+                _id: {
+                    $in: returnItemsReferenceIds
+                }
+            });
+            res.status(200).json(groupItems);
+        });
+    }
+}
+exports.GroupItemsController = GroupItemsController;
 //# sourceMappingURL=groupController.js.map
