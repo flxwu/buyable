@@ -128,7 +128,8 @@ const groupUpdateHandler = async (
           update.settings.defaultRole = action.payload;
         }
         break;
-      case constants.ACTIONS.GROUP.DELETE_ITEM:
+      case constants.ACTIONS.GROUP.DELETE_ITEMS:
+        // TODO: check all permissions
         if (user.items.indexOf(action.payload) >= 0) {
           if (!update.items) update.items = [];
           update.items.push({
@@ -146,9 +147,38 @@ const groupUpdateHandler = async (
           errors.push(constants.ERRORS.GROUP_UPDATE.UNPRIVILEGED);
         }
         break;
-      case constants.ACTIONS.GROUP.ADD_ITEM:
+      case constants.ACTIONS.GROUP.ADD_ITEMS:
+        switch (groupUser.role) {
+          case constants.ROLES.ADMIN:
+            permissionsArray = oldGroup.permissions.admin;
+            break;
+          case constants.ROLES.SELLER:
+            permissionsArray = oldGroup.permissions.seller;
+            break;
+          case constants.ROLES.BUYER:
+            permissionsArray = oldGroup.permissions.buyer;
+            break;
+          case constants.ROLES.OWNER:
+            permissionsArray = [];
+            break;
+          default:
+            errors.push(constants.ERRORS.GROUP_UPDATE.UNPRIVILEGED);
+        }
+        if (
+          groupUser.role === constants.ROLES.OWNER ||
+          permissionsArray.indexOf(constants.PERMISSIONS.GROUP.ADD_ITEM) >= 0
+        ) {
+          const itemsToAdd = action.payload.filter(
+            (item: { referenceId: string }) => {
+              return groupUser.items.indexOf(item) >= 0;
+            }
+          );
+          // TODO: cast items to arrray of IGroupItems
+          // TODO: push new items to item array of update.
+        }
+
         break;
-      case constants.ACTIONS.GROUP.DELETE_USER:
+      case constants.ACTIONS.GROUP.DELETE_USERS:
         break;
     }
   }
