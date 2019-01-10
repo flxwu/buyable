@@ -57,7 +57,6 @@ class Controller<IController> {
       } catch (err) {
         throw err;
       }
-
       return result;
     };
     try {
