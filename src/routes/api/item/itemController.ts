@@ -16,6 +16,7 @@ class Controller<IController> {
     // validate that user is logged in
     if (owner == null || owner._id == null) {
       res.status(401).json({ error: 'Please login to post new items!' });
+      return;
     }
 
     // validate post body
@@ -27,6 +28,7 @@ class Controller<IController> {
       typeof amount !== 'number'
     ) {
       res.status(400).json({ error: 'Item form data invalid' });
+      return;
     }
 
     const createItem = async () => {
