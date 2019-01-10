@@ -46,5 +46,23 @@ export const EXPECTED = {
     groups: [],
     ownedGroups: [],
     __v: 0
+  },
+  newUser1Updated: {
+    username: 'jest-testuser1Updated',
+    email: 'jest-testuser1@api.com',
+    items: [],
+    groups: [],
+    ownedGroups: [],
+    __v: 0
+  },
+  newUser2Updated: {
+    username: 'jest-testuser2',
+    email: 'jest-testuser2@api.com',
+    forename: 'jest',
+    surname: 'test',
+    items: [],
+    groups: [],
+    ownedGroups: [],
+    __v: 0
   }
 };
