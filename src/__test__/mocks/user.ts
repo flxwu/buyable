@@ -25,6 +25,11 @@ export const INPUTS = {
     username: 'jest-testuser1',
     password: 'jest-testuser1-password',
     email: 'jest-testuser1@api.com'
+  },
+  apiTest1: {
+    username: 'apiTest1',
+    email: 'apiTest1@api.com',
+    password: 'password'
   }
 };
 
@@ -60,6 +65,14 @@ export const EXPECTED = {
     email: 'jest-testuser2@api.com',
     forename: 'jest',
     surname: 'test',
+    items: [],
+    groups: [],
+    ownedGroups: [],
+    __v: 0
+  },
+  apiTest1: {
+    username: 'apiTest1',
+    email: 'apiTest1@api.com',
     items: [],
     groups: [],
     ownedGroups: [],
