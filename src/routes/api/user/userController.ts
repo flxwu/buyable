@@ -79,8 +79,9 @@ class Controller<IController> {
     const userId = req.query._id;
     UserModel.findById(userId, (err, doc) => {
       if (err) {
-        res.status(500).send(err);
-      } else {
+        res.status(500).json({ errors: err });
+      }
+      if (doc) {
         const userGroups = doc.groups;
         const ownedGroups = doc.ownedGroups;
         const publicUserGroups: Array<IGroupReference> = [];
@@ -106,6 +107,8 @@ class Controller<IController> {
         filteredDoc.ownedGroups = publicOwnedUserGroups;
 
         res.status(200).json(filteredDoc);
+      } else {
+        res.status(404).json({ errors: ['NOT_FOUND'] });
       }
     });
   }
