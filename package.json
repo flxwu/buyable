@@ -10,6 +10,7 @@
     "build": "yarn run build-ts && yarn run tslint",
     "serve": "node dist/server.js",
     "watch-node": "nodemon dist/server.js",
+    "export-certs": "export NODE_EXTRA_CA_CERTS=\"$(mkcert -CAROOT)/rootCA.pem\"",
     "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run watch-node\"",
     "build-ts": "tsc",
     "watch-ts": "tsc -w",
