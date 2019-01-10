@@ -11,4 +11,6 @@ router.get('/', userController.GET);
 
 router.patch('/', userController.PATCH);
 
+router.delete('/', userController.DELETE);
+
 export default router;

@@ -119,6 +119,9 @@ class Controller<IController> {
     const sessionUser = req.user;
     const reqUser = req.body;
 
+    if (sessionUser == null)
+      return res.status(401).json({ errors: ['NOT_AUTHORIZED'] });
+
     if (String(sessionUser._id) !== reqUser._id)
       return res.status(401).json({ errors: ['NOT_AUTHORIZED'] });
 
@@ -152,12 +155,14 @@ class Controller<IController> {
     /* Delete immutable attributes */
     delete reqUser._id;
     delete reqUser.createdAt;
-    /* Check for password update */
-    const isMatch = await bcrypt.compare(
-      sessionUser.password,
-      reqUser.password
-    );
-    if (!isMatch) reqUser.password = await bcrypt.hash(reqUser.password, 10);
+    if (reqUser.password) {
+      /* Check for password update */
+      const isMatch = await bcrypt.compare(
+        sessionUser.password,
+        reqUser.password
+      );
+      if (!isMatch) reqUser.password = await bcrypt.hash(reqUser.password, 10);
+    }
     /* Update Document */
     const updatedDoc = await UserModel.findByIdAndUpdate(
       sessionUser._id,
@@ -166,6 +171,19 @@ class Controller<IController> {
     );
     req.user = updatedDoc;
     res.json(updatedDoc);
+  }
+
+  public async DELETE(req: any, res: any): Promise<any> {
+    const sessionUser = req.user;
+
+    if (sessionUser == null)
+      return res.status(401).json({ error: ['UNAUTHORIZED'] });
+    try {
+      const user = await UserModel.findByIdAndRemove(sessionUser._id);
+      return res.status(200).json(user);
+    } catch (err) {
+      return res.status(500).json({ error: ['Error while deleting user'] });
+    }
   }
 }
 
