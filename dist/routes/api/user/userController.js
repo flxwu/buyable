@@ -140,6 +140,8 @@ class Controller {
         return __awaiter(this, void 0, void 0, function* () {
             const sessionUser = req.user;
             const reqUser = req.body;
+            if (sessionUser == null)
+                return res.status(401).json({ errors: ['NOT_AUTHORIZED'] });
             if (String(sessionUser._id) !== reqUser._id)
                 return res.status(401).json({ errors: ['NOT_AUTHORIZED'] });
             try {
@@ -164,14 +166,30 @@ class Controller {
             /* Delete immutable attributes */
             delete reqUser._id;
             delete reqUser.createdAt;
-            /* Check for password update */
-            const isMatch = yield bcrypt_1.default.compare(sessionUser.password, reqUser.password);
-            if (!isMatch)
-                reqUser.password = yield bcrypt_1.default.hash(reqUser.password, 10);
+            if (reqUser.password) {
+                /* Check for password update */
+                const isMatch = yield bcrypt_1.default.compare(sessionUser.password, reqUser.password);
+                if (!isMatch)
+                    reqUser.password = yield bcrypt_1.default.hash(reqUser.password, 10);
+            }
             /* Update Document */
             const updatedDoc = yield user_1.UserModel.findByIdAndUpdate(sessionUser._id, reqUser, { new: true });
             req.user = updatedDoc;
             res.json(updatedDoc);
+        });
+    }
+    DELETE(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const sessionUser = req.user;
+            if (sessionUser == null)
+                return res.status(401).json({ error: ['UNAUTHORIZED'] });
+            try {
+                const user = yield user_1.UserModel.findByIdAndRemove(sessionUser._id);
+                return res.status(200).json(user);
+            }
+            catch (err) {
+                return res.status(500).json({ error: ['Error while deleting user'] });
+            }
         });
     }
 }
