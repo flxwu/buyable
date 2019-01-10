@@ -1,4 +1,5 @@
 import { GroupModel, IGroupModel } from '../../../schemas/group';
+import { ItemModel } from '../../../schemas/item';
 import constants from '../../../helpers/constants';
 import { IGroupMemberReference } from '../../../../src/interfaces/reference';
 import { IItemReference } from '../../../../src/interfaces/reference';
@@ -13,7 +14,7 @@ interface IController {
   newPOST: Function;
 }
 
-class Controller<IController> {
+class GroupController<IController> {
   public async newPOST(req: any, res: any, next: any): Promise<any> {
     const errors = [];
     const {
@@ -287,4 +288,54 @@ class Controller<IController> {
   }
 }
 
-export default Controller;
+class GroupItemsController {
+  private SORT_BY = {
+    NEWEST: 'new',
+    OLDEST: 'old'
+  };
+
+  public async GET(req, res): Promise<any> {
+    const groupId = req.query._id;
+    const user = req.user;
+
+    if (groupId == null)
+      return res.status(400).json({ errors: ['No group given'] });
+
+    if (user == null || !user.groups.some(g => g.referenceId === groupId))
+      return res.status(401).json({ errors: ['UNAUTHORIZED'] });
+
+    const amount = req.query.n || 5;
+    const sortBy = req.query.sort || this.SORT_BY.NEWEST;
+
+    const group = await GroupModel.findById(groupId);
+    // Sort group items by sort criteria
+    group.items = group.items.sort((i1, i2) => {
+      switch (sortBy) {
+        case this.SORT_BY.NEWEST:
+          return Number(i2.addedAt) - Number(i1.addedAt);
+          break;
+        case this.SORT_BY.OLDEST:
+          return Number(i1.addedAt) - Number(i2.addedAt);
+          break;
+        case this.SORT_BY.NEWEST:
+          return Number(i2.addedAt) - Number(i1.addedAt);
+          break;
+      }
+    });
+
+    // Get first 5
+    const returnItemsReferenceIds = group.items
+      .slice(0, amount - 1)
+      .map(ref => ref.referenceId);
+    // from the item ids, get the item objects
+    const groupItems = await ItemModel.find({
+      _id: {
+        $in: returnItemsReferenceIds
+      }
+    });
+
+    res.status(200).json(groupItems);
+  }
+}
+
+export { GroupController, GroupItemsController };
