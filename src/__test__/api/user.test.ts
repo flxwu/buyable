@@ -3,6 +3,16 @@ import bcrypt from 'bcrypt';
 
 import { INPUTS, EXPECTED } from '../mocks/user';
 
+const login = async (credentials: Object) =>
+  await axios.post('/api/auth/login', credentials);
+
+interface UserIDs {
+  newUser1?: string;
+  newUser2?: string;
+}
+
+const userIDs: UserIDs = {};
+
 describe('[/user POST] Add new User', () => {
   it('should add a new user', async () => {
     const { data } = await axios.post('/api/user/new', INPUTS.newUser1);
