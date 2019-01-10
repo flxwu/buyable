@@ -48,7 +48,12 @@ class Controller<IController> {
       try {
         result = await item.save();
         const update = { $push: { items: { referenceId: result._id } } };
-        await UserModel.findByIdAndUpdate(req.user._id, update).exec();
+        const newUser = await UserModel.findByIdAndUpdate(
+          req.user._id,
+          update,
+          { new: true }
+        ).exec();
+        req.user = newUser;
       } catch (err) {
         throw err;
       }
@@ -58,8 +63,8 @@ class Controller<IController> {
     try {
       const result = await createItem();
       res.status(200).json({ item: result });
-    } catch (error) {
-      res.status(500).json({ error });
+    } catch (errors) {
+      res.status(500).json({ errors });
     }
   }
 
