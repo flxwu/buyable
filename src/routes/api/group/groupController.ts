@@ -16,15 +16,9 @@ interface IController {
 class Controller<IController> {
   public async newPOST(req: any, res: any, next: any): Promise<any> {
     const errors = [];
-    const {
-      name,
-      urlSuffix,
-      pictureURL,
-      description,
-      permissions,
-      settings
-    } = req.body;
-    let password = req.body.password;
+    const { name, pictureURL, description, permissions, settings } = req.body;
+    let { password, urlSuffix } = req.body;
+    urlSuffix = String(urlSuffix).replace(/[^a-z0-9]/gi, '');
     const owner = { referenceId: req.user._id };
     const ownerUser = {
       referenceId: req.user._id,

@@ -2,6 +2,7 @@ import constants from '../helpers/constants';
 import bcrypt from 'bcrypt';
 import { stringify } from 'querystring';
 import { exists } from 'fs';
+import { GroupModel } from '../schemas/group';
 
 class Action {
   public type: any;
@@ -120,15 +121,16 @@ class Validators {
     }
     return { errors, actions };
   };
-  public static validateUrlSuffix = (
+  public static validateUrlSuffix = async (
     oldGroupUrlSuffix: string | undefined,
     newGroupUrlSuffix: string | undefined
-  ): {
+  ): Promise<{
     errors: Array<String>;
     actions: Array<Object>;
-  } => {
+  }> => {
     const errors = [],
       actions = [];
+    newGroupUrlSuffix = newGroupUrlSuffix.replace(/[^a-z0-9]/gi, '');
     if (newGroupUrlSuffix && oldGroupUrlSuffix) {
       if (newGroupUrlSuffix !== oldGroupUrlSuffix) {
         if (newGroupUrlSuffix.length < 3) {
@@ -136,12 +138,19 @@ class Validators {
         } else if (newGroupUrlSuffix.length > 50) {
           errors.push(constants.ERRORS.GROUP_UPDATE.URLSUFFIX_TOO_LONG);
         } else {
-          actions.push(
-            new Action(
-              constants.ACTIONS.GROUP.EDIT_URLSUFFIX,
-              newGroupUrlSuffix
-            )
-          );
+          const duplicate = await GroupModel.find({
+            urlSuffix: newGroupUrlSuffix
+          })
+            .lean()
+            .exec();
+          !duplicate
+            ? actions.push(
+                new Action(
+                  constants.ACTIONS.GROUP.EDIT_URLSUFFIX,
+                  newGroupUrlSuffix
+                )
+              )
+            : errors.push(constants.ERRORS.GROUP_UPDATE.URLSUFFIX_DUPLICATE);
         }
       }
     }
@@ -401,9 +410,16 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
       validationErrors.push(error.message);
     }
   if (Validators.exists(newGroup.urlSuffix))
-    appendResults(
-      Validators.validateUrlSuffix(oldGroup.urlSuffix, newGroup.urlSuffix)
-    );
+    try {
+      appendResults(
+        await Validators.validateUrlSuffix(
+          oldGroup.urlSuffix,
+          newGroup.urlSuffix
+        )
+      );
+    } catch (err) {
+      validationErrors.push(err.message);
+    }
   if (Validators.exists(newGroup.permissions)) {
     if (Validators.exists(newGroup.permissions.admin)) console.log();
     appendResults(
