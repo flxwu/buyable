@@ -138,19 +138,25 @@ class Validators {
         } else if (newGroupUrlSuffix.length > 50) {
           errors.push(constants.ERRORS.GROUP_UPDATE.URLSUFFIX_TOO_LONG);
         } else {
-          const duplicate = await GroupModel.find({
-            urlSuffix: newGroupUrlSuffix
-          })
-            .lean()
-            .exec();
-          !duplicate
-            ? actions.push(
-                new Action(
-                  constants.ACTIONS.GROUP.EDIT_URLSUFFIX,
-                  newGroupUrlSuffix
+          let duplicate;
+          try {
+            duplicate = await GroupModel.findOne({
+              urlSuffix: newGroupUrlSuffix
+            })
+              .lean()
+              .exec();
+            console.log(duplicate);
+            !duplicate
+              ? actions.push(
+                  new Action(
+                    constants.ACTIONS.GROUP.EDIT_URLSUFFIX,
+                    newGroupUrlSuffix
+                  )
                 )
-              )
-            : errors.push(constants.ERRORS.GROUP_UPDATE.URLSUFFIX_DUPLICATE);
+              : errors.push(constants.ERRORS.GROUP_UPDATE.URLSUFFIX_DUPLICATE);
+          } catch (err) {
+            errors.push(err.message);
+          }
         }
       }
     }
@@ -267,7 +273,7 @@ class Validators {
     const errors = [],
       actions = [];
     if (
-      newGroupSettings.priceLimit &&
+      (newGroupSettings.priceLimit || newGroupSettings.priceLimit === 0) &&
       newGroupSettings.priceLimit !== oldGroupSettings.priceLimit
     ) {
       if (newGroupSettings.priceLimit === 0)
@@ -317,7 +323,6 @@ class Validators {
       actions = [];
     const deletedItems = arrayDiff(oldGroupItems, newGroupItems);
     const addedItems = arrayDiff(newGroupItems, oldGroupItems);
-    console.log(addedItems, deletedItems);
     for (const item of deletedItems) {
       if (item && item.referenceId) {
         actions.push(
@@ -382,9 +387,6 @@ class Validators {
 const groupUpdate = async (oldGroup: any, newGroup: any) => {
   const validationErrors: Array<String> = [],
     validationActions: Array<Object> = [];
-  // oof. let's go.
-  // validate name
-  // define helper function
   const appendResults = ({
     errors,
     actions
@@ -421,19 +423,20 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
       validationErrors.push(err.message);
     }
   if (Validators.exists(newGroup.permissions)) {
-    if (Validators.exists(newGroup.permissions.admin)) console.log();
-    appendResults(
-      Validators.validateAdminPermissions(
-        oldGroup.permissions.admin,
-        newGroup.permissions.admin
-      )
-    );
-    if (Validators.exists(newGroup.permissions.seller)) {
-      const results = Validators.validateSellerPermissions(
-        oldGroup.permissions.seller,
-        newGroup.permissions.seller
+    if (Validators.exists(newGroup.permissions.admin))
+      appendResults(
+        Validators.validateAdminPermissions(
+          oldGroup.permissions.admin,
+          newGroup.permissions.admin
+        )
       );
-      appendResults(results);
+    if (Validators.exists(newGroup.permissions.seller)) {
+      appendResults(
+        Validators.validateSellerPermissions(
+          oldGroup.permissions.seller,
+          newGroup.permissions.seller
+        )
+      );
     }
     if (Validators.exists(newGroup.permissions.buyer))
       appendResults(
@@ -451,8 +454,6 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
     appendResults(Validators.validateItems(oldGroup.items, newGroup.items));
   if (Validators.exists(newGroup.users))
     appendResults(Validators.validateUsers(oldGroup.items, newGroup.items));
-  console.log(oldGroup.settings.defaultRole === newGroup.settings.defaultRole);
-  console.log({ errors: validationErrors, actions: validationActions });
   return { errors: validationErrors, actions: validationActions };
 };
 
