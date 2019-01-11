@@ -5,6 +5,8 @@
 import { GroupModel } from '../schemas/group';
 import { ItemModel } from '../schemas/item';
 import constants from '../helpers/constants';
+import { IGroupItem } from '../interfaces/group';
+import { IItemReference } from '../interfaces/reference';
 const groupUpdateHandler = async (
   user: any,
   groupUser: any,
@@ -15,6 +17,7 @@ const groupUpdateHandler = async (
     errors = [];
   update.permissions = { ...oldGroup.permissions };
   update.settings = { ...oldGroup.settings };
+  console.log(actions);
   for (const action of actions) {
     let permissionsArray;
     switch (action.type) {
@@ -168,13 +171,30 @@ const groupUpdateHandler = async (
           groupUser.role === constants.ROLES.OWNER ||
           permissionsArray.indexOf(constants.PERMISSIONS.GROUP.ADD_ITEM) >= 0
         ) {
-          const itemsToAdd = action.payload.filter(
-            (item: { referenceId: string }) => {
-              return groupUser.items.indexOf(item) >= 0;
-            }
-          );
-          // TODO: cast items to arrray of IGroupItems
-          // TODO: push new items to item array of update.
+          const itemsToAdd = action.payload
+            .filter((payloadItem: IItemReference) => {
+              return (
+                !oldGroup.items.find((oldGroupItem: IGroupItem) => {
+                  return payloadItem.referenceId === oldGroupItem.referenceId;
+                }) &&
+                user.items.find((item: IItemReference) => {
+                  return (
+                    String(item.referenceId) === String(payloadItem.referenceId)
+                  );
+                })
+              );
+            })
+            .map((item: IItemReference) => {
+              return {
+                referenceId: item.referenceId,
+                addedAt: Date.now(),
+                ownerRole: groupUser.role
+              };
+            });
+          if (itemsToAdd.length > 0) {
+            if (!update.$push) update.$push = {};
+            update.$push.items = { $each: itemsToAdd };
+          }
         }
 
         break;
