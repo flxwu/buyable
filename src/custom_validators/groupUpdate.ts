@@ -321,10 +321,11 @@ class Validators {
   } => {
     const errors: Array<string> = [],
       actions = [];
-    const deletedItems = arrayDiff(oldGroupItems, newGroupItems).filter(
-      item => item && item.referenceId
-    );
-    const addedItems = arrayDiff(newGroupItems, oldGroupItems).filter(
+    const deletedItems = arrayReferenceDiff(
+      oldGroupItems,
+      newGroupItems
+    ).filter(item => item && item.referenceId);
+    const addedItems = arrayReferenceDiff(newGroupItems, oldGroupItems).filter(
       item => item && item.referenceId
     );
     if (deletedItems.length > 0) {
@@ -434,6 +435,11 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
 function arrayDiff(a: Array<any>, b: Array<any>) {
   return a.filter(function(i: Object) {
     return b.indexOf(i) < 0;
+  });
+}
+function arrayReferenceDiff(a: Array<any>, b: Array<any>) {
+  return a.filter(function(adata) {
+    return !b.find(bdata => adata.referenceId === bdata.referenceId);
   });
 }
 function arraysEqual(a: Array<any>, b: Array<any>) {

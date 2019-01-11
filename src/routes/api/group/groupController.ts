@@ -164,8 +164,12 @@ class GroupController<IController> {
     console.log('Duplicate Group: ', duplicate);
     if (!duplicate && errors.length == 0) {
       try {
+        // TODO: write function that appends all permission dependencies to permission arrays and outsource
+        const defaultAdminPermissions = [constants.PERMISSIONS.GROUP.ADD_ITEM];
+        const defaultSellerPermissions = [];
+        const defaultBuyerPermissions = [];
         // create permissions array
-
+        adminPermissions.push(...defaultAdminPermissions);
         const newGroup: IGroupModel = new GroupModel({
           name,
           description,
