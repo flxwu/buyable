@@ -1,15 +1,15 @@
 export interface IUserReference {
-    referenceId: string;
+  referenceId: string;
 }
 
 export interface IGroupMemberReference {
-    referenceId: string;
-    role: string;
+  referenceId: string;
+  role: string;
 }
 
 export interface IItemReference {
-    referenceId: string;
+  referenceId: string;
 }
 export interface IGroupReference {
-    referenceId: string;
+  referenceId: string;
 }

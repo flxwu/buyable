@@ -13,6 +13,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const database_1 = require("../helpers/database");
 exports.UserSchema = new mongoose_1.Schema({
     username: {
         type: String,
@@ -34,18 +35,17 @@ exports.UserSchema = new mongoose_1.Schema({
     createdAt: String
 });
 exports.UserSchema.pre('save', function (next) {
-    const self = this;
-    exports.UserModel.find({ $or: [{ username: self.username }, { email: self.email }] }, function (err, docs) {
-        if (!docs.length) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const isDuplicate = yield database_1.isUserDuplicate([this.username, this.email], ['username', 'email']);
+        if (isDuplicate) {
             const now = new Date();
-            if (!self.createdAt) {
-                self.createdAt = now.getTime();
+            if (!this.createdAt) {
+                this.createdAt = now;
             }
             next();
         }
         else {
-            console.log('User exists: ', self.username);
-            next(new Error('User exists!'));
+            next(new Error('Username or email already exists'));
         }
     });
 });

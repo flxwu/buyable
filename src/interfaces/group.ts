@@ -30,7 +30,7 @@ export interface IGroupSettings {
   priceLimit: number;
 }
 
-export interface IGroupItem {
-  referenceId: IItemReference;
-  addedAt: string;
+export interface IGroupItem extends IItemReference {
+  addedAt: Number;
+  ownerRole: string;
 }

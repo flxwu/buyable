@@ -1,6 +1,7 @@
 import { Document, Schema, Model, model } from 'mongoose';
 import { IUser } from '../interfaces/user';
 import bcrypt from 'bcrypt';
+import { isUserDuplicate } from '../helpers/database';
 
 export interface IUserModel extends IUser, Document {
   _id: any | string;
@@ -27,23 +28,20 @@ export const UserSchema: Schema = new Schema({
   createdAt: String
 });
 
-UserSchema.pre('save', function(next: any) {
-  const self = this;
-  UserModel.find(
-    { $or: [{ username: self.username }, { email: self.email }] },
-    function(err, docs) {
-      if (!docs.length) {
-        const now = new Date();
-        if (!self.createdAt) {
-          self.createdAt = now.getTime();
-        }
-        next();
-      } else {
-        console.log('User exists: ', self.username);
-        next(new Error('User exists!'));
-      }
-    }
+UserSchema.pre('save', async function(next: any) {
+  const isDuplicate = await isUserDuplicate(
+    [this.username, this.email],
+    ['username', 'email']
   );
+  if (isDuplicate) {
+    const now = new Date();
+    if (!this.createdAt) {
+      this.createdAt = now;
+    }
+    next();
+  } else {
+    next(new Error('Username or email already exists'));
+  }
 });
 
 UserSchema.methods.verifyPassword = async function verifyPassword(
