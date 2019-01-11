@@ -136,6 +136,44 @@ class ProfileGroups extends React.Component {
     );
   }
 
+  addGroupForm = submitErrors => (
+    <FormContainer>
+      <TextInputField
+        label="Group name"
+        placeholder="cucumber-fans"
+        onChange={this.onGroupNameFieldChange}
+        value={this.state.groupNameField}
+      />
+      <TextInputField
+        label="Description"
+        placeholder="This is a group for diehard fans of yodelling cucumbers"
+        onChange={this.onGroupDescriptionFieldChange}
+        value={this.state.groupDescriptionField}
+      />
+      <Box>
+        <TextInputField
+          label="URL Suffix"
+          placeholder="cucumberfangroup"
+          prefix="buyable.io/groups/"
+          onChange={this.onGroupUrlSuffixFieldChange}
+          value={this.state.groupUrlSuffixField}
+        />
+        <GenerateNewSuffixCTA
+          onClick={() =>
+            this.setState({
+              groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`
+            })
+          }>
+          Generate new
+        </GenerateNewSuffixCTA>
+      </Box>
+      {this.permissionsForm()}
+      {this.settingsForm()}
+      {submitErrors && <ErrorMessage text={submitErrors} />}
+      <AddGroupCTA label="Add Group" onClick={this.onAddGroup} />
+    </FormContainer>
+  );
+
   render() {
     const { showAddGroupForm, submitErrors } = this.state;
     return (
@@ -150,46 +188,11 @@ class ProfileGroups extends React.Component {
           label1="Add Group"
           label2="Close"
         />
-        {showAddGroupForm && (
-          <FormContainer>
-            <TextInputField
-              label="Group name"
-              placeholder="cucumber-fans"
-              onChange={this.onGroupNameFieldChange}
-              value={this.state.groupNameField}
-            />
-            <TextInputField
-              label="Description"
-              placeholder="This is a group for diehard fans of yodelling cucumbers"
-              onChange={this.onGroupDescriptionFieldChange}
-              value={this.state.groupDescriptionField}
-            />
-            <Box>
-              <TextInputField
-                label="URL Suffix"
-                placeholder="cucumberfangroup"
-                prefix="buyable.io/groups/"
-                onChange={this.onGroupUrlSuffixFieldChange}
-                value={this.state.groupUrlSuffixField}
-              />
-              <GenerateNewSuffixCTA
-                onClick={() =>
-                  this.setState({
-                    groupUrlSuffixField: `buyable.io/group/${shortid.generate()}`
-                  })
-                }>
-                Generate new
-              </GenerateNewSuffixCTA>
-            </Box>
-            {this.permissionsForm()}
-            {this.settingsForm()}
-            {submitErrors && <ErrorMessage text={submitErrors} />}
-            <AddGroupCTA label="Add Group" onClick={this.onAddGroup} />
-          </FormContainer>
-        )}
+        {showAddGroupForm && this.addGroupForm(submitErrors)}
       </Box>
     );
   }
+
   onGroupNameFieldChange = e => {
     this.setState({ groupNameField: e.target.value });
   };
