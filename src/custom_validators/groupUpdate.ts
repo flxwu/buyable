@@ -347,9 +347,10 @@ class Validators {
   } => {
     const errors: Array<String> = [],
       actions = [];
-    const deletedUsers = arrayDiff(oldGroupUsers, newGroupUsers).filter(
-      user => user && user.referenceId
-    );
+    const deletedUsers = arrayReferenceDiff(
+      oldGroupUsers,
+      newGroupUsers
+    ).filter(user => user && user.referenceId);
     if (deletedUsers.length > 0) {
       actions.push(
         new Action(constants.ACTIONS.GROUP.DELETE_USERS, deletedUsers)
@@ -428,7 +429,7 @@ const groupUpdate = async (oldGroup: any, newGroup: any) => {
   if (Validators.exists(newGroup.items))
     appendResults(Validators.validateItems(oldGroup.items, newGroup.items));
   if (Validators.exists(newGroup.users))
-    appendResults(Validators.validateUsers(oldGroup.items, newGroup.items));
+    appendResults(Validators.validateUsers(oldGroup.users, newGroup.users));
   return { errors: validationErrors, actions: validationActions };
 };
 

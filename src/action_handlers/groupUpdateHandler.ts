@@ -2,11 +2,11 @@
 // check if action is allowed
 // perform action
 // save model or add errors
-import { GroupModel } from '../schemas/group';
-import { ItemModel } from '../schemas/item';
+import { GroupModel, GroupSchema } from '../schemas/group';
+import { ItemModel, ItemSchema } from '../schemas/item';
 import constants from '../helpers/constants';
 import { IGroupItem } from '../interfaces/group';
-import { IItemReference } from '../interfaces/reference';
+import { IItemReference, IGroupMemberReference } from '../interfaces/reference';
 const groupUpdateHandler = async (
   user: any,
   groupUser: any,
@@ -133,22 +133,26 @@ const groupUpdateHandler = async (
         break;
       case constants.ACTIONS.GROUP.DELETE_ITEMS:
         // TODO: check all permissions
-        if (user.items.indexOf(action.payload) >= 0) {
-          if (!update.items) update.items = [];
-          update.items.push({
-            $pull: { items: { referenceId: action.payload.referenceId } }
-          });
-        } else if (
-          groupUser.role === constants.ROLES.OWNER ||
-          groupUser.role === constants.ROLES.ADMIN
-        ) {
-          if (!update.items) update.items = [];
-          update.items.push({
-            $pull: { items: { referenceId: action.payload.referenceId } }
-          });
-        } else {
-          errors.push(constants.ERRORS.GROUP_UPDATE.UNPRIVILEGED);
-        }
+        const [ownItems, otherItems] = action.payload
+          .filter((payloadItem: IItemReference) => {
+            return oldGroup.items.find((oldGroupItem: IGroupItem) => {
+              return payloadItem.referenceId === oldGroupItem.referenceId;
+            });
+          })
+          .reduce(
+            ([pass, fail], elem) => {
+              return user.items.find((item: IItemReference) => {
+                return String(item.referenceId) === String(elem.referenceId);
+              })
+                ? [[...pass, elem], fail]
+                : [pass, [...fail, elem]];
+            },
+            [[], []]
+          );
+        console.log('OWN' + console.log(ownItems));
+        console.log('OTHER' + console.log(otherItems));
+        if (!update.$pullAll) update.$pullAll = {};
+        update.$pullAll.items = [...ownItems, otherItems];
         break;
       case constants.ACTIONS.GROUP.ADD_ITEMS:
         switch (groupUser.role) {
@@ -175,7 +179,10 @@ const groupUpdateHandler = async (
             .filter((payloadItem: IItemReference) => {
               return (
                 !oldGroup.items.find((oldGroupItem: IGroupItem) => {
-                  return payloadItem.referenceId === oldGroupItem.referenceId;
+                  return (
+                    String(payloadItem.referenceId) ===
+                    String(oldGroupItem.referenceId)
+                  );
                 }) &&
                 user.items.find((item: IItemReference) => {
                   return (
@@ -191,14 +198,28 @@ const groupUpdateHandler = async (
                 ownerRole: groupUser.role
               };
             });
+          console.log(itemsToAdd);
           if (itemsToAdd.length > 0) {
             if (!update.$push) update.$push = {};
             update.$push.items = { $each: itemsToAdd };
           }
         }
-
         break;
       case constants.ACTIONS.GROUP.DELETE_USERS:
+        // TODO: check permissions
+        console.log(action.payload);
+        const usersToDelete = oldGroup.users.filter(
+          (oldGroupUser: IGroupMemberReference) => {
+            return action.payload.find(
+              (payloadUser: IGroupMemberReference) =>
+                String(oldGroupUser.referenceId) ===
+                String(payloadUser.referenceId)
+            );
+          }
+        );
+        console.log('USERS TO DELETE' + usersToDelete);
+        if (!update.$pullAll) update.$pullAll = {};
+        update.$pullAll.users = usersToDelete;
         break;
     }
   }
