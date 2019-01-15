@@ -5,7 +5,7 @@ import { Formik, Form } from 'formik';
 import axios from 'axios';
 import * as yup from 'yup';
 
-import TextButtonCTA from '../form/CTAs/TextButtonCTA';
+import TextButtonCTA from '../UIComponents/forms/CTAs/TextButtonCTA';
 import ErrorText from '../UIComponents/forms/ErrorMessage';
 import TextInputField from '../UIComponents/forms/TextInputField';
 import FormContainer from '../UIComponents/forms/FormContainer';
