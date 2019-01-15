@@ -11,4 +11,7 @@ router.get('/', userController.GET);
 
 router.patch('/', userController.PATCH);
 
+router.get('/items', userController.itemsGET);
+
+router.get('/groups', userController.groupsGET);
 export default router;

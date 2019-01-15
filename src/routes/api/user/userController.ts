@@ -4,6 +4,7 @@ import * as yup from 'yup';
 
 import { UserModel, IUserModel } from '../../../schemas/user';
 import { GroupModel } from '../../../schemas/group';
+import { ItemModel } from '../../../schemas/item';
 import { IGroupReference } from '../../../interfaces/reference';
 import { IUser } from '../../../interfaces/user';
 import { isUserDuplicate } from '../../../helpers/database';
@@ -162,6 +163,20 @@ class Controller<IController> {
       reqUser
     );
     res.json(updatedDoc);
+  }
+  async itemsGET(req: any, res: any, next: any): Promise<any> {
+    const items = req.user.items.map(item => item.referenceId);
+    const userItems = await ItemModel.find({ _id: { $in: items } })
+      .lean()
+      .exec();
+    res.json({ items: userItems });
+  }
+  async groupsGET(req: any, res: any, next: any): Promise<any> {
+    const group = req.user.groups.map(group => group.referenceId);
+    const userGroups = await GroupModel.find({ _id: { $in: group } })
+      .lean()
+      .exec();
+    res.json({ groups: userGroups });
   }
 }
 
