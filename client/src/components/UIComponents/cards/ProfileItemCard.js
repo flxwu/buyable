@@ -34,6 +34,7 @@ const CardRight = styled.div`
   width: 100%;
   align-items: flex-start;
   align-self: stretch;
+  margin: 1vh;
 `;
 
 const ProfileItemCardImage = styled.img`
@@ -68,7 +69,8 @@ const ItemCardContainer = styled(Box)`
   border: 1px solid grey;
   box-shadow: 1px 1px 5px #888888;
   width: 50vw;
-  margin: 10vh;
+  margin-top: 1vh;
+  margin-bottom: 1vh;
   > * {
     display: flex;
   }
