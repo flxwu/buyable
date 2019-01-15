@@ -9,6 +9,7 @@ import TextButtonCTA from '../UIComponents/forms/CTAs/TextButtonCTA';
 import ErrorText from '../UIComponents/forms/ErrorMessage';
 import TextInputField from '../UIComponents/forms/TextInputField';
 import FormContainer from '../UIComponents/forms/FormContainer';
+import ProfileItemCard from '../UIComponents/cards/ProfileItemCard';
 class ProfileItems extends React.Component {
   state = { showAddItemForm: true };
 
@@ -17,10 +18,11 @@ class ProfileItems extends React.Component {
     return (
       <Box fill align="center" justify="center">
         <Heading level="2">Items</Heading>
+        <ProfileItemCard />
         <TextButtonCTA
           onClick={this.showAddItemForm}
-          label1="Add Item"
-          label2="Close"
+          label1="Close"
+          label2="Add item"
         />
         {showAddItemForm && this.addItemForm()}
       </Box>
