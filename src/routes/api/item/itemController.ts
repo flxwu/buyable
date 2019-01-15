@@ -1,6 +1,7 @@
 import { IUserReference } from '../../../interfaces/reference';
 
 import { ItemModel, IItemModel } from '../../../schemas/item';
+import { UserModel, IUserModel } from '../../../schemas/user';
 import { IItem } from '../../../interfaces/item';
 
 interface IController {
@@ -16,6 +17,7 @@ class Controller<IController> {
     // validate that user is logged in
     if (owner == null || owner._id == null) {
       res.status(401).json({ error: 'Please login to post new items!' });
+      return;
     }
 
     // validate post body
@@ -27,6 +29,7 @@ class Controller<IController> {
       typeof amount !== 'number'
     ) {
       res.status(400).json({ error: 'Item form data invalid' });
+      return;
     }
 
     const createItem = async () => {
@@ -44,6 +47,13 @@ class Controller<IController> {
       let result;
       try {
         result = await item.save();
+        const update = { $push: { items: { referenceId: result._id } } };
+        const newUser = await UserModel.findByIdAndUpdate(
+          req.user._id,
+          update,
+          { new: true }
+        ).exec();
+        req.user = newUser;
       } catch (err) {
         throw err;
       }
@@ -52,8 +62,8 @@ class Controller<IController> {
     try {
       const result = await createItem();
       res.status(200).json({ item: result });
-    } catch (error) {
-      res.status(500).json({ error });
+    } catch (errors) {
+      res.status(500).json({ errors });
     }
   }
 

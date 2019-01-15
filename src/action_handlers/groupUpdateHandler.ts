@@ -5,6 +5,8 @@
 import { GroupModel } from '../schemas/group';
 import { ItemModel } from '../schemas/item';
 import constants from '../helpers/constants';
+import { IGroupItem } from '../interfaces/group';
+import { IItemReference } from '../interfaces/reference';
 const groupUpdateHandler = async (
   user: any,
   groupUser: any,
@@ -13,6 +15,9 @@ const groupUpdateHandler = async (
 ): Promise<Object> => {
   const update: { [k: string]: any } = {},
     errors = [];
+  update.permissions = { ...oldGroup.permissions };
+  update.settings = { ...oldGroup.settings };
+  console.log(actions);
   for (const action of actions) {
     let permissionsArray;
     switch (action.type) {
@@ -68,27 +73,33 @@ const groupUpdateHandler = async (
         if (groupUser.role === constants.ROLES.OWNER)
           update.permissions.seller = action.payload;
         break;
-      case constants.ACTIONS.GROUP.EDIT_USER_PERMISSIONS:
+      case constants.ACTIONS.GROUP.EDIT_BUYER_PERMISSIONS:
         if (groupUser.role === constants.ROLES.OWNER)
-          update.permissions.user = action.payload;
+          update.permissions.buyer = action.payload;
         break;
       case constants.ACTIONS.GROUP.EDIT_SETTINGS_PRICE_LIMIT:
         switch (groupUser.role) {
           case constants.ROLES.ADMIN:
             permissionsArray = oldGroup.permissions.admin;
+            break;
           case constants.ROLES.SELLER:
             permissionsArray = oldGroup.permissions.seller;
+            break;
           case constants.ROLES.BUYER:
-            permissionsArray = oldGroup.permissions.user;
+            permissionsArray = oldGroup.permissions.buyer;
+            break;
           case constants.ROLES.OWNER:
-            permissionsArray = oldGroup.permissions.owner;
+            permissionsArray = [];
+            break;
           default:
             errors.push(constants.ERRORS.GROUP_UPDATE.UNPRIVILEGED);
         }
         if (
-          errors.length === 0 &&
-          permissionsArray.indexOf(constants.PERMISSIONS.GROUP.EDIT_SETTINGS) >=
-            0
+          (errors.length === 0 &&
+            permissionsArray.indexOf(
+              constants.PERMISSIONS.GROUP.EDIT_SETTINGS
+            ) >= 0) ||
+          groupUser.role === constants.ROLES.OWNER
         ) {
           update.settings.priceLimit = action.payload;
         }
@@ -97,24 +108,31 @@ const groupUpdateHandler = async (
         switch (groupUser.role) {
           case constants.ROLES.ADMIN:
             permissionsArray = oldGroup.permissions.admin;
+            break;
           case constants.ROLES.SELLER:
             permissionsArray = oldGroup.permissions.seller;
+            break;
           case constants.ROLES.BUYER:
-            permissionsArray = oldGroup.permissions.user;
+            permissionsArray = oldGroup.permissions.buyer;
+            break;
           case constants.ROLES.OWNER:
-            permissionsArray = oldGroup.permissions.owner;
+            permissionsArray = [];
+            break;
           default:
             errors.push(constants.ERRORS.GROUP_UPDATE.UNPRIVILEGED);
         }
         if (
-          errors.length === 0 &&
-          permissionsArray.indexOf(constants.PERMISSIONS.GROUP.EDIT_SETTINGS) >=
-            0
+          (errors.length === 0 &&
+            permissionsArray.indexOf(
+              constants.PERMISSIONS.GROUP.EDIT_SETTINGS
+            ) >= 0) ||
+          groupUser.role === constants.ROLES.OWNER
         ) {
           update.settings.defaultRole = action.payload;
         }
         break;
-      case constants.ACTIONS.GROUP.DELETE_ITEM:
+      case constants.ACTIONS.GROUP.DELETE_ITEMS:
+        // TODO: check all permissions
         if (user.items.indexOf(action.payload) >= 0) {
           if (!update.items) update.items = [];
           update.items.push({
@@ -132,19 +150,65 @@ const groupUpdateHandler = async (
           errors.push(constants.ERRORS.GROUP_UPDATE.UNPRIVILEGED);
         }
         break;
-      case constants.ACTIONS.GROUP.ADD_ITEM:
+      case constants.ACTIONS.GROUP.ADD_ITEMS:
+        switch (groupUser.role) {
+          case constants.ROLES.ADMIN:
+            permissionsArray = oldGroup.permissions.admin;
+            break;
+          case constants.ROLES.SELLER:
+            permissionsArray = oldGroup.permissions.seller;
+            break;
+          case constants.ROLES.BUYER:
+            permissionsArray = oldGroup.permissions.buyer;
+            break;
+          case constants.ROLES.OWNER:
+            permissionsArray = [];
+            break;
+          default:
+            errors.push(constants.ERRORS.GROUP_UPDATE.UNPRIVILEGED);
+        }
+        if (
+          groupUser.role === constants.ROLES.OWNER ||
+          permissionsArray.indexOf(constants.PERMISSIONS.GROUP.ADD_ITEM) >= 0
+        ) {
+          const itemsToAdd = action.payload
+            .filter((payloadItem: IItemReference) => {
+              return (
+                !oldGroup.items.find((oldGroupItem: IGroupItem) => {
+                  return payloadItem.referenceId === oldGroupItem.referenceId;
+                }) &&
+                user.items.find((item: IItemReference) => {
+                  return (
+                    String(item.referenceId) === String(payloadItem.referenceId)
+                  );
+                })
+              );
+            })
+            .map((item: IItemReference) => {
+              return {
+                referenceId: item.referenceId,
+                addedAt: Date.now(),
+                ownerRole: groupUser.role
+              };
+            });
+          if (itemsToAdd.length > 0) {
+            if (!update.$push) update.$push = {};
+            update.$push.items = { $each: itemsToAdd };
+          }
+        }
+
         break;
-      case constants.ACTIONS.GROUP.DELETE_USER:
+      case constants.ACTIONS.GROUP.DELETE_USERS:
         break;
     }
   }
   if (errors.length > 0) return { errors };
   // update group;
   try {
-    const newGroup = await GroupModel.findOneAndUpdate(
-      oldGroup.urlSuffix,
-      update
-    );
+    const newGroup = await GroupModel.findByIdAndUpdate(oldGroup._id, update, {
+      new: true
+    }).exec();
+    console.log(newGroup);
     return { errors: null, newGroup };
   } catch (err) {
     return { errors: err.message, newGroup: null };
