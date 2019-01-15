@@ -6,9 +6,9 @@ import axios from 'axios';
 import * as yup from 'yup';
 
 import TextButtonCTA from '../form/CTAs/TextButtonCTA';
-import ErrorText from '../form/ErrorMessage';
-import TextInputField from '../form/TextInputField';
-import FormContainer from '../form/FormContainer';
+import ErrorText from '../UIComponents/forms/ErrorMessage';
+import TextInputField from '../UIComponents/forms/TextInputField';
+import FormContainer from '../UIComponents/forms/FormContainer';
 class ProfileItems extends React.Component {
   state = { showAddItemForm: true };
 
