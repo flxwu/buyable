@@ -9,6 +9,7 @@ import TextButtonCTA from '../form/CTAs/TextButtonCTA';
 import ErrorText from '../form/ErrorMessage';
 import TextInputField from '../form/TextInputField';
 import FormContainer from '../form/FormContainer';
+import DropMultiSelect from '../form/DropMultiSelect';
 class ProfileItems extends React.Component {
   state = { showAddItemForm: true };
 
@@ -101,6 +102,7 @@ class ProfileItems extends React.Component {
               {errors.amount && touched.amount && (
                 <ErrorText text={errors.amount} />
               )}
+              <DropMultiSelect />
               <AddItemCTA
                 align="center"
                 type="submit"
