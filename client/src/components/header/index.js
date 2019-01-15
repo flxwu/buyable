@@ -31,7 +31,7 @@ const Header = ({
     justify="between"
     pad={{
       horizontal: 'medium',
-      vertical: 'small'
+      vertical: 'xsmall'
     }}>
     <LeftHeader direction="row">
       <Link>Timeline</Link>
