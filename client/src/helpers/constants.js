@@ -81,3 +81,7 @@ export const ERRORS = {
     GROUP_CANNOT_REMOVE: 'GROUP_CANNOT_REMOVE'
   }
 };
+
+export const COLORS = {
+  primary: '#7D4CDB'
+};
