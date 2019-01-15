@@ -3,7 +3,7 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { Box, Heading, Button, Text } from 'grommet';
 
-import TextInputField from '../form/TextInputField';
+import TextInputField from '../UIComponents/forms/TextInputField';
 
 import { connect } from 'react-redux';
 import { addUser } from '../../redux/actions/user';
