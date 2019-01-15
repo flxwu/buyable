@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box, Button, Menu } from 'grommet';
+import { Box, Button, Menu, Clock } from 'grommet';
 import { Camera } from 'grommet-icons';
 import { withRouter } from 'react-router-dom';
 
@@ -25,7 +25,6 @@ const Header = ({
   logoutFromStore
 }) => (
   <HeaderContainer
-    gridArea="header"
     direction="row"
     align="center"
     justify="between"
@@ -38,6 +37,7 @@ const Header = ({
       <Link>Groups</Link>
       <Link>Items</Link>
     </LeftHeader>
+    <Clock type="digital" />
     <RightHeader direction="row">
       {user && (
         <Button
