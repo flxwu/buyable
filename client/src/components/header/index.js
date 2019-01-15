@@ -1,8 +1,10 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Box, Button, Menu } from 'grommet';
-import { Camera, Menu as MenuIcon } from 'grommet-icons';
+import { Camera } from 'grommet-icons';
 import { withRouter } from 'react-router-dom';
+
+import Link from '../UIComponents/Link';
 
 import { connect } from 'react-redux';
 import {
@@ -15,7 +17,6 @@ import { toggleModal } from '../../redux/actions/modals';
 import { MODAL_IDS } from '../../helpers/constants';
 
 const Header = ({
-  toggleSideBar,
   /* react-router */
   history,
   /* redux */
@@ -32,15 +33,17 @@ const Header = ({
       horizontal: 'medium',
       vertical: 'small'
     }}>
-    <Button onClick={toggleSideBar}>
-      <MenuIcon />
-    </Button>
+    <LeftHeader direction="row">
+      <Link>Timeline</Link>
+      <Link>Groups</Link>
+      <Link>Items</Link>
+    </LeftHeader>
     <RightHeader direction="row">
       {user && (
         <Button
           icon={<Camera />}
           label="Sell Product"
-          onClick={() => showModal(MODAL_IDS.NEW_PRODUCT)}
+          onClick={() => history.push('/profile/items')}
         />
       )}
       {!user && (
@@ -100,6 +103,14 @@ const HeaderContainer = styled(Box)`
 `;
 
 const RightHeader = styled(Box)`
+  padding: 0px 10px;
+  align-items: center;
+  > * {
+    margin: 10px;
+  }
+`;
+
+const LeftHeader = styled(Box)`
   padding: 0px 10px;
   align-items: center;
   > * {
