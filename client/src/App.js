@@ -3,7 +3,7 @@ import { Box } from 'grommet';
 import { Route } from 'react-router-dom';
 import Header from './components/header';
 import NewProductModal from './components/newProductModal';
-import Main from './components/main';
+import { Main as MainTimeline } from './components/timelines';
 import Profile from './components/profile';
 import AuthModal from './components/authModal';
 import { MODAL_IDS } from './helpers/constants';
@@ -36,11 +36,11 @@ class App extends React.Component {
     return (
       <Box fill>
         <Header />
-        <Box gridArea="main" align="center" justify="center">
-          <Route exact path="/" component={Main} />
+        <Box align="center" justify="center">
+          <Route exact path="/" component={MainTimeline} />
           <Route
             path="/profile"
-            component={checkForRestrictedPage(Profile, Main, loggedIn)}
+            component={checkForRestrictedPage(Profile, MainTimeline, loggedIn)}
           />
         </Box>
         {this.currentModal(modal_id)}
