@@ -3,9 +3,9 @@ import { connect } from 'react-redux';
 import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
 import { updateUser, checkUserAuthenticated } from '../../redux/actions/user';
 import { Text, Heading, Box, Button } from 'grommet';
-import TextInputField from '../form/TextInputField';
+import TextInputField from '../UIComponents/forms/TextInputField';
 import styled from 'styled-components';
-import FormContainer from '../form/FormContainer';
+import FormContainer from '../UIComponents/forms/FormContainer';
 class ProfileMain extends React.Component {
   constructor(props) {
     super(props);
@@ -36,13 +36,13 @@ class ProfileMain extends React.Component {
               Profile
             </Heading>
             <TextInputField
-            label="Username"
+              label="Username"
               value={usernameField || user.username}
               onChange={this.onUsernameFieldChange}
             />
             <TextInputField
-            label="Email"
-            type="email"
+              label="Email"
+              type="email"
               value={emailField || user.email}
               onChange={this.onEmailFieldChange}
             />

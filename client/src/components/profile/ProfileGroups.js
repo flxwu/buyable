@@ -4,10 +4,10 @@ import shortid from 'shortid';
 import { Box, Heading, Text, CheckBox, Select, Button } from 'grommet';
 import styled from 'styled-components';
 
-import TextInputField from '../form/TextInputField';
-import ErrorMessage from '../form/ErrorMessage';
-import FormContainer from '../form/FormContainer';
-import TextButtonCTA from '../form/CTAs/TextButtonCTA';
+import TextInputField from '../UIComponents/forms/TextInputField';
+import ErrorMessage from '../UIComponents/forms/ErrorMessage';
+import FormContainer from '../UIComponents/forms/FormContainer';
+import TextButtonCTA from '../UIComponents/forms/CTAs/TextButtonCTA';
 
 import { PERMISSIONS } from '../../helpers/constants';
 import { PERMISSIONS as PERMISSIONS_LABELS, ROLES } from '../../helpers/labels';
