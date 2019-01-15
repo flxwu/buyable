@@ -17,15 +17,9 @@ interface IController {
 class GroupController<IController> {
   public async newPOST(req: any, res: any, next: any): Promise<any> {
     const errors = [];
-    const {
-      name,
-      urlSuffix,
-      pictureURL,
-      description,
-      permissions,
-      settings
-    } = req.body;
-    let password = req.body.password;
+    const { name, pictureURL, description, permissions, settings } = req.body;
+    let { password, urlSuffix } = req.body;
+    urlSuffix = String(urlSuffix).replace(/[^a-z0-9]/gi, '');
     const owner = { referenceId: req.user._id };
     const ownerUser = {
       referenceId: req.user._id,
@@ -170,8 +164,12 @@ class GroupController<IController> {
     console.log('Duplicate Group: ', duplicate);
     if (!duplicate && errors.length == 0) {
       try {
+        // TODO: write function that appends all permission dependencies to permission arrays and outsource
+        const defaultAdminPermissions = [constants.PERMISSIONS.GROUP.ADD_ITEM];
+        const defaultSellerPermissions = [];
+        const defaultBuyerPermissions = [];
         // create permissions array
-
+        adminPermissions.push(...defaultAdminPermissions);
         const newGroup: IGroupModel = new GroupModel({
           name,
           description,
@@ -219,26 +217,19 @@ class GroupController<IController> {
     // otherwise, send error array or do nothing
     const content_type = req.headers['content-type'];
     if (content_type && content_type.indexOf('application/json') === 0) {
-      const { group, urlSuffix, _id } = req.body;
+      const group = req.body;
       const oldGroup = JSON.parse(
         JSON.stringify(
-          urlSuffix
-            ? await GroupModel.findOne({
-                urlSuffix
-              })
-                .lean()
-                .exec()
-            : await GroupModel.findOne({
-                _id
-              })
-                .lean()
-                .exec()
+          await GroupModel.findById(group._id)
+            .lean()
+            .exec()
         )
       );
       let isMember = false,
         groupUser;
-      for (const user of group.users) {
-        if (user.referenceId === req.user._id) isMember = true;
+      const reqUserId = String(req.user._id);
+      for (const user of oldGroup.users) {
+        if (user.referenceId === reqUserId) isMember = true;
         groupUser = user;
       }
       if (isMember) {
@@ -247,14 +238,13 @@ class GroupController<IController> {
           if (errors.length === 0) {
             if (actions.length > 0) {
               // perform actions
-              const { errors, newGroup } = await groupUpdateHandler(
+              const { errors, newGroup }: any = await groupUpdateHandler(
                 req.user,
                 groupUser,
                 oldGroup,
                 actions
               );
-              res.json(errors, newGroup);
-              if (errors) {
+              if (!errors) {
                 // success
                 res.status(200).json({ group: newGroup });
               } else {
@@ -267,7 +257,7 @@ class GroupController<IController> {
             }
           } else {
             // group validation returned errors
-            res.json({ errors });
+            res.status(500).json({ errors });
           }
         } else {
           // group (specified in req.body.urlSuffix or _id) doesn't exist
@@ -277,12 +267,12 @@ class GroupController<IController> {
         }
       } else {
         // user is not in the group he's editing
-        res.status(401).send('UNAUTHORIZED');
+        res.status(401).json({ errors: ['NOT MEMBER OF GROUP'] });
       }
     } else {
       // content-type is not application json
       res.status(400).json({
-        errors: ['BAD REQUEST']
+        errors: ['CONTENT-TYPE NOT APPLICATION/JSON']
       });
     }
   }
