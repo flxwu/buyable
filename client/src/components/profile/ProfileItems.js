@@ -18,13 +18,15 @@ class ProfileItems extends React.Component {
     return (
       <Box fill align="center" justify="center">
         <Heading level="2">Items</Heading>
-        <ProfileItemCard />
         <TextButtonCTA
           onClick={this.showAddItemForm}
           label1="Close"
           label2="Add item"
         />
         {showAddItemForm && this.addItemForm()}
+        <ProfileItemCard />
+        <ProfileItemCard />
+        <ProfileItemCard />
       </Box>
     );
   }
