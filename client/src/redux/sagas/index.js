@@ -4,9 +4,7 @@ import {
   CHECK_USER_REQUESTED,
   DELETE_USER_REQUESTED,
   UPDATE_USER_REQUESTED,
-  GET_USER_GROUPS_REQUESTED,
-  GET_USER_GROUPS_SUCCEEDED,
-  GET_USER_GROUPS_FAILED
+  GET_USER_GROUPS_REQUESTED
 } from '../actions/actionTypes';
 
 // worker Saga: will be fired on UPDATE_USER_REQUESTED actions
@@ -42,9 +40,9 @@ function* checkUser(action) {
 function* getUserGroups(action) {
   try {
     const { groups } = yield call(Api.getUserGroups);
-    yield put({ type: GET_USER_GROUPS_SUCCEEDED, payload: groups });
+    yield put({ type: 'GET_USER_GROUPS_SUCCEEDED', payload: { groups } });
   } catch ({ response }) {
-    yield put({ type: GET_USER_GROUPS_FAILED, errors: response.data.errors });
+    yield put({ type: 'GET_USER_GROUPS_FAILED', errors: response.data.errors });
   }
 }
 /*
