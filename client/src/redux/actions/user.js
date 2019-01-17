@@ -2,8 +2,9 @@ import {
   ADD_USER,
   UPDATE_USER_REQUESTED,
   DELETE_USER_REQUESTED,
-  CHECK_USER_REQUESTED
-} from "./actionTypes";
+  CHECK_USER_REQUESTED,
+  GET_USER_GROUPS_REQUESTED
+} from './actionTypes';
 
 export const addUser = userData => ({
   type: ADD_USER,
@@ -22,5 +23,10 @@ export const deleteUser = () => ({
 
 export const checkUserAuthenticated = () => ({
   type: CHECK_USER_REQUESTED,
+  payload: {}
+});
+
+export const getUserGroups = () => ({
+  type: GET_USER_GROUPS_REQUESTED,
   payload: {}
 });
