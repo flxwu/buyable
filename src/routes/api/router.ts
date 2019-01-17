@@ -3,6 +3,9 @@ import { Router } from 'express';
 import itemRouter from './item/itemRouter';
 import userRouter from './user/userRouter';
 import groupRouter from './group/groupRouter';
+
+import timelineRouter from './timeline/timelineRouter';
+
 import authRouter from './authRouter';
 import experimentalRouter from './experimentalRouter';
 
@@ -11,6 +14,8 @@ const router: Router = Router();
 router.use('/item', itemRouter);
 router.use('/user', userRouter);
 router.use('/group', groupRouter);
+router.use('/timeline', timelineRouter);
+
 router.use('/auth', authRouter);
 
 router.use('/beta', experimentalRouter);
