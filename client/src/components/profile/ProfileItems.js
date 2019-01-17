@@ -12,6 +12,9 @@ import FormContainer from '../UIComponents/forms/FormContainer';
 import DropMultiSelect from '../UIComponents/forms/DropMultiSelect';
 import ProfileItemCard from '../UIComponents/cards/ProfileItemCard';
 
+import { connect } from 'react-redux';
+import { getCurrentUserGroups } from '../../redux/selectors';
+
 class ProfileItems extends React.Component {
   state = { showAddItemForm: true };
 
@@ -34,6 +37,7 @@ class ProfileItems extends React.Component {
   }
 
   addItemForm() {
+    const { groups } = this.props;
     return (
       <Formik
         initialValues={{
@@ -107,7 +111,7 @@ class ProfileItems extends React.Component {
               {errors.amount && touched.amount && (
                 <ErrorText text={errors.amount} />
               )}
-              <DropMultiSelect />
+              <DropMultiSelect items={groups.map(g => g.name)} />
               <AddItemCTA
                 align="center"
                 type="submit"
@@ -131,4 +135,6 @@ const AddItemCTA = styled(Button)`
   align-self: center;
 `;
 
-export default ProfileItems;
+export default connect(state => ({ groups: getCurrentUserGroups(state) }))(
+  ProfileItems
+);
