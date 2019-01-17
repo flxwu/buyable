@@ -4,17 +4,22 @@ import styled from 'styled-components';
 import { Formik, Form } from 'formik';
 import axios from 'axios';
 import * as yup from 'yup';
+import { connect } from 'react-redux';
 
 import TextButtonCTA from '../UIComponents/forms/CTAs/TextButtonCTA';
 import ErrorText from '../UIComponents/forms/ErrorMessage';
 import TextInputField from '../UIComponents/forms/TextInputField';
 import FormContainer from '../UIComponents/forms/FormContainer';
 import ProfileItemCard from '../UIComponents/cards/ProfileItemCard';
+import { getCurrentUserGroups } from '../../redux/selectors';
+import { getUserGroups } from '../../redux/actions/user';
 class ProfileItems extends React.Component {
   state = { showAddItemForm: true };
 
   render() {
     const { showAddItemForm } = this.state;
+    const { groups, getGroups } = this.props;
+    console.log(groups);
     return (
       <Box fill align="center" justify="center">
         <Heading level="2">Items</Heading>
@@ -24,9 +29,16 @@ class ProfileItems extends React.Component {
           label2="Add item"
         />
         {showAddItemForm && this.addItemForm()}
-        <ProfileItemCard />
-        <ProfileItemCard />
-        <ProfileItemCard />
+        <Button label="Refresh items" onClick={getGroups} />
+        {groups &&
+          groups.map(group => {
+            return (
+              <ProfileItemCard
+                name={group.name}
+                description={group.description}
+              />
+            );
+          })}
       </Box>
     );
   }
@@ -127,5 +139,14 @@ const AddItemCTA = styled(Button)`
   width: fit-content;
   align-self: center;
 `;
+const mapStateToProps = state => {
+  return { groups: getCurrentUserGroups(state) };
+};
+const mapDispatchToProps = {
+  getGroups: getUserGroups
+};
 
-export default ProfileItems;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ProfileItems);

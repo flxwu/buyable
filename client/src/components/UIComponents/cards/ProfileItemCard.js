@@ -1,29 +1,21 @@
 import React from 'react';
 import { Box, Text } from 'grommet';
 import styled from 'styled-components';
-const Card = ({
-  item = {
-    imageURL: './',
-    name: 'sample item',
-    description: 'sample description'
-  }
-}) => {
+const ProfileItemCard = ({ name, description, imageURL }) => {
   return (
     <ItemCardContainer direction="row">
       <CardLeft>
         <ProfileItemCardImageContainer>
-          <ProfileItemCardImage src={item.imageURL} />
+          <ProfileItemCardImage src={imageURL} />
         </ProfileItemCardImageContainer>
       </CardLeft>
       <CardRight>
-        <ItemHeading> {item.name} </ItemHeading>
-        <ProfileItemCardDescription description={item.description} />
+        <ItemHeading> {name} </ItemHeading>
+        <ProfileItemCardDescription description={description} />
       </CardRight>
     </ItemCardContainer>
   );
 };
-
-const ProfileItemCard = styled(Card)``;
 
 const CardLeft = styled.div``;
 
@@ -71,6 +63,7 @@ const ItemCardContainer = styled(Box)`
   width: 50vw;
   margin-top: 1vh;
   margin-bottom: 1vh;
+  word-wrap: break-word;
   > * {
     display: flex;
   }
