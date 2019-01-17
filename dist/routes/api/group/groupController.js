@@ -21,8 +21,9 @@ class GroupController {
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const errors = [];
-            const { name, urlSuffix, pictureURL, description, permissions, settings } = req.body;
-            let password = req.body.password;
+            const { name, pictureURL, description, permissions, settings } = req.body;
+            let { password, urlSuffix } = req.body;
+            urlSuffix = String(urlSuffix).replace(/[^a-z0-9]/gi, '');
             const owner = { referenceId: req.user._id };
             const ownerUser = {
                 referenceId: req.user._id,
@@ -161,7 +162,12 @@ class GroupController {
             console.log('Duplicate Group: ', duplicate);
             if (!duplicate && errors.length == 0) {
                 try {
+                    // TODO: write function that appends all permission dependencies to permission arrays and outsource
+                    const defaultAdminPermissions = [constants_1.default.PERMISSIONS.GROUP.ADD_ITEM];
+                    const defaultSellerPermissions = [];
+                    const defaultBuyerPermissions = [];
                     // create permissions array
+                    adminPermissions.push(...defaultAdminPermissions);
                     const newGroup = new group_1.GroupModel({
                         name,
                         description,
@@ -216,21 +222,14 @@ class GroupController {
             // otherwise, send error array or do nothing
             const content_type = req.headers['content-type'];
             if (content_type && content_type.indexOf('application/json') === 0) {
-                const { group, urlSuffix, _id } = req.body;
-                const oldGroup = JSON.parse(JSON.stringify(urlSuffix
-                    ? yield group_1.GroupModel.findOne({
-                        urlSuffix
-                    })
-                        .lean()
-                        .exec()
-                    : yield group_1.GroupModel.findOne({
-                        _id
-                    })
-                        .lean()
-                        .exec()));
+                const group = req.body;
+                const oldGroup = JSON.parse(JSON.stringify(yield group_1.GroupModel.findById(group._id)
+                    .lean()
+                    .exec()));
                 let isMember = false, groupUser;
-                for (const user of group.users) {
-                    if (user.referenceId === req.user._id)
+                const reqUserId = String(req.user._id);
+                for (const user of oldGroup.users) {
+                    if (user.referenceId === reqUserId)
                         isMember = true;
                     groupUser = user;
                 }
@@ -241,8 +240,7 @@ class GroupController {
                             if (actions.length > 0) {
                                 // perform actions
                                 const { errors, newGroup } = yield groupUpdateHandler_1.default(req.user, groupUser, oldGroup, actions);
-                                res.json(errors, newGroup);
-                                if (errors) {
+                                if (!errors) {
                                     // success
                                     res.status(200).json({ group: newGroup });
                                 }
@@ -258,7 +256,7 @@ class GroupController {
                         }
                         else {
                             // group validation returned errors
-                            res.json({ errors });
+                            res.status(500).json({ errors });
                         }
                     }
                     else {
@@ -270,13 +268,13 @@ class GroupController {
                 }
                 else {
                     // user is not in the group he's editing
-                    res.status(401).send('UNAUTHORIZED');
+                    res.status(401).json({ errors: ['NOT MEMBER OF GROUP'] });
                 }
             }
             else {
                 // content-type is not application json
                 res.status(400).json({
-                    errors: ['BAD REQUEST']
+                    errors: ['CONTENT-TYPE NOT APPLICATION/JSON']
                 });
             }
         });
@@ -310,15 +308,15 @@ class GroupItemsController {
                     case this.SORT_BY.OLDEST:
                         return Number(i1.addedAt) - Number(i2.addedAt);
                         break;
-                    case this.SORT_BY.NEWEST:
+                    default:
                         return Number(i2.addedAt) - Number(i1.addedAt);
                         break;
                 }
             });
             // Get first 5
-            const returnItemsReferenceIds = group.items
-                .slice(0, amount - 1)
-                .map(ref => ref.referenceId);
+            const returnItemsReferenceIds = amount === 'all'
+                ? group.items.map(ref => ref.referenceId)
+                : group.items.slice(0, amount - 1).map(ref => ref.referenceId);
             // from the item ids, get the item objects
             const groupItems = yield item_1.ItemModel.find({
                 _id: {

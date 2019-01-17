@@ -24,10 +24,11 @@ const Header = ({
   showModal,
   logoutFromStore
 }) => (
-  <HeaderContainer
+  <Box
     direction="row"
     align="center"
     justify="between"
+    elevation="small"
     pad={{
       horizontal: 'medium',
       vertical: 'xsmall'
@@ -97,12 +98,8 @@ const Header = ({
         />
       )}
     </RightHeader>
-  </HeaderContainer>
+  </Box>
 );
-
-const HeaderContainer = styled(Box)`
-  border-bottom: 1px solid grey;
-`;
 
 const RightHeader = styled(Box)`
   padding: 0px 10px;
