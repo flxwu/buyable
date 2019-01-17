@@ -10,6 +10,7 @@ import TextButtonCTA from '../UIComponents/forms/CTAs/TextButtonCTA';
 import ErrorText from '../UIComponents/forms/ErrorMessage';
 import TextInputField from '../UIComponents/forms/TextInputField';
 import FormContainer from '../UIComponents/forms/FormContainer';
+import DropMultiSelect from '../UIComponents/forms/DropMultiSelect';
 import ProfileItemCard from '../UIComponents/cards/ProfileItemCard';
 import { getCurrentUserGroups } from '../../redux/selectors';
 import { getUserGroups } from '../../redux/actions/user';
@@ -44,6 +45,7 @@ class ProfileItems extends React.Component {
   }
 
   addItemForm() {
+    const { groups } = this.props;
     return (
       <Formik
         initialValues={{
@@ -117,6 +119,7 @@ class ProfileItems extends React.Component {
               {errors.amount && touched.amount && (
                 <ErrorText text={errors.amount} />
               )}
+              <DropMultiSelect items={groups && groups.map(g => g.name)} />
               <AddItemCTA
                 align="center"
                 type="submit"
