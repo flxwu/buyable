@@ -3,13 +3,11 @@ import { Anchor, Box, Button, DropButton, Heading, Text } from 'grommet';
 import { FormAdd, FormClose } from 'grommet-icons';
 import MultiSelect from './MultiSelect';
 
-const airlines = ['Aegean Airlines', 'Wizzair', 'WOW air', 'Xiamen Airlines'];
-
 export default class DropMultiSelect extends Component {
   state = {
     selected: [],
     open: undefined,
-    available: airlines
+    available: this.props.items
   };
 
   filter = query =>
@@ -21,11 +19,9 @@ export default class DropMultiSelect extends Component {
   close = () => this.setState({ open: undefined, available: this.get() });
 
   get = (selected = this.state.selected, query) => {
-    let all = [...airlines];
+    let all = [...this.props.items];
     if (query) {
-      all = all.filter(airline =>
-        airline.toLowerCase().match(query.toLowerCase())
-      );
+      all = all.filter(group => group.toLowerCase().match(query.toLowerCase()));
     }
     if (selected.length) {
       all = all.filter(value => selected.indexOf(value) === -1);
@@ -33,9 +29,9 @@ export default class DropMultiSelect extends Component {
     return all;
   };
 
-  select = airline => {
+  select = group => {
     const newSelected = [...this.state.selected];
-    newSelected.push(airline);
+    newSelected.push(group);
     this.setState({
       open: undefined,
       selected: newSelected,
@@ -68,16 +64,16 @@ export default class DropMultiSelect extends Component {
     if (selected.length) {
       itemNodes = (
         <Box pad={{ vertical: 'small' }}>
-          {selected.map((airline, index) => (
+          {selected.map((group, index) => (
             <Box
               align="center"
-              key={airline}
+              key={group}
               direction="row"
               justify="between"
               pad={{ vertical: 'xsmall' }}>
-              <Text margin={{ right: 'small' }}>{airline}</Text>
+              <Text margin={{ right: 'small' }}>{group}</Text>
               <Button
-                a11yTitle={`Delete ${airline}`}
+                a11yTitle={`Delete ${group}`}
                 plain={true}
                 onClick={() => this.remove(index)}>
                 <Box align="center">
@@ -88,7 +84,7 @@ export default class DropMultiSelect extends Component {
           ))}
           <Box align="start" margin={{ vertical: 'small' }}>
             <Anchor href="#" onClick={this.reset}>
-              Clear Airlines
+              Clear Groups
             </Anchor>
           </Box>
         </Box>
@@ -96,15 +92,14 @@ export default class DropMultiSelect extends Component {
     }
 
     return (
-      <Box basis="small">
+      <Box>
         <DropButton
-          a11yTitle="Open Airlines drop"
+          a11yTitle="Open Groups drop"
           open={open}
           onClose={this.close}
           dropContent={
             <MultiSelect
-              dropSize="medium"
-              category="Airline"
+              category="Group"
               onSearch={this.filter}
               onClose={this.close}
               items={available}
@@ -118,7 +113,7 @@ export default class DropMultiSelect extends Component {
             gap="small"
             pad={{ vertical: 'xsmall' }}>
             <Heading level={4} margin="none">
-              <strong>Airlines</strong>
+              <strong>Groups</strong>
             </Heading>
             <FormAdd />
           </Box>
