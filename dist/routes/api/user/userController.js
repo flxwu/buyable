@@ -23,6 +23,7 @@ const validator_1 = __importDefault(require("validator"));
 const yup = __importStar(require("yup"));
 const user_1 = require("../../../schemas/user");
 const group_1 = require("../../../schemas/group");
+const item_1 = require("../../../schemas/item");
 const database_1 = require("../../../helpers/database");
 const yupSchemas_1 = require("../../../helpers/yupSchemas");
 class Controller {
@@ -97,9 +98,9 @@ class Controller {
             const userId = req.query._id;
             user_1.UserModel.findById(userId, (err, doc) => {
                 if (err) {
-                    res.status(500).send(err);
+                    res.status(500).json({ errors: err });
                 }
-                else {
+                if (doc) {
                     const userGroups = doc.groups;
                     const ownedGroups = doc.ownedGroups;
                     const publicUserGroups = [];
@@ -125,6 +126,9 @@ class Controller {
                     filteredDoc.groups = publicUserGroups;
                     filteredDoc.ownedGroups = publicOwnedUserGroups;
                     res.status(200).json(filteredDoc);
+                }
+                else {
+                    res.status(404).json({ errors: ['NOT_FOUND'] });
                 }
             });
         });
@@ -164,6 +168,24 @@ class Controller {
             /* Update Document */
             const updatedDoc = yield user_1.UserModel.findByIdAndUpdate(sessionUser._id, reqUser);
             res.json(updatedDoc);
+        });
+    }
+    itemsGET(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const items = req.user.items.map(item => item.referenceId);
+            const userItems = yield item_1.ItemModel.find({ _id: { $in: items } })
+                .lean()
+                .exec();
+            res.json({ items: userItems });
+        });
+    }
+    groupsGET(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const group = req.user.groups.map(group => group.referenceId);
+            const userGroups = yield group_1.GroupModel.find({ _id: { $in: group } })
+                .lean()
+                .exec();
+            res.json({ groups: userGroups });
         });
     }
 }

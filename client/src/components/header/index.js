@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { Box, Button, Menu, Clock } from 'grommet';
 import { Camera } from 'grommet-icons';
-import { withRouter, NavLink } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 
 import Link from '../UIComponents/Link';
 
@@ -33,14 +33,9 @@ const Header = ({
       vertical: 'xsmall'
     }}>
     <LeftHeader direction="row">
-      <NavLink to="/">Timeline</NavLink>
-      <NavLink to="/profile/groups">Groups</NavLink>
-      <Link
-        onClick={() => {
-          history.replace('/profile/items');
-        }}>
-        Items
-      </Link>
+      <Link to="/">Timeline</Link>
+      <Link to="/groups">Groups</Link>
+      <Link to="/items">Items</Link>
     </LeftHeader>
     <Clock type="digital" />
     <RightHeader direction="row">
