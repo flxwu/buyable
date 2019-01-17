@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const item_1 = require("../../../schemas/item");
+const user_1 = require("../../../schemas/user");
 class Controller {
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -17,6 +18,7 @@ class Controller {
             // validate that user is logged in
             if (owner == null || owner._id == null) {
                 res.status(401).json({ error: 'Please login to post new items!' });
+                return;
             }
             // validate post body
             if (typeof name !== 'string' ||
@@ -25,6 +27,7 @@ class Controller {
                 typeof price !== 'number' ||
                 typeof amount !== 'number') {
                 res.status(400).json({ error: 'Item form data invalid' });
+                return;
             }
             const createItem = () => __awaiter(this, void 0, void 0, function* () {
                 // TODO: deal with image blobs => upload to s3 and create array of urls
@@ -40,6 +43,9 @@ class Controller {
                 let result;
                 try {
                     result = yield item.save();
+                    const update = { $push: { items: { referenceId: result._id } } };
+                    const newUser = yield user_1.UserModel.findByIdAndUpdate(req.user._id, update, { new: true }).exec();
+                    req.user = newUser;
                 }
                 catch (err) {
                     throw err;
@@ -50,8 +56,8 @@ class Controller {
                 const result = yield createItem();
                 res.status(200).json({ item: result });
             }
-            catch (error) {
-                res.status(500).json({ error });
+            catch (errors) {
+                res.status(500).json({ errors });
             }
         });
     }
