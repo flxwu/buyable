@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from 'grommet';
-import { Route } from 'react-router-dom';
+import { Route, withRouter } from 'react-router-dom';
 import Header from './components/header';
 import NewProductModal from './components/newProductModal';
 import { Main as MainTimeline } from './components/timelines';
@@ -72,7 +72,9 @@ const mapDispatchToProps = {
   authCheck: checkUserAuthenticated
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(App)
+);
