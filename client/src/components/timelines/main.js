@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { Box } from 'grommet';
 import styled from 'styled-components';
 
 import Carousel from '../UIComponents/timeline/Carousel';
@@ -11,7 +10,7 @@ const Main = ({ /* react-router */ history }) => {
 
   return (
     <TopContainer>
-      <Carousel />
+      <Carousel asyncItemsUrl="/api/timeline/latest" />
     </TopContainer>
   );
 };

@@ -3,10 +3,10 @@ import styled from 'styled-components';
 
 import { COLORS } from '../../../helpers/constants';
 
-const CarouselCard = ({ imageUrl, title, ...props }) => {
+const CarouselCard = ({ imageURL, title, ...props }) => {
   return (
     <CardContainer elevation="xsmall">
-      <ProductImage src={imageUrl} />
+      <ProductImage src={imageURL} />
       <ProductTitle>{title}</ProductTitle>
     </CardContainer>
   );
