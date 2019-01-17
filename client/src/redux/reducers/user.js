@@ -5,12 +5,15 @@ import {
   DELETE_USER_SUCCEEDED,
   DELETE_USER_FAILED,
   CHECK_USER_SUCCEEDED,
-  CHECK_USER_FAILED
+  CHECK_USER_FAILED,
+  GET_USER_GROUPS_FAILED,
+  GET_USER_GROUPS_SUCCEEDED
 } from '../actions/actionTypes';
 
 const initialState = {
   user: null,
-  loggedIn: null
+  loggedIn: null,
+  groups: null
 };
 
 export default function(state = initialState, action) {
@@ -69,6 +72,19 @@ const asyncReducers = (action, state) => {
       return {
         ...state,
         loggedIn: false
+      };
+    }
+    case GET_USER_GROUPS_SUCCEEDED: {
+      const { groups } = action.payload;
+      return {
+        ...state,
+        groups
+      };
+    }
+    case GET_USER_GROUPS_FAILED: {
+      return {
+        ...state,
+        groups: null
       };
     }
     default:

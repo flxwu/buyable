@@ -4,7 +4,7 @@ import validator from 'validator';
 import styled from 'styled-components';
 import { Heading, Box, Button, Text } from 'grommet';
 
-import TextInputField from '../form/TextInputField';
+import TextInputField from '../UIComponents/forms/TextInputField';
 
 import { connect } from 'react-redux';
 import { addUser } from '../../redux/actions/user';
