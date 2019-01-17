@@ -3,7 +3,7 @@ import { Box, Text } from 'grommet';
 import styled from 'styled-components';
 const Card = ({
   item = {
-    imageUrl: './',
+    imageURL: './',
     name: 'sample item',
     description: 'sample description'
   }
