@@ -3,7 +3,8 @@ import Api from './api';
 import {
   CHECK_USER_REQUESTED,
   DELETE_USER_REQUESTED,
-  UPDATE_USER_REQUESTED
+  UPDATE_USER_REQUESTED,
+  GET_USER_GROUPS_REQUESTED
 } from '../actions/actionTypes';
 
 // worker Saga: will be fired on UPDATE_USER_REQUESTED actions
@@ -36,7 +37,14 @@ function* checkUser(action) {
     yield put({ type: 'CHECK_USER_FAILED', errors: response.data.errors });
   }
 }
-
+function* getUserGroups(action) {
+  try {
+    const { groups } = yield call(Api.getUserGroups);
+    yield put({ type: 'GET_USER_GROUPS_SUCCEEDED', payload: { groups } });
+  } catch ({ response }) {
+    yield put({ type: 'GET_USER_GROUPS_FAILED', errors: response.data.errors });
+  }
+}
 /*
   Starts updateUser on each dispatched `UPDATE_USER_REQUESTED` action.
 */
@@ -45,6 +53,7 @@ function* apiSaga() {
   yield takeEvery(DELETE_USER_REQUESTED, deleteUser);
   yield takeEvery(CHECK_USER_REQUESTED, checkUser);
   yield takeEvery(UPDATE_USER_REQUESTED, updateUser);
+  yield takeEvery(GET_USER_GROUPS_REQUESTED, getUserGroups);
 }
 
 export default apiSaga;

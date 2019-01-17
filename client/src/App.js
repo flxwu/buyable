@@ -1,11 +1,9 @@
 import React from 'react';
 import { Box } from 'grommet';
-import { Route } from 'react-router-dom';
-import IndexGrid from './components/IndexGrid';
+import { Route, withRouter } from 'react-router-dom';
 import Header from './components/header';
-import SideBar from './components/sidebar';
 import NewProductModal from './components/newProductModal';
-import Main from './components/main';
+import { Main as MainTimeline } from './components/timelines';
 import Profile from './components/profile';
 import AuthModal from './components/authModal';
 import { MODAL_IDS } from './helpers/constants';
@@ -33,24 +31,18 @@ class App extends React.Component {
   }
 
   render() {
-    const { showSideBar } = this.state;
     /* redux */
     const { modal_id, loggedIn } = this.props;
     return (
       <Box fill>
-        <IndexGrid showSideBar={showSideBar}>
-          <Header
-            toggleSideBar={() => this.setState({ showSideBar: !showSideBar })}
+        <Header />
+        <Box align="center" justify="center">
+          <Route exact path="/" component={MainTimeline} />
+          <Route
+            path="/profile"
+            component={checkForRestrictedPage(Profile, MainTimeline, loggedIn)}
           />
-          {showSideBar && <SideBar />}
-          <Box gridArea="main" align="center" justify="center">
-            <Route exact path="/" component={Main} />
-            <Route
-              path="/profile"
-              component={checkForRestrictedPage(Profile, Main, loggedIn)}
-            />
-          </Box>
-        </IndexGrid>
+        </Box>
         {this.currentModal(modal_id)}
       </Box>
     );
@@ -80,7 +72,9 @@ const mapDispatchToProps = {
   authCheck: checkUserAuthenticated
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(App);
+export default withRouter(
+  connect(
+    mapStateToProps,
+    mapDispatchToProps
+  )(App)
+);

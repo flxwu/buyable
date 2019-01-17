@@ -308,15 +308,15 @@ class GroupItemsController {
                     case this.SORT_BY.OLDEST:
                         return Number(i1.addedAt) - Number(i2.addedAt);
                         break;
-                    case this.SORT_BY.NEWEST:
+                    default:
                         return Number(i2.addedAt) - Number(i1.addedAt);
                         break;
                 }
             });
             // Get first 5
-            const returnItemsReferenceIds = group.items
-                .slice(0, amount - 1)
-                .map(ref => ref.referenceId);
+            const returnItemsReferenceIds = amount === 'all'
+                ? group.items.map(ref => ref.referenceId)
+                : group.items.slice(0, amount - 1).map(ref => ref.referenceId);
             // from the item ids, get the item objects
             const groupItems = yield item_1.ItemModel.find({
                 _id: {

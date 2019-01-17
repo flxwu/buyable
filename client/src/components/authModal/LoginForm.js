@@ -3,10 +3,10 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { Box, Heading, Button, Text } from 'grommet';
 
-import TextInputField from '../form/TextInputField';
+import TextInputField from '../UIComponents/forms/TextInputField';
 
 import { connect } from 'react-redux';
-import { addUser } from '../../redux/actions/user';
+import { addUser, getUserGroups } from '../../redux/actions/user';
 import { toggleModal } from '../../redux/actions/modals';
 
 const LoginForm = props => {
@@ -23,6 +23,7 @@ const LoginForm = props => {
       const user = result.data;
       props.toggleModal(null);
       props.addUser(user);
+      await props.getUserGroups();
     } catch (err) {
       if (err.response) {
         const { status } = err.response;
@@ -94,5 +95,5 @@ const FormContainer = styled(Box)`
 
 export default connect(
   null,
-  { addUser, toggleModal }
+  { addUser, toggleModal, getUserGroups }
 )(LoginForm);

@@ -10,5 +10,7 @@ const userController = new userController_1.default();
 router.post('/new', userController.newPOST);
 router.get('/', userController.GET);
 router.patch('/', userController.PATCH);
+router.get('/items', userController.itemsGET);
+router.get('/groups', userController.groupsGET);
 exports.default = router;
 //# sourceMappingURL=userRouter.js.map
