@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Box, Button, Menu, Clock } from 'grommet';
+import { Box, Button, Menu, TextInput as SearchBar } from 'grommet';
 import { Camera } from 'grommet-icons';
 import { withRouter } from 'react-router-dom';
 
@@ -25,79 +25,106 @@ const Header = ({
   logoutFromStore
 }) => (
   <Box
-    direction="row"
+    direction="column"
     align="center"
-    justify="between"
-    elevation="small"
     pad={{
-      horizontal: 'medium',
       vertical: 'xsmall'
     }}>
-    <LeftHeader direction="row">
+    <Box
+      direction="row"
+      justify="between"
+      align="center"
+      fill
+      pad={{
+        horizontal: 'medium'
+      }}>
+      <LeftHeader direction="row">
+        <a
+          style={{
+            fontSize: 45,
+            fontFamily: 'Caveat',
+            textDecoration: 'none',
+            color: 'inherit'
+          }}
+          href="/">
+          Buyable
+        </a>
+      </LeftHeader>
+      <div style={{ display: 'flex', flexGrow: 1 }}>
+        <SearchBar placeholder="Search for trousers, pants, flipflops,..." />
+      </div>
+      <RightHeader direction="row">
+        {user && (
+          <Button
+            icon={<Camera />}
+            label="Sell Product"
+            onClick={() => {
+              history.push('/profile/items');
+            }}
+          />
+        )}
+        {!user && (
+          <Button
+            onClick={() => showModal(MODAL_IDS.AUTH)}
+            label="Login or Sign up"
+          />
+        )}
+        {user && (
+          <Menu
+            label={user.username}
+            items={[
+              {
+                label: 'My Profile',
+                onClick: () => {
+                  history.push('/profile');
+                }
+              },
+              {
+                label: 'Items',
+                onClick: () => {
+                  history.push('/profile/items');
+                }
+              },
+              {
+                label: 'Groups',
+                onClick: () => {
+                  history.push('/profile/groups');
+                }
+              },
+              {
+                label: 'Settings',
+                onClick: () => {
+                  history.push('/profile/settings');
+                }
+              },
+              {
+                label: 'Log out',
+                onClick: () => {
+                  try {
+                    logoutFromStore();
+                    history.push('/');
+                  } catch (err) {
+                    alert('error logging out');
+                  }
+                }
+              }
+            ]}
+          />
+        )}
+      </RightHeader>
+    </Box>
+    <Notch
+      elevation="xsmall"
+      direction="row"
+      alignSelf="start"
+      pad={{
+        horizontal: 'medium'
+      }}
+      fill>
       <Link to="/">Timeline</Link>
       <Link to="/groups">Groups</Link>
       <Link to="/items">Items</Link>
-    </LeftHeader>
-    <Clock type="digital" />
-    <RightHeader direction="row">
-      {user && (
-        <Button
-          icon={<Camera />}
-          label="Sell Product"
-          onClick={() => {
-            history.push('/profile/items');
-          }}
-        />
-      )}
-      {!user && (
-        <Button
-          onClick={() => showModal(MODAL_IDS.AUTH)}
-          label="Login or Sign up"
-        />
-      )}
-      {user && (
-        <Menu
-          label={user.username}
-          items={[
-            {
-              label: 'My Profile',
-              onClick: () => {
-                history.push('/profile');
-              }
-            },
-            {
-              label: 'Items',
-              onClick: () => {
-                history.push('/profile/items');
-              }
-            },
-            {
-              label: 'Groups',
-              onClick: () => {
-                history.push('/profile/groups');
-              }
-            },
-            {
-              label: 'Settings',
-              onClick: () => {
-                history.push('/profile/settings');
-              }
-            },
-            {
-              label: 'Log out',
-              onClick: () => {
-                try {
-                  logoutFromStore();
-                  history.push('/');
-                } catch (err) {
-                  alert('error logging out');
-                }
-              }
-            }
-          ]}
-        />
-      )}
-    </RightHeader>
+    </Notch>
   </Box>
 );
 
@@ -112,6 +139,12 @@ const RightHeader = styled(Box)`
 const LeftHeader = styled(Box)`
   padding: 0px 10px;
   align-items: center;
+  > * {
+    margin: 10px;
+  }
+`;
+
+const Notch = styled(Box)`
   > * {
     margin: 10px;
   }
