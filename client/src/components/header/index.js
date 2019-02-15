@@ -39,16 +39,12 @@ const Header = ({
         horizontal: 'medium'
       }}>
       <LeftHeader direction="row">
-        <a
-          style={{
-            fontSize: 45,
-            fontFamily: 'Caveat',
-            textDecoration: 'none',
-            color: 'inherit'
-          }}
-          href="/">
+        <Logo
+          onClick={() => {
+            history.push('/');
+          }}>
           Buyable
-        </a>
+        </Logo>
       </LeftHeader>
       <div style={{ display: 'flex', flexGrow: 1 }}>
         <SearchBar placeholder="Search for trousers, pants, flipflops,..." />
@@ -141,6 +137,17 @@ const LeftHeader = styled(Box)`
   align-items: center;
   > * {
     margin: 10px;
+  }
+`;
+
+const Logo = styled.div`
+  font-size: 45px;
+  font-family: 'Caveat';
+  text-decoration: 'none';
+  color: 'inherit';
+  &:hover {
+    cursor: pointer;
+    font-weight: bold;
   }
 `;
 
