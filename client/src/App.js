@@ -3,8 +3,11 @@ import { Box } from 'grommet';
 import { Route, withRouter } from 'react-router-dom';
 import Header from './components/header';
 import NewProductModal from './components/newProductModal';
-import { Main as MainTimeline } from './components/timelines';
-import Profile from './components/profile';
+
+import { Main as MainTimelineRoute } from './components/routes/timelines';
+import CheckoutRoute from './components/routes/checkout';
+import ProfileRoute from './components/routes/profile';
+
 import AuthModal from './components/authModal';
 import { MODAL_IDS } from './helpers/constants';
 import { checkForRestrictedPage } from './helpers/pages';
@@ -35,12 +38,23 @@ class App extends React.Component {
     const { modal_id, loggedIn } = this.props;
     return (
       <Box fill>
-        <Header />
+        <Route
+          exact
+          path={`/(groups|items|profile.*)?`}
+          component={withRouter(props => (
+            <Header {...props} />
+          ))}
+        />
         <Box align="center" justify="center">
-          <Route exact path="/" component={MainTimeline} />
+          <Route exact path="/" component={MainTimelineRoute} />
+          <Route exact path="/checkout" component={CheckoutRoute} />
           <Route
             path="/profile"
-            component={checkForRestrictedPage(Profile, MainTimeline, loggedIn)}
+            component={checkForRestrictedPage(
+              ProfileRoute,
+              MainTimelineRoute,
+              loggedIn
+            )}
           />
         </Box>
         {this.currentModal(modal_id)}

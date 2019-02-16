@@ -1,11 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
-import { updateUser, checkUserAuthenticated } from '../../redux/actions/user';
-import { Text, Heading, Box, Button } from 'grommet';
-import TextInputField from '../UIComponents/forms/TextInputField';
+import { getCurrentUser, isLoggedIn } from '../../../redux/selectors';
+import {
+  updateUser,
+  checkUserAuthenticated
+} from '../../../redux/actions/user';
+import { Heading, Box, Button } from 'grommet';
+import TextInputField from '../../UIComponents/forms/TextInputField';
 import styled from 'styled-components';
-import FormContainer from '../UIComponents/forms/FormContainer';
+import FormContainer from '../../UIComponents/forms/FormContainer';
 class ProfileMain extends React.Component {
   constructor(props) {
     super(props);

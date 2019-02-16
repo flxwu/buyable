@@ -3,6 +3,17 @@ export const MODAL_IDS = {
   NEW_PRODUCT: 'SELL_PRODUCT_MODAL'
 };
 
+export const ROUTES = {
+  CHECKOUT: '/checkout',
+  TIMELINE: '/',
+  TIMELINE_GROUPS: '/groups',
+  TIMELINE_ITEMS: '/items',
+  PROFILE: '/profile',
+  PROFILE_GROUPS: '/profile/groups',
+  PROFILE_SETTINGS: '/profile/settings',
+  PROFILE_ITEMS: '/profile/items'
+};
+
 export const PERMISSIONS = {
   GROUP: {
     ALL: 'ALL',
