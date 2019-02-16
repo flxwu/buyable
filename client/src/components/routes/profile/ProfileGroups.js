@@ -4,17 +4,20 @@ import shortid from 'shortid';
 import { Box, Heading, Text, CheckBox, Select, Button } from 'grommet';
 import styled from 'styled-components';
 
-import TextInputField from '../UIComponents/forms/TextInputField';
-import ErrorMessage from '../UIComponents/forms/ErrorMessage';
-import FormContainer from '../UIComponents/forms/FormContainer';
-import TextButtonCTA from '../UIComponents/forms/CTAs/TextButtonCTA';
+import TextInputField from '../../UIComponents/forms/TextInputField';
+import ErrorMessage from '../../UIComponents/forms/ErrorMessage';
+import FormContainer from '../../UIComponents/forms/FormContainer';
+import TextButtonCTA from '../../UIComponents/forms/CTAs/TextButtonCTA';
 
-import { PERMISSIONS } from '../../helpers/constants';
-import { PERMISSIONS as PERMISSIONS_LABELS, ROLES } from '../../helpers/labels';
+import { PERMISSIONS } from '../../../helpers/constants';
+import {
+  PERMISSIONS as PERMISSIONS_LABELS,
+  ROLES
+} from '../../../helpers/labels';
 
 import { connect } from 'react-redux';
-import { updateUser } from '../../redux/actions/user';
-import { getCurrentUser } from '../../redux/selectors';
+import { updateUser } from '../../../redux/actions/user';
+import { getCurrentUser } from '../../../redux/selectors';
 const GROUP_PERMISSIONS = PERMISSIONS.GROUP;
 
 class ProfileGroups extends React.Component {

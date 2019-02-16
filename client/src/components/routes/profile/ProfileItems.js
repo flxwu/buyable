@@ -6,14 +6,14 @@ import axios from 'axios';
 import * as yup from 'yup';
 import { connect } from 'react-redux';
 
-import TextButtonCTA from '../UIComponents/forms/CTAs/TextButtonCTA';
-import ErrorText from '../UIComponents/forms/ErrorMessage';
-import TextInputField from '../UIComponents/forms/TextInputField';
-import FormContainer from '../UIComponents/forms/FormContainer';
-import DropMultiSelect from '../UIComponents/forms/DropMultiSelect';
-import ProfileItemCard from '../UIComponents/cards/ProfileItemCard';
-import { getCurrentUserGroups } from '../../redux/selectors';
-import { getUserGroups } from '../../redux/actions/user';
+import TextButtonCTA from '../../UIComponents/forms/CTAs/TextButtonCTA';
+import ErrorText from '../../UIComponents/forms/ErrorMessage';
+import TextInputField from '../../UIComponents/forms/TextInputField';
+import FormContainer from '../../UIComponents/forms/FormContainer';
+import DropMultiSelect from '../../UIComponents/forms/DropMultiSelect';
+import ProfileItemCard from '../../UIComponents/cards/ProfileItemCard';
+import { getCurrentUserGroups } from '../../../redux/selectors';
+import { getUserGroups } from '../../../redux/actions/user';
 class ProfileItems extends React.Component {
   state = { showAddItemForm: true };
 

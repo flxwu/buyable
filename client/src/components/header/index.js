@@ -14,11 +14,12 @@ import {
 } from '../../redux/actions/user';
 import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
 import { toggleModal } from '../../redux/actions/modals';
-import { MODAL_IDS } from '../../helpers/constants';
+import { MODAL_IDS, ROUTES } from '../../helpers/constants';
 
 const Header = ({
   /* react-router */
   history,
+  location,
   /* redux */
   user,
   showModal,
@@ -109,18 +110,20 @@ const Header = ({
         )}
       </RightHeader>
     </Box>
-    <Notch
-      elevation="xsmall"
-      direction="row"
-      alignSelf="start"
-      pad={{
-        horizontal: 'medium'
-      }}
-      fill>
-      <Link to="/">Timeline</Link>
-      <Link to="/groups">Groups</Link>
-      <Link to="/items">Items</Link>
-    </Notch>
+    {!location.pathname.match(`${ROUTES.PROFILE}.*`) && (
+      <Notch
+        alignSelf="start"
+        direction="row"
+        elevation="xsmall"
+        pad={{
+          horizontal: 'medium'
+        }}
+        fill>
+        <Link to="/">Timeline</Link>
+        <Link to="/groups">Groups</Link>
+        <Link to="/items">Items</Link>
+      </Notch>
+    )}
   </Box>
 );
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import styled from 'styled-components';
 
-import Carousel from '../UIComponents/timeline/Carousel';
+import Carousel from '../../UIComponents/timeline/Carousel';
 
 const Main = ({ /* react-router */ history }) => {
   useEffect(() => {
