@@ -1,11 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Box, Button, Menu, TextInput as SearchBar } from 'grommet';
-import { Camera } from 'grommet-icons';
-import { withRouter } from 'react-router-dom';
+import { Camera, Basket } from 'grommet-icons';
 
 import Link from '../UIComponents/Link';
 
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import {
   deleteUser,
@@ -52,13 +52,19 @@ const Header = ({
       </div>
       <RightHeader direction="row">
         {user && (
-          <Button
-            icon={<Camera />}
-            label="Sell Product"
-            onClick={() => {
-              history.push('/profile/items');
-            }}
-          />
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <Link
+              to="/profile/items"
+              direction="row"
+              style={{ marginBottom: 5 }}>
+              <Camera style={{ marginRight: 5 }} />
+              Sell Product
+            </Link>
+            <Link to="/profile/basket" direction="row">
+              <Basket style={{ marginRight: 5 }} />
+              Shopping Cart
+            </Link>
+          </div>
         )}
         {!user && (
           <Button
