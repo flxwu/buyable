@@ -13,6 +13,9 @@ const LinkText = styled(NavLink)`
   color: black;
   cursor: pointer;
   text-decoration: none;
+  display: flex;
+  ${props =>
+    props.direction === 'row' ? 'align-items: ' : 'justify-content: '}center;
 `;
 
 export default Link;
