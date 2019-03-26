@@ -9,68 +9,70 @@ import validator from 'validator';
 import { UserModel } from './schemas/user';
 import apiRouter from './routes/api/router';
 
-const app = express();
+const configureApp = async () => {
+  const app = express();
+  const MongoStore = MongoConnect(session);
 
-const MongoStore = MongoConnect(session);
+  // Session Handling
+  const mongoURL = `mongodb://${process.env.MLAB_USER}:${
+    process.env.MLAB_PASSWORD
+  }@ds016108.mlab.com:16108/buyable-dev`;
+  app.use(
+    session({
+      secret: process.env.SESSION_SECRET,
+      store: new MongoStore({
+        url: mongoURL
+      }),
+      resave: true,
+      saveUninitialized: true
+    })
+  );
 
-// Session Handling
-const mongoURL = `mongodb://${process.env.MLAB_USER}:${
-  process.env.MLAB_PASSWORD
-}@ds016108.mlab.com:16108/buyable-dev`;
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    store: new MongoStore({
-      url: mongoURL
-    }),
-    resave: true,
-    saveUninitialized: true
-  })
-);
+  app.use(passport.initialize());
+  app.use(passport.session());
+  // MongoDB
+  await mongoose.connect(mongoURL);
+  console.log('connected to db');
+  const db = mongoose.connection;
+  db.on('error', () => console.error('Error connecting to MLab MongoDB'));
 
-app.use(passport.initialize());
-app.use(passport.session());
-// MongoDB
-mongoose.connect(mongoURL);
-const db = mongoose.connection;
-db.on('error', () => console.error('Error connecting to MLab MongoDB'));
-
-const LocalStrategy = passportLocal.Strategy;
-passport.serializeUser<any, any>((user, done) => {
-  done(undefined, user._id);
-});
-
-passport.deserializeUser((id, done) => {
-  UserModel.findById(id, (err, user) => {
-    done(err, user);
+  const LocalStrategy = passportLocal.Strategy;
+  passport.serializeUser<any, any>((user, done) => {
+    done(undefined, user._id);
   });
-});
 
-passport.use(
-  new LocalStrategy(function(username, password, done) {
-    UserModel.findOne(
-      validator.isEmail(username) ? { email: username } : { username },
-      async function(err, user) {
-        if (err) {
-          return done(err);
-        }
-        if (!user) {
-          return done(null, false);
-        }
-        const pwCorrect = await user.verifyPassword(password);
-        if (!pwCorrect) {
-          return done(null, false);
-        }
-        return done(null, user);
-      }
-    );
-  })
-);
+  passport.deserializeUser((id, done) => {
+    UserModel.findById(id, (err, user) => {
+      done(err, user);
+    });
+  });
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(morgan('dev'));
-app.use('/api', apiRouter);
-app.use(express.static(__dirname + '/../client/build/'));
+  passport.use(
+    new LocalStrategy(function(username, password, done) {
+      UserModel.findOne(
+        validator.isEmail(username) ? { email: username } : { username },
+        async function(err, user) {
+          if (err) {
+            return done(err);
+          }
+          if (!user) {
+            return done(null, false);
+          }
+          const pwCorrect = await user.verifyPassword(password);
+          if (!pwCorrect) {
+            return done(null, false);
+          }
+          return done(null, user);
+        }
+      );
+    })
+  );
 
-export default app;
+  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json());
+  app.use(morgan('dev'));
+  app.use('/api', apiRouter);
+  app.use(express.static(__dirname + '/../client/build/'));
+  return app;
+};
+export default configureApp;
