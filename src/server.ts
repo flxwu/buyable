@@ -23,19 +23,17 @@ const startServer = async () => {
         )
         .listen(port, () =>
           console.log(
-            'Server running at port %d | MODE: %s',
-            port,
-            app.get('env')
+            '\x1b[36m%s\x1b[0m',
+            `Server running at port ${port} | MODE: ${app.get('env')} |`
           )
         )
     : http
         .createServer(app)
         .listen(port, () =>
           console.log(
-            'Server running at port %d | MODE: %s',
-            port,
-            app.get('env'),
-            '\nWARNING: HTTPS DISABLED'
+            '\x1b[36m%s\x1b[0m',
+            `Server running at port ${port} | MODE: ${app.get('env')} |`,
+            '\x1b[31mWARNING: HTTPS DISABLED\x1b[0m'
           )
         );
 };
