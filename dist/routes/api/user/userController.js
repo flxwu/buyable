@@ -55,6 +55,7 @@ class Controller {
                     return yield user.save();
                 }
                 catch (err) {
+                    console.log(err);
                     throw new Error('ise');
                 }
             });
@@ -86,6 +87,7 @@ class Controller {
                         message = 'Password too long';
                         break;
                     default:
+                        console.log(err);
                         status = 500;
                         message = 'Internal server error';
                 }

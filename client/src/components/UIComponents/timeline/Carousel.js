@@ -15,7 +15,8 @@ const Carousel = ({
   const [items, setItems] = useState(null);
 
   const settings = {
-    dots: true,
+    dots: false,
+    arrows: false,
     infinite: true,
     slidesToShow,
     slidesToScroll: 1,
