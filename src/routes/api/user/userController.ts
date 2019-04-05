@@ -41,6 +41,7 @@ class Controller<IController> {
         });
         return await user.save();
       } catch (err) {
+        console.log(err);
         throw new Error('ise');
       }
     };
@@ -71,6 +72,7 @@ class Controller<IController> {
           message = 'Password too long';
           break;
         default:
+          console.log(err);
           status = 500;
           message = 'Internal server error';
       }
