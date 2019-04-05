@@ -10,6 +10,7 @@ import ProfileMain from './ProfileMain';
 const Profile = () => (
   <Box fill>
     <Route exact path={'/profile/'} component={ProfileMain} />
+    {/* <Route path={'/profile/basket'} component={ProfileBasket} /> */}
     <Route path={'/profile/settings'} component={ProfileSettings} />
     <Route path={'/profile/groups'} component={ProfileGroups} />
     <Route path={'/profile/items'} component={ProfileItems} />
