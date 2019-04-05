@@ -18,7 +18,7 @@ interface IController {
 class Controller<IController> {
   public async newPOST(req: any, res: any, next: any): Promise<void> {
     const { username, email, forename, surname, password } = req.body;
-
+    console.log('called');
     const createUser = async () => {
       // Validation
       if (!validator.isLength(username, { min: 3 })) throw new Error('uts');
@@ -27,15 +27,17 @@ class Controller<IController> {
       if (!validator.isLength(password, { min: 3 })) throw new Error('pts');
       if (!validator.isLength(password, { max: 50 })) throw new Error('ptl');
       // TODO: deal with image blob => upload to s3 and create array of urls
-
-      const hashedPassword = await bcrypt.hash(password, 10);
+      let hashedPassword;
+      console.log(password);
+      console.log(req.body);
+      if (password) hashedPassword = await bcrypt.hash(password, 10);
       try {
         const user: IUserModel = new UserModel({
           username,
           email,
           forename,
           surname,
-          password: hashedPassword
+          password: hashedPassword || ''
         });
         return await user.save();
       } catch (err) {
@@ -115,6 +117,7 @@ class Controller<IController> {
   }
 
   public async PATCH(req: any, res: any): Promise<any> {
+    // TODO: authentication
     const sessionUser = req.user;
     const reqUser = req.body;
 
@@ -151,18 +154,23 @@ class Controller<IController> {
     /* Delete immutable attributes */
     delete reqUser._id;
     delete reqUser.createdAt;
+
     /* Check for password update */
-    const isMatch = await bcrypt.compare(
-      sessionUser.password,
-      reqUser.password
-    );
+    let isMatch = true;
+    if (reqUser.password) {
+      isMatch = await bcrypt.compare(reqUser.password, sessionUser.password);
+    }
+    // TODO: validate groups and items
+    // TODO: validate password
     if (!isMatch) reqUser.password = await bcrypt.hash(reqUser.password, 10);
     /* Update Document */
-    const updatedDoc = await UserModel.findByIdAndUpdate(
+    const updatedUser = await UserModel.findByIdAndUpdate(
       sessionUser._id,
-      reqUser
-    );
-    res.json(updatedDoc);
+      reqUser,
+      { new: true }
+    ).lean();
+    delete updatedUser.password;
+    res.json(updatedUser);
   }
   async itemsGET(req: any, res: any, next: any): Promise<any> {
     const items = req.user.items.map(item => item.referenceId);
