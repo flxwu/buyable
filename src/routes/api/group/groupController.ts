@@ -1,7 +1,9 @@
 import { GroupModel, IGroupModel } from '../../../schemas/group';
 import { ItemModel } from '../../../schemas/item';
 import constants from '../../../helpers/constants';
+const ROLES = constants.ROLES;
 import { IGroupMemberReference } from '../../../../src/interfaces/reference';
+import { IGroupItem } from '../../../../src/interfaces/group';
 import { IItemReference } from '../../../../src/interfaces/reference';
 
 import bcrypt from 'bcrypt';
@@ -10,6 +12,8 @@ import { observableDiff } from 'deep-diff';
 import groupUpdate from '../../../custom_validators/groupUpdate';
 import { url } from 'inspector';
 import groupUpdateHandler from '../../../action_handlers/groupUpdateHandler';
+import { userInfo } from 'os';
+
 interface IController {
   newPOST: Function;
 }
@@ -65,15 +69,15 @@ class GroupController<IController> {
       buyerPermissions = [];
     // validate permissions
     // TODO: deeper validation -> right now user can add any permissions to any role!
+    console.log(permissions);
     if (permissions) {
       if (permissions.admin) {
         for (const permission in permissions.admin) {
-          if (
-            constants.PERMISSIONS.GROUP.hasOwnProperty(permission) &&
-            permissions.admin[permission]
-          ) {
-            adminPermissions.push(permission);
+          if (constants.PERMISSIONS.GROUP.hasOwnProperty(permission)) {
+            if (permissions.admin[permission])
+              adminPermissions.push(permission);
           } else {
+            console.log(permission);
             errors.push({
               [constants.ERRORS.GROUP_ADD.PERMISSIONS_INVALID]:
                 constants.ROLES.ADMIN
@@ -89,11 +93,9 @@ class GroupController<IController> {
       }
       if (permissions.seller) {
         for (const permission in permissions.seller) {
-          if (
-            constants.PERMISSIONS.GROUP.hasOwnProperty(permission) &&
-            permissions.seller[permission]
-          ) {
-            sellerPermissions.push(permission);
+          if (constants.PERMISSIONS.GROUP.hasOwnProperty(permission)) {
+            if (permissions.seller[permission])
+              sellerPermissions.push(permission);
           } else {
             errors.push({
               [constants.ERRORS.GROUP_ADD.PERMISSIONS_INVALID]:
@@ -110,11 +112,9 @@ class GroupController<IController> {
       }
       if (permissions.buyer) {
         for (const permission in permissions.buyer) {
-          if (
-            constants.PERMISSIONS.GROUP.hasOwnProperty(permission) &&
-            permissions.buyer[permission]
-          ) {
-            buyerPermissions.push(permission);
+          if (constants.PERMISSIONS.GROUP.hasOwnProperty(permission)) {
+            if (permissions.buyer[permission])
+              buyerPermissions.push(permission);
           } else {
             errors.push({
               [constants.ERRORS.GROUP_ADD.PERMISSIONS_INVALID]:
@@ -144,6 +144,7 @@ class GroupController<IController> {
         errors.push(constants.ERRORS.GROUP_ADD.SETTINGS_MIN_PRICE_INVALID);
       }
       // validate default role
+      console.log(req.body);
       if (settings.defaultRole) {
         if (
           !constants.ROLES.hasOwnProperty(settings.defaultRole) ||
@@ -276,35 +277,41 @@ class GroupController<IController> {
       });
     }
   }
+
+  // try joining group
+  public async joinPOST(req: any, res: any): Promise<void> {}
 }
 
 class GroupItemsController {
-  private SORT_BY = {
-    NEWEST: 'new',
-    OLDEST: 'old'
-  };
-
   public async GET(req, res): Promise<any> {
+    const SORT_BY = {
+      NEWEST: 'new',
+      OLDEST: 'old'
+    };
+
     const groupId = req.query._id;
     const user = req.user;
 
     if (groupId == null)
-      return res.status(400).json({ errors: ['No group given'] });
-
-    if (user == null || !user.groups.some(g => g.referenceId === groupId))
+      return res.status(400).json({ errors: ['NO GROUP SPECIFIED'] });
+    if (
+      user == null ||
+      !user.groups.some(g => String(g.referenceId) === groupId)
+    )
       return res.status(401).json({ errors: ['UNAUTHORIZED'] });
 
-    const amount = req.query.n || 5;
-    const sortBy = req.query.sort || this.SORT_BY.NEWEST;
+    const start = Number(req.query.start) || 0;
+    const end = Number(req.query.end) || 5;
+    const sortBy = req.query.sort || SORT_BY.NEWEST;
 
     const group = await GroupModel.findById(groupId);
     // Sort group items by sort criteria
     group.items = group.items.sort((i1, i2) => {
       switch (sortBy) {
-        case this.SORT_BY.NEWEST:
+        case SORT_BY.NEWEST:
           return Number(i2.addedAt) - Number(i1.addedAt);
           break;
-        case this.SORT_BY.OLDEST:
+        case SORT_BY.OLDEST:
           return Number(i1.addedAt) - Number(i2.addedAt);
           break;
         default:
@@ -313,11 +320,10 @@ class GroupItemsController {
       }
     });
 
-    // Get first 5
     const returnItemsReferenceIds =
-      amount === 'all'
+      end === -1 || start === -1
         ? group.items.map(ref => ref.referenceId)
-        : group.items.slice(0, amount - 1).map(ref => ref.referenceId);
+        : group.items.slice(start, end).map(ref => ref.referenceId);
 
     // from the item ids, get the item objects
     const groupItems = await ItemModel.find({
@@ -327,6 +333,55 @@ class GroupItemsController {
     });
 
     res.status(200).json(groupItems);
+  }
+
+  public async addPOST(req: any, res: any): Promise<any> {
+    const user = req.user;
+    const groupIds: Array<String> = req.body.groups.map(id => String(id));
+    const itemIds: Array<String> = req.body.items.map(id => String(id));
+    // TODO: validate IDs
+    const groups = await GroupModel.find({ _id: { $in: groupIds } });
+    console.log(groupIds, groups);
+    if (
+      groupIds.every(id =>
+        groups.some(
+          group =>
+            group._id == id &&
+            group.users.some(user => {
+              return (
+                String(user.referenceId) == req.user._id &&
+                [ROLES.OWNER, ROLES.ADMIN, ROLES.SELLER].some(
+                  role => role == user.role
+                )
+              );
+            })
+        )
+      ) &&
+      itemIds.every(item =>
+        req.user.items.some(userItem => userItem.referenceId == item)
+      )
+    ) {
+      // update groups: add all items to groups
+      groups.forEach(group =>
+        itemIds.forEach(id => {
+          if (!group.items.some(item => String(item.referenceId) == id)) {
+            group.items.push({
+              referenceId: String(id),
+              addedAt: Date.now(),
+              ownerRole: group.users.find(
+                user => String(user.referenceId) == req.user._id
+              ).role
+            });
+          }
+        })
+      );
+      for (const group of groups) {
+        await group.save();
+      }
+      res.status(200).json({ groups: groups });
+    } else {
+      res.json({ errors: ['IDS_INVALID'] });
+    }
   }
 }
 
