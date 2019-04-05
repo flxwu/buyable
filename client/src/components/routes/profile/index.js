@@ -6,12 +6,11 @@ import ProfileGroups from './ProfileGroups';
 import ProfileItems from './ProfileItems';
 import ProfileSettings from './ProfileSettings';
 import ProfileMain from './ProfileMain';
-import ProfileBasket from './ProfileBasket';
 
 const Profile = () => (
   <Box fill>
     <Route exact path={'/profile/'} component={ProfileMain} />
-    <Route path={'/profile/basket'} component={ProfileBasket} />
+    {/* <Route path={'/profile/basket'} component={ProfileBasket} /> */}
     <Route path={'/profile/settings'} component={ProfileSettings} />
     <Route path={'/profile/groups'} component={ProfileGroups} />
     <Route path={'/profile/items'} component={ProfileItems} />
