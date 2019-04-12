@@ -33,7 +33,7 @@ UserSchema.pre('save', async function(next: any) {
     [this.username, this.email],
     ['username', 'email']
   );
-  if (isDuplicate) {
+  if (!isDuplicate) {
     const now = new Date();
     if (!this.createdAt) {
       this.createdAt = now;
