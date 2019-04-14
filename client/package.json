@@ -20,6 +20,7 @@
     "redux-persist": "^5.10.0",
     "redux-saga": "^0.16.2",
     "shortid": "^2.2.14",
+    "stringquery": "^1.0.8",
     "styled-components": "^4.1.2",
     "validator": "^10.10.0",
     "yup": "^0.26.6"

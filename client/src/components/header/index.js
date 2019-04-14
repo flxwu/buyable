@@ -12,8 +12,9 @@ import {
   addUser,
   checkUserAuthenticated
 } from '../../redux/actions/user';
-import { getCurrentUser, isLoggedIn } from '../../redux/selectors';
+import { getCurrentUser, isLoggedIn, getCurrentSearchQueryObject } from '../../redux/selectors';
 import { toggleModal } from '../../redux/actions/modals';
+import { updateSearchOptions } from '../../redux/actions/search';
 import { MODAL_IDS, ROUTES } from '../../helpers/constants';
 
 const Header = ({
@@ -23,7 +24,9 @@ const Header = ({
   /* redux */
   user,
   showModal,
-  logoutFromStore
+  logoutFromStore,
+  query,
+  updateSearchObject
 }) => (
   <Box
     direction="column"
@@ -48,7 +51,8 @@ const Header = ({
         </Logo>
       </LeftHeader>
       <div style={{ display: 'flex', flexGrow: 1 }}>
-        <SearchBar placeholder="Search for trousers, pants, flipflops,..." />
+        <SearchBar onInput={event=>{updateSearchObject({...query, name: event.target.value})}} placeholder="Search for trousers, pants, flipflops,..." />
+        <Button label="Find!" onClick={()=>{history.push(`/search${formQuerystringFromParams({name: query.name})}`)}}/>
       </div>
       <RightHeader direction="row">
         {user && (
@@ -168,15 +172,31 @@ const Notch = styled(Box)`
 
 const mapStateToProps = state => ({
   user: getCurrentUser(state),
-  loggedIn: isLoggedIn(state)
+  loggedIn: isLoggedIn(state),
+  query: getCurrentSearchQueryObject(state)
 });
 
 const mapDispatchToProps = {
   logoutFromStore: deleteUser,
   showModal: toggleModal,
   loginToStore: addUser,
-  authCheck: checkUserAuthenticated
+  authCheck: checkUserAuthenticated,
+  updateSearchObject: updateSearchOptions
 };
+
+const formQuerystringFromParams = (query)=>{
+  const params = Object.keys(query);
+  let querystring = ""
+  for(let i = 0; i < params.length; i++){
+    if(i === 0){
+      querystring += `?${params[i]}=${query[params[i]]}`
+    }else{
+      querystring += `&${params[i]}=${query[params[i]]}`
+    }
+  }
+  return querystring;
+}
+
 export default withRouter(
   connect(
     mapStateToProps,
