@@ -32,6 +32,9 @@ const configureApp = async () => {
   app.use(passport.session());
   // MongoDB
   await mongoose.connect(mongoURL);
+  mongoose.connection.on('error', err => {
+    process.exit(1);
+  });
   console.log('connected to db');
   const db = mongoose.connection;
   db.on('error', () => console.error('Error connecting to MLab MongoDB'));

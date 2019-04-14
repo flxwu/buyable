@@ -3,7 +3,7 @@ import { Router } from 'express';
 import itemRouter from './item/itemRouter';
 import userRouter from './user/userRouter';
 import groupRouter from './group/groupRouter';
-
+import searchRouter from './search/searchRouter';
 import timelineRouter from './timeline/timelineRouter';
 
 import authRouter from './authRouter';
@@ -15,7 +15,7 @@ router.use('/item', itemRouter);
 router.use('/user', userRouter);
 router.use('/group', groupRouter);
 router.use('/timeline', timelineRouter);
-
+router.use('/search', searchRouter);
 router.use('/auth', authRouter);
 
 router.use('/beta', experimentalRouter);
