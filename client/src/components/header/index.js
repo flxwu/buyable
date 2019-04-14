@@ -51,8 +51,13 @@ const Header = ({
         </Logo>
       </LeftHeader>
       <div style={{ display: 'flex', flexGrow: 1 }}>
-        <SearchBar onInput={event=>{updateSearchObject({...query, name: event.target.value})}} placeholder="Search for trousers, pants, flipflops,..." />
-        <Button label="Find!" onClick={()=>{history.push(`/search${formQuerystringFromParams({name: query.name})}`)}}/>
+        <SearchBar value = {query.name} onChange={event=>{updateSearchObject({...query, name: event.target.value})}} onKeyDown={event=>{
+  if(event.keyCode === 13){
+    history.push(`/search${formQuerystringFromParams(query)}`);
+  }
+}} 
+placeholder="Search for trousers, pants, flipflops,..." />
+        <Button label="Find!" onClick={()=>{history.push(`/search${formQuerystringFromParams(query)}`)}}/>
       </div>
       <RightHeader direction="row">
         {user && (
@@ -196,6 +201,7 @@ const formQuerystringFromParams = (query)=>{
   }
   return querystring;
 }
+
 
 export default withRouter(
   connect(
