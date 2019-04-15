@@ -7,7 +7,8 @@ import NewProductModal from './components/newProductModal';
 import { Main as MainTimelineRoute } from './components/routes/timelines';
 import CheckoutRoute from './components/routes/checkout';
 import ProfileRoute from './components/routes/profile';
-import SearchRoute from "./components/routes/search";
+import SearchRoute from './components/routes/search';
+import ItemRoute from './components/routes/item';
 import AuthModal from './components/authModal';
 import { MODAL_IDS } from './helpers/constants';
 import { checkForRestrictedPage } from './helpers/pages';
@@ -40,16 +41,20 @@ class App extends React.Component {
       <Box fill>
         <Route
           exact
-          path={`/(search|groups|items|profile.*)?`}
+          path={`/(search|groups|items|profile.*|item.*|checkout)?`}
           component={withRouter(props => (
             <Header {...props} />
           ))}
         />
         <Box align="center" justify="center">
           <Route exact path="/" component={MainTimelineRoute} />
-          <Route exact path="/search" component={withRouter(props => (
-            <SearchRoute {...props} />
-          ))}/>
+          <Route
+            exact
+            path="/search"
+            component={withRouter(props => (
+              <SearchRoute {...props} />
+            ))}
+          />
           <Route exact path="/checkout" component={CheckoutRoute} />
           <Route
             path="/profile"
@@ -58,6 +63,13 @@ class App extends React.Component {
               MainTimelineRoute,
               loggedIn
             )}
+          />
+          <Route
+            exact
+            path="/item/:id"
+            component={withRouter(props => (
+              <ItemRoute {...props} />
+            ))}
           />
         </Box>
         {this.currentModal(modal_id)}
