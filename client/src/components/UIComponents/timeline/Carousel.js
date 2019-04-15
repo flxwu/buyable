@@ -46,8 +46,8 @@ const Carousel = ({
       case []:
         return null;
       default:
-        return items.map(item => (
-          <CarouselCard title={item.title} imageURL={item.imageURL} />
+        return items.map((item, i) => (
+          <CarouselCard key={i} title={item.title} imageURL={item.imageURL} />
         ));
     }
   };
