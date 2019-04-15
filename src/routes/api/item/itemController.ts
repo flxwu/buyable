@@ -68,13 +68,17 @@ class Controller<IController> {
   }
 
   public async GET(req: any, res: any, next: any): Promise<any> {
+    const isValidObjectId = id => id.match(/^[0-9a-fA-F]{24}$/);
     const id = req.query._id;
-    console.log(id);
-    const item = await ItemModel.findById(id);
-    if (item) {
-      res.status(200).json({ item });
+    if (isValidObjectId(id)) {
+      const item = await ItemModel.findById(id);
+      if (item) {
+        res.status(200).json({ item });
+      } else {
+        res.status(404).json({ errors: ['NOT_FOUND'] });
+      }
     } else {
-      res.status(404).json({ errors: ['NOT_FOUND'] });
+      res.status(400).json({ errors: ['INVALID_ID'] });
     }
   }
 }
