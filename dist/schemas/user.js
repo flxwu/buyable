@@ -37,7 +37,7 @@ exports.UserSchema = new mongoose_1.Schema({
 exports.UserSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         const isDuplicate = yield database_1.isUserDuplicate([this.username, this.email], ['username', 'email']);
-        if (isDuplicate) {
+        if (!isDuplicate) {
             const now = new Date();
             if (!this.createdAt) {
                 this.createdAt = now;

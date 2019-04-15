@@ -40,7 +40,7 @@ class App extends React.Component {
       <Box fill>
         <Route
           exact
-          path={`/(groups|items|profile.*)?`}
+          path={`/(search|groups|watching|profile.*|item.*|checkout)?`}
           component={withRouter(props => (
             <Header {...props} />
           ))}

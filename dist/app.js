@@ -38,6 +38,9 @@ const configureApp = () => __awaiter(this, void 0, void 0, function* () {
     app.use(passport_1.default.session());
     // MongoDB
     yield mongoose_1.default.connect(mongoURL);
+    mongoose_1.default.connection.on('error', err => {
+        process.exit(1);
+    });
     console.log('connected to db');
     const db = mongoose_1.default.connection;
     db.on('error', () => console.error('Error connecting to MLab MongoDB'));
