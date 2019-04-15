@@ -14,6 +14,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const group_1 = require("../../../schemas/group");
 const item_1 = require("../../../schemas/item");
 const constants_1 = __importDefault(require("../../../helpers/constants"));
+const ROLES = constants_1.default.ROLES;
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const groupUpdate_1 = __importDefault(require("../../../custom_validators/groupUpdate"));
 const groupUpdateHandler_1 = __importDefault(require("../../../action_handlers/groupUpdateHandler"));
@@ -69,14 +70,16 @@ class GroupController {
             const adminPermissions = [], sellerPermissions = [], buyerPermissions = [];
             // validate permissions
             // TODO: deeper validation -> right now user can add any permissions to any role!
+            console.log(permissions);
             if (permissions) {
                 if (permissions.admin) {
                     for (const permission in permissions.admin) {
-                        if (constants_1.default.PERMISSIONS.GROUP.hasOwnProperty(permission) &&
-                            permissions.admin[permission]) {
-                            adminPermissions.push(permission);
+                        if (constants_1.default.PERMISSIONS.GROUP.hasOwnProperty(permission)) {
+                            if (permissions.admin[permission])
+                                adminPermissions.push(permission);
                         }
                         else {
+                            console.log(permission);
                             errors.push({
                                 [constants_1.default.ERRORS.GROUP_ADD.PERMISSIONS_INVALID]: constants_1.default.ROLES.ADMIN
                             });
@@ -91,9 +94,9 @@ class GroupController {
                 }
                 if (permissions.seller) {
                     for (const permission in permissions.seller) {
-                        if (constants_1.default.PERMISSIONS.GROUP.hasOwnProperty(permission) &&
-                            permissions.seller[permission]) {
-                            sellerPermissions.push(permission);
+                        if (constants_1.default.PERMISSIONS.GROUP.hasOwnProperty(permission)) {
+                            if (permissions.seller[permission])
+                                sellerPermissions.push(permission);
                         }
                         else {
                             errors.push({
@@ -110,9 +113,9 @@ class GroupController {
                 }
                 if (permissions.buyer) {
                     for (const permission in permissions.buyer) {
-                        if (constants_1.default.PERMISSIONS.GROUP.hasOwnProperty(permission) &&
-                            permissions.buyer[permission]) {
-                            buyerPermissions.push(permission);
+                        if (constants_1.default.PERMISSIONS.GROUP.hasOwnProperty(permission)) {
+                            if (permissions.buyer[permission])
+                                buyerPermissions.push(permission);
                         }
                         else {
                             errors.push({
@@ -143,6 +146,7 @@ class GroupController {
                     errors.push(constants_1.default.ERRORS.GROUP_ADD.SETTINGS_MIN_PRICE_INVALID);
                 }
                 // validate default role
+                console.log(req.body);
                 if (settings.defaultRole) {
                     if (!constants_1.default.ROLES.hasOwnProperty(settings.defaultRole) ||
                         settings.defaultRole === constants_1.default.ROLES.OWNER) {
@@ -279,33 +283,37 @@ class GroupController {
             }
         });
     }
+    // try joining group
+    joinPOST(req, res) {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
 }
 exports.GroupController = GroupController;
 class GroupItemsController {
-    constructor() {
-        this.SORT_BY = {
-            NEWEST: 'new',
-            OLDEST: 'old'
-        };
-    }
     GET(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            const SORT_BY = {
+                NEWEST: 'new',
+                OLDEST: 'old'
+            };
             const groupId = req.query._id;
             const user = req.user;
             if (groupId == null)
-                return res.status(400).json({ errors: ['No group given'] });
-            if (user == null || !user.groups.some(g => g.referenceId === groupId))
+                return res.status(400).json({ errors: ['NO GROUP SPECIFIED'] });
+            if (user == null ||
+                !user.groups.some(g => String(g.referenceId) === groupId))
                 return res.status(401).json({ errors: ['UNAUTHORIZED'] });
-            const amount = req.query.n || 5;
-            const sortBy = req.query.sort || this.SORT_BY.NEWEST;
+            const start = Number(req.query.start) || 0;
+            const end = Number(req.query.end) || 5;
+            const sortBy = req.query.sort || SORT_BY.NEWEST;
             const group = yield group_1.GroupModel.findById(groupId);
             // Sort group items by sort criteria
             group.items = group.items.sort((i1, i2) => {
                 switch (sortBy) {
-                    case this.SORT_BY.NEWEST:
+                    case SORT_BY.NEWEST:
                         return Number(i2.addedAt) - Number(i1.addedAt);
                         break;
-                    case this.SORT_BY.OLDEST:
+                    case SORT_BY.OLDEST:
                         return Number(i1.addedAt) - Number(i2.addedAt);
                         break;
                     default:
@@ -313,10 +321,9 @@ class GroupItemsController {
                         break;
                 }
             });
-            // Get first 5
-            const returnItemsReferenceIds = amount === 'all'
+            const returnItemsReferenceIds = end === -1 || start === -1
                 ? group.items.map(ref => ref.referenceId)
-                : group.items.slice(0, amount - 1).map(ref => ref.referenceId);
+                : group.items.slice(start, end).map(ref => ref.referenceId);
             // from the item ids, get the item objects
             const groupItems = yield item_1.ItemModel.find({
                 _id: {
@@ -324,6 +331,40 @@ class GroupItemsController {
                 }
             });
             res.status(200).json(groupItems);
+        });
+    }
+    addPOST(req, res) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = req.user;
+            const groupIds = req.body.groups.map(id => String(id));
+            const itemIds = req.body.items.map(id => String(id));
+            // TODO: validate IDs
+            const groups = yield group_1.GroupModel.find({ _id: { $in: groupIds } });
+            console.log(groupIds, groups);
+            if (groupIds.every(id => groups.some(group => group._id == id &&
+                group.users.some(user => {
+                    return (String(user.referenceId) == req.user._id &&
+                        [ROLES.OWNER, ROLES.ADMIN, ROLES.SELLER].some(role => role == user.role));
+                }))) &&
+                itemIds.every(item => req.user.items.some(userItem => userItem.referenceId == item))) {
+                // update groups: add all items to groups
+                groups.forEach(group => itemIds.forEach(id => {
+                    if (!group.items.some(item => String(item.referenceId) == id)) {
+                        group.items.push({
+                            referenceId: String(id),
+                            addedAt: Date.now(),
+                            ownerRole: group.users.find(user => String(user.referenceId) == req.user._id).role
+                        });
+                    }
+                }));
+                for (const group of groups) {
+                    yield group.save();
+                }
+                res.status(200).json({ groups: groups });
+            }
+            else {
+                res.json({ errors: ['IDS_INVALID'] });
+            }
         });
     }
 }

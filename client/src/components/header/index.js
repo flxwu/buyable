@@ -127,7 +127,7 @@ const Header = ({
         fill>
         <Link to="/">Timeline</Link>
         <Link to="/groups">Groups</Link>
-        <Link to="/items">Items</Link>
+        <Link to="/watching">Watching</Link>
       </Notch>
     )}
   </Box>

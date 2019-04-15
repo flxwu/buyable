@@ -30,6 +30,7 @@ class Controller {
     newPOST(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             const { username, email, forename, surname, password } = req.body;
+            console.log('called');
             const createUser = () => __awaiter(this, void 0, void 0, function* () {
                 // Validation
                 if (!validator_1.default.isLength(username, { min: 3 }))
@@ -43,14 +44,18 @@ class Controller {
                 if (!validator_1.default.isLength(password, { max: 50 }))
                     throw new Error('ptl');
                 // TODO: deal with image blob => upload to s3 and create array of urls
-                const hashedPassword = yield bcrypt_1.default.hash(password, 10);
+                let hashedPassword;
+                console.log(password);
+                console.log(req.body);
+                if (password)
+                    hashedPassword = yield bcrypt_1.default.hash(password, 10);
                 try {
                     const user = new user_1.UserModel({
                         username,
                         email,
                         forename,
                         surname,
-                        password: hashedPassword
+                        password: hashedPassword || ''
                     });
                     return yield user.save();
                 }
@@ -137,6 +142,7 @@ class Controller {
     }
     PATCH(req, res) {
         return __awaiter(this, void 0, void 0, function* () {
+            // TODO: authentication
             const sessionUser = req.user;
             const reqUser = req.body;
             if (String(sessionUser._id) !== reqUser._id)
@@ -164,12 +170,18 @@ class Controller {
             delete reqUser._id;
             delete reqUser.createdAt;
             /* Check for password update */
-            const isMatch = yield bcrypt_1.default.compare(sessionUser.password, reqUser.password);
+            let isMatch = true;
+            if (reqUser.password) {
+                isMatch = yield bcrypt_1.default.compare(reqUser.password, sessionUser.password);
+            }
+            // TODO: validate groups and items
+            // TODO: validate password
             if (!isMatch)
                 reqUser.password = yield bcrypt_1.default.hash(reqUser.password, 10);
             /* Update Document */
-            const updatedDoc = yield user_1.UserModel.findByIdAndUpdate(sessionUser._id, reqUser);
-            res.json(updatedDoc);
+            const updatedUser = yield user_1.UserModel.findByIdAndUpdate(sessionUser._id, reqUser, { new: true }).lean();
+            delete updatedUser.password;
+            res.json(updatedUser);
         });
     }
     itemsGET(req, res, next) {
