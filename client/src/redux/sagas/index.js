@@ -49,7 +49,6 @@ function* getUserGroups(action) {
   Starts updateUser on each dispatched `UPDATE_USER_REQUESTED` action.
 */
 function* apiSaga() {
-  console.log('in api saga');
   yield takeEvery(DELETE_USER_REQUESTED, deleteUser);
   yield takeEvery(CHECK_USER_REQUESTED, checkUser);
   yield takeEvery(UPDATE_USER_REQUESTED, updateUser);
