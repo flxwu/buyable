@@ -1,8 +1,7 @@
 node_modules/
 *-error.log
 .env
-dist/**/*.js
-dist/**/*.js.map
+dist/
 
 # dependencies
 client/node_modules/
