@@ -57,7 +57,7 @@ const Header = ({
               <Camera style={{ marginRight: 5 }} />
               Sell Product
             </Link>
-            <Link to="/profile/basket" direction="row">
+            <Link to="/cart" direction="row">
               <Basket style={{ marginRight: 5 }} />
               Shopping Cart
             </Link>
