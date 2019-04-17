@@ -6,6 +6,8 @@ import NewProductModal from './components/newProductModal';
 
 import { Main as MainTimelineRoute } from './components/routes/timelines';
 import CheckoutRoute from './components/routes/checkout';
+import CartRoute from './components/routes/cart';
+import SellRoute from './components/routes/sell';
 import ProfileRoute from './components/routes/profile';
 
 import AuthModal from './components/authModal';
@@ -40,13 +42,15 @@ class App extends React.Component {
       <Box fill>
         <Route
           exact
-          path={`/(search|groups|watching|profile.*|item.*|checkout)?`}
+          path={`/(cart|sell|search|groups|watching|profile.*|item.*|checkout)?`}
           component={withRouter(props => (
             <Header {...props} />
           ))}
         />
         <Box align="center" justify="center">
           <Route exact path="/" component={MainTimelineRoute} />
+          <Route exact path="/sell" component={SellRoute} />
+          <Route exact path="/cart" component={CartRoute} />
           <Route exact path="/checkout" component={CheckoutRoute} />
           <Route
             path="/profile"
