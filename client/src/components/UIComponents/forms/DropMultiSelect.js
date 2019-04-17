@@ -6,7 +6,7 @@ import MultiSelect from './MultiSelect';
 export default class DropMultiSelect extends Component {
   state = {
     selected: [],
-    open: undefined,
+    open: false,
     available: this.props.items
   };
 
@@ -15,8 +15,8 @@ export default class DropMultiSelect extends Component {
       available: this.get(undefined, query),
       open: true
     });
-
-  close = () => this.setState({ open: undefined, available: this.get() });
+  open = () => this.setState(state => ({ ...state, open: true }));
+  close = () => this.setState({ open: false, available: this.get() });
 
   get = (selected = this.state.selected, query) => {
     let all = [...this.props.items];
@@ -33,7 +33,7 @@ export default class DropMultiSelect extends Component {
     const newSelected = [...this.state.selected];
     newSelected.push(group);
     this.setState({
-      open: undefined,
+      open: true,
       selected: newSelected,
       available: this.get(newSelected)
     });
@@ -59,6 +59,7 @@ export default class DropMultiSelect extends Component {
 
   render() {
     const { available, open, selected } = this.state;
+    console.log('open:' + open);
 
     let itemNodes;
     if (selected.length) {
@@ -94,8 +95,9 @@ export default class DropMultiSelect extends Component {
     return (
       <Box>
         <DropButton
-          a11yTitle="Open Groups drop"
+          onOpen={this.open}
           open={open}
+          a11yTitle="Open Groups drop"
           onClose={this.close}
           dropContent={
             <MultiSelect
