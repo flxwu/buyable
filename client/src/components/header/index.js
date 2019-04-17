@@ -53,14 +53,11 @@ const Header = ({
       <RightHeader direction="row">
         {user && (
           <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <Link
-              to="/profile/items"
-              direction="row"
-              style={{ marginBottom: 5 }}>
+            <Link to="/sell" direction="row" style={{ marginBottom: 5 }}>
               <Camera style={{ marginRight: 5 }} />
               Sell Product
             </Link>
-            <Link to="/profile/basket" direction="row">
+            <Link to="/cart" direction="row">
               <Basket style={{ marginRight: 5 }} />
               Shopping Cart
             </Link>
