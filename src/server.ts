@@ -8,7 +8,7 @@ const certificate = fs.readFileSync('localhost-certificate.pem');
 const useHttps = Number(process.env.HTTPS) ? true : false;
 
 import configureApp from './app';
-let server;
+let server: https.Server | http.Server;
 const port = process.env.PORT || 5000;
 const startServer = async () => {
   const app = await configureApp();
