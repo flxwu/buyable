@@ -17,21 +17,25 @@ const configureApp = async () => {
   const mongoURL = `mongodb://${process.env.MLAB_USER}:${
     process.env.MLAB_PASSWORD
   }@ds016108.mlab.com:16108/buyable-dev`;
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET,
-      store: new MongoStore({
-        url: mongoURL
-      }),
-      resave: true,
-      saveUninitialized: true
-    })
-  );
+  if (!process.env.OFFLINE) {
+    app.use(
+      session({
+        secret: process.env.SESSION_SECRET,
+        store: new MongoStore({
+          url: mongoURL
+        }),
+        resave: true,
+        saveUninitialized: true
+      })
+    );
+  }
 
   app.use(passport.initialize());
   app.use(passport.session());
   // MongoDB
-  await mongoose.connect(mongoURL);
+  if (!process.env.OFFLINE)
+    await mongoose.connect(mongoURL, { useNewUrlParser: true });
+
   console.log('connected to db');
   const db = mongoose.connection;
   db.on('error', () => console.error('Error connecting to MLab MongoDB'));
