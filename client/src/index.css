@@ -19,3 +19,15 @@ body {
   height: 100%;
   min-height: 100%;
 }
+
+@media (min-width: 30em) {
+  .filepond--item {
+    width: calc(50% - 0.5em);
+  }
+}
+
+@media (min-width: 50em) {
+  .filepond--item {
+    width: calc(25% - 0.5em);
+  }
+}
