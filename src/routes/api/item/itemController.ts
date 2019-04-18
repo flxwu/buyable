@@ -11,7 +11,7 @@ interface IController {
 
 class Controller<IController> {
   public async newPOST(req: any, res: any, next: any): Promise<void> {
-    const { name, description, price, amount, images } = req.body;
+    const { name, description, price, amount } = req.body;
     const owner = req.user;
 
     // validate that user is logged in
@@ -33,8 +33,6 @@ class Controller<IController> {
     }
 
     const createItem = async () => {
-      // TODO: deal with image blobs => upload to s3 and create array of urls
-
       const item: IItemModel = new ItemModel({
         name,
         description,
@@ -45,6 +43,7 @@ class Controller<IController> {
         }
       });
       let result;
+
       try {
         result = await item.save();
         const update = { $push: { items: { referenceId: result._id } } };
