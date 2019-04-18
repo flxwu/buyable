@@ -1,15 +1,35 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Formik, Form } from 'formik';
 import styled from 'styled-components';
 import { Box, Button, Heading } from 'grommet';
 import axios from 'axios';
 import * as yup from 'yup';
+
 import ErrorText from '../../UIComponents/forms/ErrorMessage';
 import TextInputField from '../../UIComponents/forms/TextInputField';
 import FormContainer from '../../UIComponents/forms/FormContainer';
 import DropMultiSelect from '../../UIComponents/forms/DropMultiSelect';
+import ImageUploadField from '../../UIComponents/forms/ImageUploadField';
 
-class SellView extends Component {
+import { FilePond, registerPlugin } from 'react-filepond';
+import FilePondPluginImageExifOrientation from 'filepond-plugin-image-exif-orientation';
+import FilePondPluginImagePreview from 'filepond-plugin-image-preview';
+import FilePondPluginImageTransform from 'filepond-plugin-image-transform';
+import FilePondPluginFileEncode from 'filepond-plugin-file-encode';
+
+import 'filepond-plugin-image-preview/dist/filepond-plugin-image-preview.css';
+import 'filepond/dist/filepond.min.css';
+registerPlugin(
+  FilePondPluginImageExifOrientation,
+  FilePondPluginImagePreview,
+  FilePondPluginImageTransform,
+  FilePondPluginFileEncode
+);
+
+class SellView extends React.Component {
+  state = {
+    images: []
+  };
   render() {
     const groups = [{ name: 'asdf' }, { name: 'jkl;' }];
     return (
@@ -41,7 +61,10 @@ class SellView extends Component {
           })}
           onSubmit={async (values, { setSubmitting }) => {
             const createdItem = await axios.post('/api/item/new', {
-              ...values
+              ...values,
+              images: this.state.images.map(file =>
+                file.getFileEncodeBase64String()
+              )
             });
             setSubmitting(false);
             console.log(createdItem.data);
@@ -91,6 +114,24 @@ class SellView extends Component {
                 {errors.amount && touched.amount && (
                   <ErrorText text={errors.amount} />
                 )}
+                {/* <ImageUploadField
+                  label="Showcase some images of your item!"
+                  api="/api/item/image"
+                /> */}
+                <FilePond
+                  ref={ref => (this.pond = ref)}
+                  allowMultiple={true}
+                  api={{
+                    process: '/api/item/images',
+                    fetch: null,
+                    revert: null
+                  }}
+                  imageResizeTargetWidth={600}
+                  imageCropAspectRatio={1}
+                  maxFiles={6}
+                  onupdatefiles={images => this.setState({ images })}
+                  labelIdle={`<b>Showcase some images of your item!</b> <br>Drag & Drop your images or <span class="filepond--label-action"> Browse on your computer</span>`}
+                />
                 <DropMultiSelect items={groups && groups.map(g => g.name)} />
                 <AddItemCTA
                   align="center"
