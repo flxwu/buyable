@@ -9,6 +9,19 @@ import validator from 'validator';
 import { UserModel } from './schemas/user';
 import apiRouter from './routes/api/router';
 
+// image uploading to s3
+import aws from 'aws-sdk';
+import multer from 'multer';
+import multerS3 from 'multer-s3';
+aws.config.update({
+  accessKeyId: process.env.s3Key,
+  secretAccessKey: process.env.s3Secret
+});
+const s3 = new aws.S3({
+  endpoint: 'ams3.digitaloceanspaces.com',
+  params: { Bucket: 'buyable-images-store', acl: 'public-read' }
+});
+
 const configureApp = async () => {
   const app = express();
   const MongoStore = MongoConnect(session);
@@ -75,7 +88,7 @@ const configureApp = async () => {
   app.use(express.urlencoded({ extended: true }));
   app.use(express.json());
   app.use(morgan('dev'));
-  app.use('/api', apiRouter);
+  app.use('/api', apiRouter(s3));
   app.use(express.static(__dirname + '/../client/build/'));
   return app;
 };
