@@ -5,10 +5,15 @@ import Controller from './itemController';
 /**
  * POST New Product
  */
-
+let s3;
 const itemController = new Controller();
 
-router.post('/new', itemController.newPOST);
+router.post('/new', (req, res, next) =>
+  itemController.newPOST(req, res, next, s3)
+);
 router.get('/', itemController.GET);
 
-export default router;
+export default function(s3Ref) {
+  s3 = s3Ref;
+  return router;
+}

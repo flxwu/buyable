@@ -4,14 +4,16 @@ import { ItemModel, IItemModel } from '../../../schemas/item';
 import { UserModel, IUserModel } from '../../../schemas/user';
 import { IItem } from '../../../interfaces/item';
 
+import { uploadImages } from '../../../helpers/api';
+
 interface IController {
   newPOST: Function;
   GET: Function;
 }
 
 class Controller<IController> {
-  public async newPOST(req: any, res: any, next: any): Promise<void> {
-    const { name, description, price, amount } = req.body;
+  public async newPOST(req, res, next, s3): Promise<void> {
+    const { name, description, price, amount, images } = req.body;
     const owner = req.user;
 
     // validate that user is logged in
@@ -33,6 +35,7 @@ class Controller<IController> {
     }
 
     const createItem = async () => {
+      uploadImages(s3, owner._id, images);
       const item: IItemModel = new ItemModel({
         name,
         description,
