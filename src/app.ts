@@ -1,14 +1,16 @@
 import express from 'express';
 import morgan from 'morgan';
 import session from 'express-session';
-import mongoose from 'mongoose';
+import mongoose, { Mongoose } from 'mongoose';
 import MongoConnect from 'connect-mongo';
 import passport from 'passport';
 import passportLocal from 'passport-local';
+import expressValidator from 'express-validator';
 import validator from 'validator';
 import { UserModel } from './schemas/user';
+import { IUser } from './interfaces/user';
 import apiRouter from './routes/api/router';
-
+import { Schema } from 'mongoose';
 const configureApp = async () => {
   const app = express();
   const MongoStore = MongoConnect(session);
@@ -32,6 +34,7 @@ const configureApp = async () => {
 
   app.use(passport.initialize());
   app.use(passport.session());
+  app.use(expressValidator());
   // MongoDB
   if (!process.env.OFFLINE)
     await mongoose.connect(mongoURL, { useNewUrlParser: true });
@@ -41,18 +44,22 @@ const configureApp = async () => {
   db.on('error', () => console.error('Error connecting to MLab MongoDB'));
 
   const LocalStrategy = passportLocal.Strategy;
-  passport.serializeUser<any, any>((user, done) => {
-    done(undefined, user._id);
+  passport.serializeUser((user: IUser, done: Function) => {
+    done(null, user._id);
   });
 
-  passport.deserializeUser((id, done) => {
-    UserModel.findById(id, (err, user) => {
+  passport.deserializeUser((id: Schema.Types.ObjectId, done: Function) => {
+    UserModel.findById(id, (err: Error, user: IUser) => {
       done(err, user);
     });
   });
 
   passport.use(
-    new LocalStrategy(function(username, password, done) {
+    new LocalStrategy(function(
+      username: string,
+      password: string,
+      done: Function
+    ) {
       UserModel.findOne(
         validator.isEmail(username) ? { email: username } : { username },
         async function(err, user) {
