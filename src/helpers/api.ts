@@ -8,9 +8,12 @@ export const validateEmail = (email: String) => {
 export const uploadImages = async (s3, keyPrefix, images) => {
   try {
     const files = [];
+    const keys = [];
     for (let i = 0; i < images.length; i++) {
+      const key = `${keyPrefix}-${shortid.generate() + shortid.generate()}`;
+      keys.push(key);
       const fileObj = {
-        Key: `${keyPrefix}-${shortid.generate() + shortid.generate()}`,
+        Key: key,
         Body: new Buffer(images[i], 'base64'),
         ContentEncoding: 'base64',
         ContentType: 'image/jpeg',
@@ -22,7 +25,9 @@ export const uploadImages = async (s3, keyPrefix, images) => {
       await Promise.all(
         files.map(async fileObj => await s3.upload(fileObj).promise())
       );
-      return true;
+      return keys.map(
+        k => `https://ams3.digitaloceanspaces.com/buyable-images-store/${k}`
+      );
     } catch (err) {
       console.error(err);
       return false;

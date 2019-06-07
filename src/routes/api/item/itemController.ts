@@ -35,12 +35,13 @@ class Controller<IController> {
     }
 
     const createItem = async () => {
-      uploadImages(s3, owner._id, images);
+      const imageURLs = uploadImages(s3, owner._id, images);
       const item: IItemModel = new ItemModel({
         name,
         description,
         price,
         amount,
+        imageURLs,
         owner: {
           referenceId: owner._id
         }
